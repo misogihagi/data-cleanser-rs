@@ -11,6 +11,8 @@ use std::{thread, time};
 pub struct FlowA<'a> {
     pub index: &'a str,
     pub base: &'a str,
+    pub link_link_base: &'a str,
+    pub link_base: &'a str,
     pub link_link_selector: &'a str,
     pub link_selector: &'a str,
     pub title_selector: &'a str,
@@ -19,6 +21,8 @@ pub struct FlowA<'a> {
     pub encoding: &'a str,
     pub link_links: Vec<String>,
     pub links: Vec<String>,
+    pub pool_size: usize,
+    pub rest: u64,
 }
 
 impl Default for FlowA<'_> {
@@ -26,6 +30,8 @@ impl Default for FlowA<'_> {
         FlowA {
             index: "",
             base: "",
+            link_link_base: "",
+            link_base: "",
             link_link_selector: "",
             link_selector: "",
             title_selector: "",
@@ -34,6 +40,8 @@ impl Default for FlowA<'_> {
             encoding: "utf-8",
             link_links: vec![],
             links: vec![],
+            pool_size: POOL_SIZE,
+            rest: REST,
         }
     }
 }
@@ -45,6 +53,7 @@ pub struct FlowB {
     pub titles_selector: &'static str,
     pub bodies_selector: &'static str,
     pub encoding: &'static str,
+    pub links: Vec<String>,
 }
 impl Default for FlowB {
     fn default() -> FlowB {
@@ -55,6 +64,7 @@ impl Default for FlowB {
             titles_selector: "",
             bodies_selector: "",
             encoding: "utf-8",
+            links: vec![],
         }
     }
 }
@@ -67,7 +77,7 @@ pub trait Flow {
     async fn get_terms(&self) -> Vec<Term>;
 }
 
-const POOL_SIZE: usize = 100;
+const POOL_SIZE: usize = 50;
 const REST: u64 = 5;
 
 #[async_trait]
@@ -76,9 +86,18 @@ impl Flow for FlowA<'_> {
         if self.link_links.len() > 0 {
             self.link_links.clone()
         } else {
+            let base = if !self.link_link_base.is_empty() {
+                self.link_link_base
+            } else {
+                if !self.base.is_empty() {
+                    self.base
+                } else {
+                    ""
+                }
+            };
             get_links(LinkQuery {
                 url: &self.index,
-                base: &self.base,
+                base: base,
                 selector_string: &self.link_link_selector,
                 encoding: &self.encoding,
             })
@@ -89,15 +108,22 @@ impl Flow for FlowA<'_> {
     async fn get_links(&self) -> Vec<String> {
         let link_links = if self.links.len() > 0 {
             self.links.clone()
-        } else if self.link_link_selector == "" {
-            vec![self.index.to_string()]
         } else {
             self.get_link_links().await
+        };
+        let base = if !self.link_base.is_empty() {
+            self.link_base
+        } else {
+            if !self.base.is_empty() {
+                self.base
+            } else {
+                ""
+            }
         };
         join_all(link_links.iter().map(|l| {
             get_links(LinkQuery {
                 url: l,
-                base: self.base,
+                base: base,
                 selector_string: self.link_selector,
                 encoding: &self.encoding,
             })
@@ -111,7 +137,7 @@ impl Flow for FlowA<'_> {
         let chunks: Vec<Vec<String>> = self
             .get_links()
             .await
-            .chunks(POOL_SIZE)
+            .chunks(self.pool_size)
             .map(|c| c.to_vec())
             .collect();
 
@@ -130,7 +156,7 @@ impl Flow for FlowA<'_> {
         }) {
             let mut terms: Vec<_> = c.await.into_iter().map(|r| r.unwrap()).collect();
 
-            thread::sleep(time::Duration::from_secs(REST));
+            thread::sleep(time::Duration::from_secs(self.rest));
 
             result.append(&mut terms)
         }
@@ -143,14 +169,20 @@ impl Flow for FlowB {
         vec![]
     }
     async fn get_links(&self) -> Vec<String> {
-        get_links(LinkQuery {
-            url: self.index,
-            base: self.base,
-            selector_string: self.link_selector,
-            encoding: &self.encoding,
-        })
-        .await
-        .unwrap()
+        if self.links.len() > 0 {
+            self.links.clone()
+        } else if self.link_selector == "" {
+            vec![self.index.to_string()]
+        } else {
+            get_links(LinkQuery {
+                url: self.index,
+                base: self.base,
+                selector_string: self.link_selector,
+                encoding: &self.encoding,
+            })
+            .await
+            .unwrap()
+        }
     }
     async fn get_terms(&self) -> Vec<Term> {
         let links: Vec<String> = self.get_links().await;
@@ -178,10 +210,16 @@ pub struct Term {
     pub images: Vec<String>,
 }
 
-const RETRY: usize = 3;
-const RETRY_INTERVAL: u64 = 3;
+const RETRY: usize = 5;
+const RETRY_INTERVAL: u64 = 5;
+const BANNED_INTERVAL: u64 = 600;
+const APP_USER_AGENT: &str = "Mozilla/5.0 (MSIE; Windows 10)";
 
 pub async fn get_html(url: impl AsRef<str>, encoding_str: &str) -> reqwest::Result<String> {
+    let client = reqwest::Client::builder()
+        .user_agent(APP_USER_AGENT)
+        .build()?;
+
     let encoding = match encoding_str {
         "utf-8" => encoding_rs::UTF_8,
         "euc-jp" => encoding_rs::EUC_JP,
@@ -189,16 +227,28 @@ pub async fn get_html(url: impl AsRef<str>, encoding_str: &str) -> reqwest::Resu
         _ => encoding_rs::UTF_8,
     };
     println!("{} is getting", url.as_ref());
-    let mut result = reqwest::get(url.as_ref()).await;
+    let mut r = None;
     for i in 1..RETRY {
-        if result.is_ok() {
-            break;
+        let result = client.get(url.as_ref()).send().await;
+        if result.is_err() {
+            println!("{} failed {} times. retrying", url.as_ref(), i);
+            thread::sleep(time::Duration::from_secs(RETRY_INTERVAL));
+            continue;
         }
-        println!("{} failed {} times. retrying", url.as_ref(), i);
-        thread::sleep(time::Duration::from_secs(RETRY_INTERVAL));
-        result = reqwest::get(url.as_ref()).await;
+        let response = result.unwrap();
+        if response.status() == reqwest::StatusCode::SERVICE_UNAVAILABLE {
+            println!("{} failed {} times. retrying", url.as_ref(), i);
+            thread::sleep(time::Duration::from_secs(RETRY_INTERVAL));
+            continue;
+        } else if response.status() == reqwest::StatusCode::FORBIDDEN {
+            println!("{} failed {} times. retrying", url.as_ref(), i);
+            thread::sleep(time::Duration::from_secs(BANNED_INTERVAL));
+            continue;
+        }
+        r = Some(response.bytes().await.unwrap());
+        break;
     }
-    let bytes = result.unwrap().bytes().await.unwrap();
+    let bytes = r.expect("the number of retries exceeded");
     let (res, _, _) = encoding.decode(&bytes);
     Ok(res.to_string())
 }
@@ -236,28 +286,20 @@ pub trait Converter {
     fn get_fragment(&self) -> String;
     fn get_selector(&self) -> String;
 }
+
 pub enum GetTextFragment {
     Html(Html),
     RefHtml(&'static Html),
 }
+
 pub enum GetTextSelector {
     Selector(Selector),
     RefSelector(&'static Selector),
 }
 
-pub fn get_text(fragment: GetTextFragment, selector: GetTextSelector) -> String {
-    let html_fragment: Html = match fragment {
-        GetTextFragment::Html(h) => h,
-        GetTextFragment::RefHtml(h) => h.clone(),
-    };
-
-    let css_selector = match selector {
-        GetTextSelector::Selector(s) => s,
-        GetTextSelector::RefSelector(s) => s.clone(),
-    };
-
-    html_fragment
-        .select(&css_selector)
+pub fn get_text(fragment: Html, selector: Selector) -> String {
+    fragment
+        .select(&selector)
         .flat_map(|e| {
             e.text()
                 .map(|t| t.to_string().trim().to_string())
@@ -275,6 +317,10 @@ pub fn get_texts(fragment: GetTextFragment, selector: GetTextSelector) -> Vec<St
         GetTextSelector::Selector(s) => s,
         GetTextSelector::RefSelector(s) => s.clone(),
     };
+
+    let t = html_fragment.select(&css_selector).map(|e| e.children());
+
+    let mut i = 0;
 
     html_fragment
         .select(&css_selector)
@@ -312,14 +358,12 @@ pub async fn get_term(
     let body_selector = Selector::parse(s_body).unwrap();
     let fragment = Html::parse_fragment(&html);
 
-    let title = get_text(
-        GetTextFragment::Html(fragment.clone()),
-        GetTextSelector::Selector(title_selector.clone()),
-    );
-    let body = get_text(
-        GetTextFragment::Html(fragment.clone()),
-        GetTextSelector::Selector(body_selector.clone()),
-    );
+    let title = get_text(fragment.clone(), title_selector.clone());
+    let body = get_text(fragment.clone(), body_selector.clone());
+
+    if title == "" {
+        println!("{}", html);
+    }
 
     let images: Vec<String> = match s_images {
         Some(s) => {
@@ -356,10 +400,19 @@ pub async fn get_terms(
         GetTextFragment::Html(fragment.clone()),
         GetTextSelector::Selector(title_selector.clone()),
     );
+
     let bodies = get_texts(
         GetTextFragment::Html(fragment.clone()),
         GetTextSelector::Selector(body_selector.clone()),
     );
+
+    if (titles.len() != bodies.len()) {
+        panic!(
+            "titles and bodies is not coincident\ntitles: {}, bodies: {}",
+            titles.len(),
+            bodies.len()
+        )
+    }
 
     let images: Vec<String> = match s_images {
         Some(s) => {
@@ -372,13 +425,11 @@ pub async fn get_terms(
         None => vec![],
     };
 
-    Ok(bodies
-        .into_iter()
-        .enumerate()
-        .map(|(i, v)| Term {
+    Ok((0..titles.len())
+        .map(|i| Term {
             title: titles[i].to_string(),
-            body: v,
-            images: vec![],
+            body: bodies[i].to_string(),
+            images: images.clone(),
         })
         .collect())
 }

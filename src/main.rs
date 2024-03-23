@@ -1,37 +1,31 @@
+mod args;
 mod sites;
 mod utils;
-
+use crate::utils::use_write;
+use args::Args;
 use clap::Parser;
-use sites::smbcnikko::smbcnikko;
+use sites::mitsue;
+use std::fs;
 
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    #[arg(long, default_value_t = false)]
-    athome: bool,
-    #[arg(long, default_value_t = false)]
-    beer: bool,
-    #[arg(long, default_value_t = false)]
-    cybernet: bool,
-    #[arg(long, default_value_t = false)]
-    ena: bool,
-    #[arg(long, default_value_t = false)]
-    goonet: bool,
-    #[arg(long, default_value_t = false)]
-    ryugaku: bool,
-    #[arg(long, default_value_t = false)]
-    smbcnikko: bool,
-    #[arg(long, default_value_t = false)]
-    soccer: bool,
-    #[arg(long, default_value_t = false)]
-    webtan: bool,
+macro_rules! cmd {
+    ($e:expr) => {
+        let terms = sites::run($e).await;
+        use_write(format!("{}.json", $e).to_string())(&terms);
+    };
 }
 
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
 
-    if args.smbcnikko {
-        smbcnikko("smbcnikko.json").await;
+    for mode in args.simples() {
+        cmd!(mode);
+    }
+    if args.mitsue {
+        fs::create_dir("mitsue").unwrap();
+        let books = mitsue();
+        for (i, terms) in books.await.iter().enumerate() {
+            use_write(format!("mitsue/{}.json", i).to_string())(&terms);
+        }
     }
 }
