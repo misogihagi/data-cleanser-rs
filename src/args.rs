@@ -44,6 +44,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     soccer: bool,
     #[arg(long, default_value_t = false)]
+    theglenlivet: bool,
+    #[arg(long, default_value_t = false)]
     webtan: bool,
 
     #[arg(long, default_value_t = false)]
@@ -112,6 +114,9 @@ impl Args {
         }
         if self.soccer {
             ret.push("soccer")
+        }
+        if self.theglenlivet {
+            ret.push("theglenlivet")
         }
         if self.webtan {
             ret.push("webtan")

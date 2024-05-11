@@ -197,6 +197,7 @@ fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
 
 pub enum SiteKindSimpleB {
     Meiwakaiun,
+    Theglenlivet,
 }
 
 fn simple_b(kind: SiteKindSimpleB) -> FlowB {
@@ -206,6 +207,12 @@ fn simple_b(kind: SiteKindSimpleB) -> FlowB {
             // section.grossary typo!
             titles_selector: "main > div.page-box > div.container > div.glossary-details > section.grossary-details-box > table > tbody > tr > td > div.glossary-details > section.grossary-details-box > table > tbody > tr:not(#ki02a) > th",
             bodies_selector: "main > div.page-box > div.container > div.glossary-details > section.grossary-details-box > table > tbody > tr > td > div.glossary-details > section.grossary-details-box > table > tbody > tr:not(#ki02a) > td",
+            ..Default::default()
+        },
+        SiteKindSimpleB::Theglenlivet => FlowB {
+            index: "https://www.theglenlivet.jp/craft/whisky-words.html",
+            titles_selector: "section.producttext > div > h3",
+            bodies_selector: "section.producttext > div > h3 + p",
             ..Default::default()
         },
     }
@@ -385,6 +392,7 @@ fn str_to_kind(s: &str) -> SiteKind {
         "ryugaku" => SiteKind::SimpleA(SiteKindSimpleA::Ryugaku),
         "smbcnikko" => SiteKind::SimpleA(SiteKindSimpleA::Smbcnikko),
         "soccer" => SiteKind::SimpleA(SiteKindSimpleA::Soccer),
+        "theglenlivet" => SiteKind::SimpleB(SiteKindSimpleB::Theglenlivet),
         "webtan" => SiteKind::SimpleA(SiteKindSimpleA::Webtan),
         &_ => panic!("not valid kind"),
     }
