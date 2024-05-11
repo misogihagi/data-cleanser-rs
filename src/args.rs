@@ -24,6 +24,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     hrpro: bool,
     #[arg(long, default_value_t = false)]
+    jmac: bool,
+    #[arg(long, default_value_t = false)]
     kenchikuyogo: bool,
     #[arg(long, default_value_t = false)]
     macromill: bool,
@@ -74,6 +76,9 @@ impl Args {
         }
         if self.goonet {
             ret.push("goonet")
+        }
+        if self.jmac {
+            ret.push("jmac")
         }
         if self.hrpro {
             ret.push("hrpro")

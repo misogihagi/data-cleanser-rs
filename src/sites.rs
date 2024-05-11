@@ -26,6 +26,7 @@ pub enum SiteKindSimpleA {
     ESP,
     Fastretailing,
     Goonet,
+    JMAC,
     Kenchikuyogo,
     Macromill,
     Mintesu,
@@ -98,6 +99,15 @@ fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
             title_selector: ".h3box > h5",
             body_selector: ".text",
             encoding: "euc-jp",
+            ..Default::default()
+        },
+        SiteKindSimpleA::JMAC => FlowA {
+            index: "https://www.jmac.co.jp/glossary/",
+            base: "https://www.jmac.co.jp",
+            link_link_selector:"section.l-pageSection:nth-child(4) > ul > li > a, section.l-pageSection:nth-child(5) > ul > li > a, section.l-pageSection:nth-child(6) > ul > li > a",
+            link_selector:".c-glossaryList > li > a",
+            title_selector: "h1.c-simpleHeader_title",
+            body_selector: ".l-wysiwyg",
             ..Default::default()
         },
         SiteKindSimpleA::Kenchikuyogo => FlowA {
@@ -364,6 +374,7 @@ fn str_to_kind(s: &str) -> SiteKind {
         "goonet" => SiteKind::SimpleA(SiteKindSimpleA::Goonet),
         "hiroshima" => SiteKind::Hiroshima,
         "hrpro" => SiteKind::Customize(SiteKindCustomize::Hrpro),
+        "jmac" => SiteKind::SimpleA(SiteKindSimpleA::JMAC),
         "kenchikuyogo" => SiteKind::SimpleA(SiteKindSimpleA::Kenchikuyogo),
         "macromill" => SiteKind::SimpleA(SiteKindSimpleA::Macromill),
         "meiwakaiun" => SiteKind::SimpleB(SiteKindSimpleB::Meiwakaiun),
