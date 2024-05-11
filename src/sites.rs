@@ -23,6 +23,7 @@ pub enum SiteKindSimpleA {
     Beer,
     Cybernet,
     Ena,
+    ESP,
     Fastretailing,
     Goonet,
     Kenchikuyogo,
@@ -68,6 +69,15 @@ fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
             link_selector: "div.body > dl > dd:nth-child(2) > ul:nth-child(1) > li > a",
             title_selector: "div.guide > h2 > span > span",
             body_selector: "div.text > p",
+            ..Default::default()
+        },
+        SiteKindSimpleA::ESP => FlowA {
+            index: "https://www.esp.ac.jp/epv/glossary/index.html",
+            base: "https://www.esp.ac.jp/epv/glossary/",
+            link_link_selector: "#glossary-navi > li > a",
+            link_selector: "#glossary-list > li > a",
+            title_selector: "#glossary-name",
+            body_selector: "#glossary-text",
             ..Default::default()
         },
         SiteKindSimpleA::Fastretailing => FlowA {
@@ -349,6 +359,7 @@ fn str_to_kind(s: &str) -> SiteKind {
         "beer" => SiteKind::SimpleA(SiteKindSimpleA::Beer),
         "cybernet" => SiteKind::SimpleA(SiteKindSimpleA::Cybernet),
         "ena" => SiteKind::SimpleA(SiteKindSimpleA::Ena),
+        "esp" => SiteKind::SimpleA(SiteKindSimpleA::ESP),
         "fastretailing" => SiteKind::SimpleA(SiteKindSimpleA::Fastretailing),
         "goonet" => SiteKind::SimpleA(SiteKindSimpleA::Goonet),
         "hiroshima" => SiteKind::Hiroshima,

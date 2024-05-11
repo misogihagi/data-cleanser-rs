@@ -14,6 +14,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     ena: bool,
     #[arg(long, default_value_t = false)]
+    esp: bool,
+    #[arg(long, default_value_t = false)]
     fastretailing: bool,
     #[arg(long, default_value_t = false)]
     goonet: bool,
@@ -63,6 +65,9 @@ impl Args {
         }
         if self.ena {
             ret.push("ena")
+        }
+        if self.esp {
+            ret.push("esp")
         }
         if self.fastretailing {
             ret.push("fastretailing")
