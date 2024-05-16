@@ -12,6 +12,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     beer: bool,
     #[arg(long, default_value_t = false)]
+    chemicoat: bool,
+    #[arg(long, default_value_t = false)]
     cybernet: bool,
     #[arg(long, default_value_t = false)]
     ena: bool,
@@ -68,6 +70,9 @@ impl Args {
         }
         if self.beer {
             ret.push("beer")
+        }
+        if self.chemicoat {
+            ret.push("chemicoat")
         }
         if self.cybernet {
             ret.push("cybernet")

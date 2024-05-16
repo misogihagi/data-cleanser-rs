@@ -22,6 +22,7 @@ pub enum SiteKindSimpleA {
     Aritayaki,
     Athome,
     Beer,
+    Chemicoat,
     Cybernet,
     Ena,
     ESP,
@@ -62,6 +63,13 @@ fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
             link_selector: "li.dictionary_section > ol > li > a",
             title_selector: ".article_headline",
             body_selector: ".article_body > p",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Chemicoat => FlowA {
+            link_links: vec![String::from("https://www.chemicoat.co.jp/knowledge/")],
+            link_selector: ".content-list > ul > li > a",
+            title_selector: ".columnh2",
+            body_selector: ".columntext",
             ..Default::default()
         },
         SiteKindSimpleA::Cybernet => FlowA {
@@ -383,6 +391,7 @@ fn str_to_kind(s: &str) -> SiteKind {
         "aritayaki" => SiteKind::SimpleA(SiteKindSimpleA::Aritayaki),
         "athome" => SiteKind::SimpleA(SiteKindSimpleA::Athome),
         "beer" => SiteKind::SimpleA(SiteKindSimpleA::Beer),
+        "chemicoat" => SiteKind::SimpleA(SiteKindSimpleA::Chemicoat),
         "cybernet" => SiteKind::SimpleA(SiteKindSimpleA::Cybernet),
         "ena" => SiteKind::SimpleA(SiteKindSimpleA::Ena),
         "esp" => SiteKind::SimpleA(SiteKindSimpleA::ESP),
