@@ -19,6 +19,7 @@ pub enum SiteKind {
     Hiroshima,
 }
 pub enum SiteKindSimpleA {
+    Aritayaki,
     Athome,
     Beer,
     Cybernet,
@@ -40,6 +41,13 @@ pub enum SiteKindSimpleA {
 
 fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
     match kind {
+        SiteKindSimpleA::Aritayaki => FlowA {
+            link_links: (1..8).map(|i| "http://www.aritayaki-fun.com/?cat=7&paged=".to_string()+&i.to_string()).collect(),
+            link_selector: ".main-conts > article > div > div > p > a",
+            title_selector: "h1.section-title",
+            body_selector: ".article-body > p:nth-child(1)",
+            ..Default::default()
+        },
         SiteKindSimpleA::Athome => FlowA {
             index: "https://www.athome.co.jp/contents/words/",
             base: "https://www.athome.co.jp",
@@ -372,6 +380,7 @@ pub async fn hiroshima() -> Vec<Term> {
 fn str_to_kind(s: &str) -> SiteKind {
     match s {
         "ajima" => SiteKind::Ajima,
+        "aritayaki" => SiteKind::SimpleA(SiteKindSimpleA::Aritayaki),
         "athome" => SiteKind::SimpleA(SiteKindSimpleA::Athome),
         "beer" => SiteKind::SimpleA(SiteKindSimpleA::Beer),
         "cybernet" => SiteKind::SimpleA(SiteKindSimpleA::Cybernet),

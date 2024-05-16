@@ -6,6 +6,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     ajima: bool,
     #[arg(long, default_value_t = false)]
+    aritayaki: bool,
+    #[arg(long, default_value_t = false)]
     athome: bool,
     #[arg(long, default_value_t = false)]
     beer: bool,
@@ -57,6 +59,9 @@ impl Args {
         let mut ret = vec![];
         if self.ajima {
             ret.push("ajima")
+        }
+        if self.aritayaki {
+            ret.push("aritayaki")
         }
         if self.athome {
             ret.push("athome")
