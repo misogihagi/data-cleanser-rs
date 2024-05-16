@@ -37,6 +37,7 @@ pub enum SiteKindSimpleA {
     Ryugaku,
     Smbcnikko,
     Soccer,
+    WaferMeasurementInspection,
     Webtan,
 }
 
@@ -198,6 +199,14 @@ fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
             title_selector: ".post_btn > h1:nth-child(1)",
             body_selector: ".post_box",
             image_selector: Some(".post_box_img > img:nth-child(1)"),
+            ..Default::default()
+        },
+        SiteKindSimpleA::WaferMeasurementInspection => FlowA {
+            link_links: vec![String::from("https://www.wafer-measurement-inspection.com/words/")],
+            base: "https://www.wafer-measurement-inspection.com/words/",
+            link_selector: ".newslist > li > a",
+            title_selector: ".ts3",
+            body_selector: ".longComment",
             ..Default::default()
         },
         SiteKindSimpleA::Webtan => FlowA {
@@ -411,6 +420,7 @@ fn str_to_kind(s: &str) -> SiteKind {
         "smbcnikko" => SiteKind::SimpleA(SiteKindSimpleA::Smbcnikko),
         "soccer" => SiteKind::SimpleA(SiteKindSimpleA::Soccer),
         "theglenlivet" => SiteKind::SimpleB(SiteKindSimpleB::Theglenlivet),
+        "wafermeasurementinspection" => SiteKind::SimpleA(SiteKindSimpleA::WaferMeasurementInspection),
         "webtan" => SiteKind::SimpleA(SiteKindSimpleA::Webtan),
         &_ => panic!("not valid kind"),
     }
