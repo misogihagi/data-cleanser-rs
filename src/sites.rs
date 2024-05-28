@@ -43,6 +43,7 @@ pub enum SiteKindSimpleA {
     Smbcnikko,
     Smtrc,
     Soccer,
+    Suumo,
     WaferMeasurementInspection,
     Webtan,
 }
@@ -256,6 +257,15 @@ fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
             title_selector: ".post_btn > h1:nth-child(1)",
             body_selector: ".post_box",
             image_selector: Some(".post_box_img > img:nth-child(1)"),
+            ..Default::default()
+        },
+        SiteKindSimpleA::Suumo => FlowA {
+            index: "https://suumo.jp/yougo/",
+            base: "https://suumo.jp",
+            link_link_selector: "ul.syllabary-list > li:nth-child(1) > a",
+            link_selector: "div.ui-section_h3 > div > div > ul > li > div > a",
+            title_selector: ".ui-section--h1 > div > h1",
+            body_selector: ".pagecaption-txt",
             ..Default::default()
         },
         SiteKindSimpleA::WaferMeasurementInspection => FlowA {
@@ -482,6 +492,7 @@ fn str_to_kind(s: &str) -> SiteKind {
         "smbcnikko" => SiteKind::SimpleA(SiteKindSimpleA::Smbcnikko),
         "smtrc" => SiteKind::SimpleA(SiteKindSimpleA::Smtrc),
         "soccer" => SiteKind::SimpleA(SiteKindSimpleA::Soccer),
+        "suumo" => SiteKind::SimpleA(SiteKindSimpleA::Suumo),
         "theglenlivet" => SiteKind::SimpleB(SiteKindSimpleB::Theglenlivet),
         "wafermeasurementinspection" => SiteKind::SimpleA(SiteKindSimpleA::WaferMeasurementInspection),
         "webtan" => SiteKind::SimpleA(SiteKindSimpleA::Webtan),
