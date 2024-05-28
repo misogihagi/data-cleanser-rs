@@ -41,6 +41,7 @@ pub enum SiteKindSimpleA {
     Ryugaku,
     Sumai1,
     Smbcnikko,
+    Smtrc,
     Soccer,
     WaferMeasurementInspection,
     Webtan,
@@ -237,6 +238,15 @@ fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
             encoding: "shift-jis",
             pool_size:100,
             rest:60,
+            ..Default::default()
+        },
+        SiteKindSimpleA::Smtrc => FlowA {
+            index: "https://smtrc.jp/useful/glossary/",
+            base: "https://smtrc.jp",
+            link_link_selector: ".table_wrap_50on > ul > li > a, .table_wrap_alphabet > ul > li > a",
+            link_selector: "#list > ul> li > a",
+            title_selector: ".title",
+            body_selector: ".text",
             ..Default::default()
         },
         SiteKindSimpleA::Soccer => FlowA {
@@ -470,6 +480,7 @@ fn str_to_kind(s: &str) -> SiteKind {
         "ryugaku" => SiteKind::SimpleA(SiteKindSimpleA::Ryugaku),
         "sumai1" => SiteKind::SimpleA(SiteKindSimpleA::Sumai1),
         "smbcnikko" => SiteKind::SimpleA(SiteKindSimpleA::Smbcnikko),
+        "smtrc" => SiteKind::SimpleA(SiteKindSimpleA::Smtrc),
         "soccer" => SiteKind::SimpleA(SiteKindSimpleA::Soccer),
         "theglenlivet" => SiteKind::SimpleB(SiteKindSimpleB::Theglenlivet),
         "wafermeasurementinspection" => SiteKind::SimpleA(SiteKindSimpleA::WaferMeasurementInspection),

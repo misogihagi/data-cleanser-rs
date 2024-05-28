@@ -54,6 +54,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     smbcnikko: bool,
     #[arg(long, default_value_t = false)]
+    smtrc: bool,
+    #[arg(long, default_value_t = false)]
     soccer: bool,
     #[arg(long, default_value_t = false)]
     sumai1: bool,
@@ -145,6 +147,9 @@ impl Args {
         }
         if self.smbcnikko {
             ret.push("smbcnikko")
+        }
+        if self.smtrc {
+            ret.push("smtrc")
         }
         if self.soccer {
             ret.push("soccer")
