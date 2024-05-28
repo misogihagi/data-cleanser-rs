@@ -33,6 +33,7 @@ pub enum SiteKindSimpleA {
     Kenchikuyogo,
     Macromill,
     Mintesu,
+    Mizuho,
     Nomura,
     //    Ntt,
     Ryugaku,
@@ -160,6 +161,15 @@ fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
             link_selector: "ul.wordList > li > a",
             title_selector: "h1",
             body_selector: ".section.clearfix",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Mizuho => FlowA {
+            index: "https://www.mizuho-re.co.jp/knowledge/dictionary/",
+            base: "https://www.mizuho-re.co.jp",
+            link_link_selector: "ul.colspan > li > a, ul.colspan2 > a",
+            link_selector: "#list > ul > li > a",
+            title_selector: "#select_word",
+            body_selector: "#ue > div:nth-child(1) > div:nth-child(2)",
             ..Default::default()
         },
         SiteKindSimpleA::Nomura => FlowA {
@@ -434,6 +444,7 @@ fn str_to_kind(s: &str) -> SiteKind {
         "meiwakaiun" => SiteKind::SimpleB(SiteKindSimpleB::Meiwakaiun),
         "mintetsu" => SiteKind::SimpleA(SiteKindSimpleA::Mintesu),
         "mitsue" => SiteKind::SimpleA(SiteKindSimpleA::Mintesu),
+        "mizuho" => SiteKind::SimpleA(SiteKindSimpleA::Mizuho),
         "nomura" => SiteKind::SimpleA(SiteKindSimpleA::Nomura),
         //        "ntt" => SiteKind::SimpleA(SiteKindSimpleA::Ntt),
         "ryugaku" => SiteKind::SimpleA(SiteKindSimpleA::Ryugaku),

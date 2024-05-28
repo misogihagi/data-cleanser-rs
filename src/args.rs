@@ -40,6 +40,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     mintetsu: bool,
     #[arg(long, default_value_t = false)]
+    mizuho: bool,
+    #[arg(long, default_value_t = false)]
     nomura: bool,
     #[arg(long, default_value_t = false)]
     ntt: bool,
@@ -118,6 +120,9 @@ impl Args {
         }
         if self.mintetsu {
             ret.push("mintetsu")
+        }
+        if self.mizuho {
+            ret.push("mizuho")
         }
         if self.nomura {
             ret.push("nomura")
