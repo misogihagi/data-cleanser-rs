@@ -37,6 +37,7 @@ pub enum SiteKindSimpleA {
     Mizuho,
     Nomura,
     //    Ntt,
+    Rewords,
     Ryugaku,
     Sumai1,
     Smbcnikko,
@@ -199,6 +200,15 @@ fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
             ..Default::default()
         },
         */
+        SiteKindSimpleA::Rewords => FlowA {
+            index: "https://www.re-words.net/japan/",
+            base: "https://www.re-words.net/japan/",
+            link_link_selector: "ul.colspan > li > a, ul.colspan2 > li > a",
+            link_selector: "#list > ul:nth-child(1) > li > a",
+            title_selector: "#ue > div:nth-child(1) > h2:nth-child(1)",
+            body_selector: "div.contents:nth-child(3)",
+            ..Default::default()
+        },
         SiteKindSimpleA::Ryugaku => FlowA {
             index: "https://ryugaku.kuraveil.jp/dictionaries",
             base: "https://ryugaku.kuraveil.jp",
@@ -456,6 +466,7 @@ fn str_to_kind(s: &str) -> SiteKind {
         "mizuho" => SiteKind::SimpleA(SiteKindSimpleA::Mizuho),
         "nomura" => SiteKind::SimpleA(SiteKindSimpleA::Nomura),
         //        "ntt" => SiteKind::SimpleA(SiteKindSimpleA::Ntt),
+        "rewords" => SiteKind::SimpleA(SiteKindSimpleA::Rewords),
         "ryugaku" => SiteKind::SimpleA(SiteKindSimpleA::Ryugaku),
         "sumai1" => SiteKind::SimpleA(SiteKindSimpleA::Sumai1),
         "smbcnikko" => SiteKind::SimpleA(SiteKindSimpleA::Smbcnikko),
