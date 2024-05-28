@@ -34,6 +34,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     kenchikuyogo: bool,
     #[arg(long, default_value_t = false)]
+    livable: bool,
+    #[arg(long, default_value_t = false)]
     macromill: bool,
     #[arg(long, default_value_t = false)]
     meiwakaiun: bool,
@@ -111,6 +113,9 @@ impl Args {
         }
         if self.kenchikuyogo {
             ret.push("kenchikuyogo")
+        }
+        if self.livable {
+            ret.push("livable")
         }
         if self.macromill {
             ret.push("macromill")

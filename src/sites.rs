@@ -31,6 +31,7 @@ pub enum SiteKindSimpleA {
     Gurubi,
     JMAC,
     Kenchikuyogo,
+    Livable,
     Macromill,
     Mintesu,
     Mizuho,
@@ -144,6 +145,13 @@ fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
             link_selector:".is-style-stripes > table:nth-child(1) > tbody:nth-child(1) > tr > td > a",
             title_selector: "h1.alignwide",
             body_selector: ".entry-content > p:not([class])",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Livable => FlowA {
+            link_links:vec![String::from("https://www.livable.co.jp/yogo/list/")],
+            link_selector:"section.s-content__box> ul > li > a",
+            title_selector: ".a-headline",
+            body_selector: ".s-content__detail > p",
             ..Default::default()
         },
         SiteKindSimpleA::Macromill => FlowA {
@@ -440,6 +448,7 @@ fn str_to_kind(s: &str) -> SiteKind {
         "hrpro" => SiteKind::Customize(SiteKindCustomize::Hrpro),
         "jmac" => SiteKind::SimpleA(SiteKindSimpleA::JMAC),
         "kenchikuyogo" => SiteKind::SimpleA(SiteKindSimpleA::Kenchikuyogo),
+        "livable" => SiteKind::SimpleA(SiteKindSimpleA::Livable),
         "macromill" => SiteKind::SimpleA(SiteKindSimpleA::Macromill),
         "meiwakaiun" => SiteKind::SimpleB(SiteKindSimpleB::Meiwakaiun),
         "mintetsu" => SiteKind::SimpleA(SiteKindSimpleA::Mintesu),
