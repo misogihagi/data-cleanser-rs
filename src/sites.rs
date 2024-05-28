@@ -36,6 +36,7 @@ pub enum SiteKindSimpleA {
     Nomura,
     //    Ntt,
     Ryugaku,
+    Sumai1,
     Smbcnikko,
     Soccer,
     WaferMeasurementInspection,
@@ -187,6 +188,15 @@ fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
             link_selector: ".word-list > li > a",
             title_selector: ".header-title",
             body_selector: ".markdown",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Sumai1 => FlowA {
+            index: "https://www.sumai1.com/useful/words/",
+            base: "https://www.sumai1.com",
+            link_link_selector: ".innerbody > div > div > ul > li > a, .index-alphabet > div > div:nth-child(1) > ul > li:nth-child(1) > a , div.tb-row:nth-child(3) > div:nth-child(2) > ul:nth-child(1) > li:nth-child(1) > a, .index-number > div:nth-child(1) > div > ul > li:nth-child(2) > a",
+            link_selector: "ul.col2:nth-child(1) > li > a",
+            title_selector: ".images > h1",
+            body_selector: ".description",
             ..Default::default()
         },
         SiteKindSimpleA::Smbcnikko => FlowA {
@@ -427,6 +437,7 @@ fn str_to_kind(s: &str) -> SiteKind {
         "nomura" => SiteKind::SimpleA(SiteKindSimpleA::Nomura),
         //        "ntt" => SiteKind::SimpleA(SiteKindSimpleA::Ntt),
         "ryugaku" => SiteKind::SimpleA(SiteKindSimpleA::Ryugaku),
+        "sumai1" => SiteKind::SimpleA(SiteKindSimpleA::Sumai1),
         "smbcnikko" => SiteKind::SimpleA(SiteKindSimpleA::Smbcnikko),
         "soccer" => SiteKind::SimpleA(SiteKindSimpleA::Soccer),
         "theglenlivet" => SiteKind::SimpleB(SiteKindSimpleB::Theglenlivet),

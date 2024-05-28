@@ -50,6 +50,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     soccer: bool,
     #[arg(long, default_value_t = false)]
+    sumai1: bool,
+    #[arg(long, default_value_t = false)]
     theglenlivet: bool,
     #[arg(long, default_value_t = false)]
     wafermeasurementinspection: bool,
@@ -131,6 +133,9 @@ impl Args {
         }
         if self.soccer {
             ret.push("soccer")
+        }
+        if self.sumai1 {
+            ret.push("sumai1")
         }
         if self.theglenlivet {
             ret.push("theglenlivet")
