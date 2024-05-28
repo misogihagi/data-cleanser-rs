@@ -24,6 +24,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     goonet: bool,
     #[arg(long, default_value_t = false)]
+    gurubi: bool,
+    #[arg(long, default_value_t = false)]
     hiroshima: bool,
     #[arg(long, default_value_t = false)]
     hrpro: bool,
@@ -90,6 +92,9 @@ impl Args {
         }
         if self.goonet {
             ret.push("goonet")
+        }
+        if self.gurubi {
+            ret.push("gurubi")
         }
         if self.jmac {
             ret.push("jmac")

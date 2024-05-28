@@ -28,6 +28,7 @@ pub enum SiteKindSimpleA {
     ESP,
     Fastretailing,
     Goonet,
+    Gurubi,
     JMAC,
     Kenchikuyogo,
     Macromill,
@@ -116,6 +117,14 @@ fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
             title_selector: ".h3box > h5",
             body_selector: ".text",
             encoding: "euc-jp",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Gurubi => FlowA {
+            link_links: vec![String::from("https://gurubi.ac.jp/glossary/")],
+            base: "https://gurubi.ac.jp/glossary/",
+            link_selector: "div.glossary-list > ul > li > a",
+            title_selector: ".yogo > h2",
+            body_selector: ".yogo > p",
             ..Default::default()
         },
         SiteKindSimpleA::JMAC => FlowA {
@@ -406,6 +415,7 @@ fn str_to_kind(s: &str) -> SiteKind {
         "esp" => SiteKind::SimpleA(SiteKindSimpleA::ESP),
         "fastretailing" => SiteKind::SimpleA(SiteKindSimpleA::Fastretailing),
         "goonet" => SiteKind::SimpleA(SiteKindSimpleA::Goonet),
+        "gurubi" => SiteKind::SimpleA(SiteKindSimpleA::Gurubi),
         "hiroshima" => SiteKind::Hiroshima,
         "hrpro" => SiteKind::Customize(SiteKindCustomize::Hrpro),
         "jmac" => SiteKind::SimpleA(SiteKindSimpleA::JMAC),
