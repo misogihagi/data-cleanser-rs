@@ -4,7 +4,7 @@ mod utils;
 use crate::utils::use_write;
 use args::Args;
 use clap::Parser;
-use sites::mitsue;
+use sites::{mitsue, elite_network};
 use std::fs;
 
 macro_rules! cmd {
@@ -26,6 +26,13 @@ async fn main() {
         let books = mitsue();
         for (i, terms) in books.await.iter().enumerate() {
             use_write(format!("mitsue/{}.json", i).to_string())(&terms);
+        }
+    }
+    if args.elitenetwork {
+        fs::create_dir("elite-network").unwrap();
+        let books = elite_network();
+        for (key, terms) in books.await {
+            use_write(format!("elite-network/{}.json", key).to_string())(&terms);
         }
     }
 }

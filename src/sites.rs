@@ -1,4 +1,5 @@
 use std::vec;
+use std::collections::HashMap;
 
 use crate::utils::{get_html, get_text, Flow, FlowA, FlowB, Term};
 use clap::Parser;
@@ -362,6 +363,40 @@ pub async fn mitsue() -> Vec<Vec<Term>> {
     }
     books
 }
+
+pub async fn elite_network() -> HashMap<&'static str, Vec<Term>> {
+    let business = [
+    "it",
+    "web",
+    "maker",
+    "medical",
+    "kinyu",
+    "consul",
+    "kanri",
+    "qualification",
+    "bizwords",
+    "keiri",
+    "jinji",
+    ];
+    let mut books = HashMap::new();
+
+    for c in business {
+        let index = format!("https://www.elite-network.co.jp/dictionary/words_{}/", c);
+        books.insert(c,
+            FlowA {
+                link_links: vec![String::from(index)],
+                link_selector: "div.word_idx_list > a",
+                title_selector: ".midasi",
+                body_selector: ".contentsleft > div:nth-child(4)",
+                ..Default::default()
+            }
+            .get_terms()
+            .await,
+        );
+    }
+    books
+}
+
 pub async fn ajima() -> Vec<Term> {
     let links = FlowA {
         index: "https://hougen.ajima.jp/gojyuon/",

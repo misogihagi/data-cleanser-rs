@@ -70,6 +70,8 @@ pub struct Args {
 
     #[arg(long, default_value_t = false)]
     pub mitsue: bool,
+    #[arg(long, default_value_t = false)]
+    pub elitenetwork: bool,
 }
 
 impl Args {
