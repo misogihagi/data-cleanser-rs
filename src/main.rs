@@ -4,12 +4,12 @@ mod utils;
 use crate::utils::use_write;
 use args::Args;
 use clap::Parser;
-use sites::{mitsue, elite_network};
+use sites::special::{elite_network, mitsue};
 use std::fs;
 
 macro_rules! cmd {
     ($e:expr) => {
-        let terms = sites::run($e).await;
+        let terms = sites::lib::run($e).await;
         use_write(format!("{}.json", $e).to_string())(&terms);
     };
 }
@@ -18,7 +18,7 @@ macro_rules! cmd {
 async fn main() {
     let args = Args::parse();
 
-    for mode in args.simples() {
+    for mode in args.common() {
         cmd!(mode);
     }
     if args.mitsue {

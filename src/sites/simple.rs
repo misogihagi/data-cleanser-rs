@@ -1,24 +1,83 @@
-use std::vec;
-use std::collections::HashMap;
+use super::interface::WorkFlowTrait;
+use crate::utils::{Flow, FlowA, FlowB, Term};
 
-use crate::utils::{get_html, get_text, Flow, FlowA, FlowB, Term};
-use clap::Parser;
-use futures::future::join_all;
-use scraper::{Html, Selector};
+pub enum SiteKindSimple {
+    A(SiteKindSimpleA),
+    B(SiteKindSimpleB),
+}
 
-#[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-struct Args {
-    #[arg(short, long, default_value_t = false)]
-    goonet: bool,
+pub struct SimpleWorkFlow {
+    pub kind: SiteKindSimple,
 }
-pub enum SiteKind {
-    SimpleA(SiteKindSimpleA),
-    SimpleB(SiteKindSimpleB),
-    Customize(SiteKindCustomize),
-    Ajima,
-    Hiroshima,
+pub trait SimpleWorkFlowTrait: WorkFlowTrait {
+    fn new(kind_str: &'static str) -> SimpleWorkFlow;
+    fn my_kind(kind_str: &'static str) -> Option<SiteKindSimple>;
 }
+
+impl SimpleWorkFlowTrait for SimpleWorkFlow {
+    fn new(kind_str: &'static str) -> SimpleWorkFlow {
+        SimpleWorkFlow {
+            kind: SimpleWorkFlow::my_kind(kind_str).unwrap(),
+        }
+    }
+    fn my_kind(kind_str: &'static str) -> Option<SiteKindSimple> {
+        match kind_str {
+            "aritayaki" => Some(SiteKindSimple::A(SiteKindSimpleA::Aritayaki)),
+            "athome" => Some(SiteKindSimple::A(SiteKindSimpleA::Athome)),
+            "beer" => Some(SiteKindSimple::A(SiteKindSimpleA::Beer)),
+            "chemicoat" => Some(SiteKindSimple::A(SiteKindSimpleA::Chemicoat)),
+            "cybernet" => Some(SiteKindSimple::A(SiteKindSimpleA::Cybernet)),
+            "ena" => Some(SiteKindSimple::A(SiteKindSimpleA::Ena)),
+            "esp" => Some(SiteKindSimple::A(SiteKindSimpleA::ESP)),
+            "fastretailing" => Some(SiteKindSimple::A(SiteKindSimpleA::Fastretailing)),
+            "goonet" => Some(SiteKindSimple::A(SiteKindSimpleA::Goonet)),
+            "gurubi" => Some(SiteKindSimple::A(SiteKindSimpleA::Gurubi)),
+            "jmac" => Some(SiteKindSimple::A(SiteKindSimpleA::JMAC)),
+            "kenchikuyogo" => Some(SiteKindSimple::A(SiteKindSimpleA::Kenchikuyogo)),
+            "livable" => Some(SiteKindSimple::A(SiteKindSimpleA::Livable)),
+            "macromill" => Some(SiteKindSimple::A(SiteKindSimpleA::Macromill)),
+            "meiwakaiun" => Some(SiteKindSimple::B(SiteKindSimpleB::Meiwakaiun)),
+            "mintetsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Mintesu)),
+            "mitsue" => Some(SiteKindSimple::A(SiteKindSimpleA::Mintesu)),
+            "mizuho" => Some(SiteKindSimple::A(SiteKindSimpleA::Mizuho)),
+            "nomura" => Some(SiteKindSimple::A(SiteKindSimpleA::Nomura)),
+            //        "ntt" => Some(SiteKindSimple::A(SiteKindSimpleA::Ntt)),
+            "rewords" => Some(SiteKindSimple::A(SiteKindSimpleA::Rewords)),
+            "ryugaku" => Some(SiteKindSimple::A(SiteKindSimpleA::Ryugaku)),
+            "sumai1" => Some(SiteKindSimple::A(SiteKindSimpleA::Sumai1)),
+            "smbcnikko" => Some(SiteKindSimple::A(SiteKindSimpleA::Smbcnikko)),
+            "smtrc" => Some(SiteKindSimple::A(SiteKindSimpleA::Smtrc)),
+            "soccer" => Some(SiteKindSimple::A(SiteKindSimpleA::Soccer)),
+            "suumo" => Some(SiteKindSimple::A(SiteKindSimpleA::Suumo)),
+            "theglenlivet" => Some(SiteKindSimple::B(SiteKindSimpleB::Theglenlivet)),
+            "wafermeasurementinspection" => Some(SiteKindSimple::A(
+                SiteKindSimpleA::WaferMeasurementInspection,
+            )),
+            "webtan" => Some(SiteKindSimple::A(SiteKindSimpleA::Webtan)),
+            _ => None,
+        }
+    }
+}
+
+impl WorkFlowTrait for SimpleWorkFlow {
+    fn is_my_kind(kind_str: &'static str) -> bool {
+        match SimpleWorkFlow::my_kind(kind_str) {
+            Some(_) => true,
+            None => false,
+        }
+    }
+    async fn get_terms(&self) -> Vec<Term> {
+        simple(&self.kind).await
+    }
+}
+
+pub async fn simple(kind: &SiteKindSimple) -> Vec<Term> {
+    match kind {
+        SiteKindSimple::A(k) => simple_a(k).get_terms().await,
+        SiteKindSimple::B(k) => simple_b(k).get_terms().await,
+    }
+}
+
 pub enum SiteKindSimpleA {
     Aritayaki,
     Athome,
@@ -49,7 +108,7 @@ pub enum SiteKindSimpleA {
     Webtan,
 }
 
-fn simple_a(kind: SiteKindSimpleA) -> FlowA<'static> {
+fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
     match kind {
         SiteKindSimpleA::Aritayaki => FlowA {
             link_links: (1..8).map(|i| "http://www.aritayaki-fun.com/?cat=7&paged=".to_string()+&i.to_string()).collect(),
@@ -293,7 +352,7 @@ pub enum SiteKindSimpleB {
     Theglenlivet,
 }
 
-fn simple_b(kind: SiteKindSimpleB) -> FlowB {
+fn simple_b(kind: &SiteKindSimpleB) -> FlowB {
     match kind {
         SiteKindSimpleB::Meiwakaiun => FlowB {
             index: "https://www.meiwakaiun.com/meiwalabo/yougo/",
@@ -309,240 +368,4 @@ fn simple_b(kind: SiteKindSimpleB) -> FlowB {
             ..Default::default()
         },
     }
-}
-
-pub enum SiteKindCustomize {
-    Hrpro,
-}
-
-fn customize(kind: SiteKindCustomize) -> impl Flow {
-    match kind {
-        SiteKindCustomize::Hrpro => {
-            let resource = "https://www.hrpro.co.jp/glossary.php?";
-            let urls = vec!["a", "k", "s", "t", "n", "h", "m", "y", "r", "w"]
-                .into_iter()
-                .fold(vec![], |mut total, query| {
-                    total.append(&mut vec![
-                        resource.to_string() + "index=" + query,
-                        resource.to_string() + "index=" + query + "&pcnt=2",
-                    ]);
-                    total
-                });
-            FlowA {
-                index: "https://www.hrpro.co.jp/glossary.php",
-                base: "https://www.hrpro.co.jp/",
-                link_selector: ".rlt-list > li > a",
-                title_selector: "h1.ttl",
-                body_selector: ".article-body",
-                link_links: urls,
-                ..Default::default()
-            }
-        } //    SiteKindCustomize::Mitsue => { },
-    }
-}
-
-pub async fn mitsue() -> Vec<Vec<Term>> {
-    let chars = ['i', 'm', 'c', 'y', 's', 'p', 'l', 'b'];
-
-    let mut books = vec![];
-
-    for c in chars {
-        let index = format!("https://www.mitsue.co.jp/case/glossary/{}_index.html", c);
-        books.push(
-            FlowA {
-                link_links: vec![String::from(index)],
-                base: "https://www.mitsue.co.jp/case/glossary/",
-                link_selector: "li.bullet__item > a",
-                title_selector: ".level1__heading",
-                body_selector: ".text,.bullet,.description,.number,.number__item,.level3",
-                ..Default::default()
-            }
-            .get_terms()
-            .await,
-        )
-    }
-    books
-}
-
-pub async fn elite_network() -> HashMap<&'static str, Vec<Term>> {
-    let business = [
-    "it",
-    "web",
-    "maker",
-    "medical",
-    "kinyu",
-    "consul",
-    "kanri",
-    "qualification",
-    "bizwords",
-    "keiri",
-    "jinji",
-    ];
-    let mut books = HashMap::new();
-
-    for c in business {
-        let index = format!("https://www.elite-network.co.jp/dictionary/words_{}/", c);
-        books.insert(c,
-            FlowA {
-                link_links: vec![String::from(index)],
-                link_selector: "div.word_idx_list > a",
-                title_selector: ".midasi",
-                body_selector: ".contentsleft > div:nth-child(4)",
-                ..Default::default()
-            }
-            .get_terms()
-            .await,
-        );
-    }
-    books
-}
-
-pub async fn ajima() -> Vec<Term> {
-    let links = FlowA {
-        index: "https://hougen.ajima.jp/gojyuon/",
-        base: "https://hougen.ajima.jp",
-        link_link_selector: "ul.gojyuon > li > a",
-        link_selector: ".list_hougen > li > article > a",
-        ..Default::default()
-    }
-    .get_links()
-    .await;
-
-    join_all(links.iter().map(|l| get_html(l, "utf-8")))
-        .await
-        .into_iter()
-        .map(|x| x.unwrap())
-        .map(|html| {
-            let title_selector = Selector::parse(".midashi").unwrap();
-            let fragment = Html::parse_fragment(&html);
-
-            let title: String = get_text(fragment.clone(), title_selector.clone());
-
-            let meaning_str = ".detail_body > ol:nth-child(2)";
-            let meaning_selector = Selector::parse(meaning_str).unwrap();
-            let meaning = get_text(fragment.clone(), meaning_selector.clone());
-            let commentary_str = ".kaisetsu";
-            let commentary_selector = Selector::parse(commentary_str).unwrap();
-            let commentary = get_text(fragment.clone(), commentary_selector.clone());
-            let frequency_str = ".kanren > dd:nth-child(2) > img:nth-child(1)";
-            let frequency_selector = Selector::parse(frequency_str).unwrap();
-            let frequency_url: String = fragment
-                .select(&frequency_selector)
-                .map(|e| e.value().attr("src").unwrap().to_string())
-                .collect();
-
-            let frequency = match frequency_url.as_str() {
-                "./img/hindo1.png" => "1",
-                "./img/hindo2.png" => "2",
-                "./img/hindo3.png" => "3",
-                "./img/hindo4.png" => "4",
-                "./img/hindo5.png" => "5",
-                _ => "",
-            };
-
-            let image_str = ".detail_image > img:nth-child(1)";
-            let image_selector = Selector::parse(image_str).unwrap();
-            let image: String = fragment
-                .select(&image_selector)
-                .map(|e| e.value().attr("src").unwrap().to_string())
-                .collect();
-
-            Term {
-                title: title,
-                body: String::new()
-                    + "意味：\n"
-                    + &meaning
-                    + "\n解説: \n"
-                    + &commentary
-                    + "\n耳にする度: "
-                    + frequency,
-                images: vec![image],
-            }
-        })
-        .collect()
-}
-pub async fn hiroshima() -> Vec<Term> {
-    /*
-    FlowB {
-        index: "https://www.pref.hiroshima.lg.jp/soshiki/19/1178070843217.html",
-        // html broken?
-        //            titles_selector: ".sp_table_wrap > div:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr > td:nth-child(1)",
-        //            bodies_selector: ".sp_table_wrap > div:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr > td:nth-child(2)",
-        links: vec![String::from(
-            "https://www.pref.hiroshima.lg.jp/soshiki/19/1178070843217.html",
-        )],
-        ..Default::default()
-    }
-    */
-    let body = get_html(
-        "https://www.pref.hiroshima.lg.jp/soshiki/19/1178070843217.html",
-        "utf-8",
-    )
-    .await
-    .unwrap();
-
-    let fragment = Html::parse_fragment(&body);
-
-    let selector = Selector::parse(".detail_free").unwrap();
-
-    let g: Vec<_> = fragment.select(&selector).flat_map(|e| e.text()).collect();
-    (28..434)
-        .step_by(14)
-        .map(|i| Term {
-            title: g[i].to_string(),
-            body: g[i + 4].to_string(),
-            images: vec![],
-        })
-        .collect()
-}
-
-fn str_to_kind(s: &str) -> SiteKind {
-    match s {
-        "ajima" => SiteKind::Ajima,
-        "aritayaki" => SiteKind::SimpleA(SiteKindSimpleA::Aritayaki),
-        "athome" => SiteKind::SimpleA(SiteKindSimpleA::Athome),
-        "beer" => SiteKind::SimpleA(SiteKindSimpleA::Beer),
-        "chemicoat" => SiteKind::SimpleA(SiteKindSimpleA::Chemicoat),
-        "cybernet" => SiteKind::SimpleA(SiteKindSimpleA::Cybernet),
-        "ena" => SiteKind::SimpleA(SiteKindSimpleA::Ena),
-        "esp" => SiteKind::SimpleA(SiteKindSimpleA::ESP),
-        "fastretailing" => SiteKind::SimpleA(SiteKindSimpleA::Fastretailing),
-        "goonet" => SiteKind::SimpleA(SiteKindSimpleA::Goonet),
-        "gurubi" => SiteKind::SimpleA(SiteKindSimpleA::Gurubi),
-        "hiroshima" => SiteKind::Hiroshima,
-        "hrpro" => SiteKind::Customize(SiteKindCustomize::Hrpro),
-        "jmac" => SiteKind::SimpleA(SiteKindSimpleA::JMAC),
-        "kenchikuyogo" => SiteKind::SimpleA(SiteKindSimpleA::Kenchikuyogo),
-        "livable" => SiteKind::SimpleA(SiteKindSimpleA::Livable),
-        "macromill" => SiteKind::SimpleA(SiteKindSimpleA::Macromill),
-        "meiwakaiun" => SiteKind::SimpleB(SiteKindSimpleB::Meiwakaiun),
-        "mintetsu" => SiteKind::SimpleA(SiteKindSimpleA::Mintesu),
-        "mitsue" => SiteKind::SimpleA(SiteKindSimpleA::Mintesu),
-        "mizuho" => SiteKind::SimpleA(SiteKindSimpleA::Mizuho),
-        "nomura" => SiteKind::SimpleA(SiteKindSimpleA::Nomura),
-        //        "ntt" => SiteKind::SimpleA(SiteKindSimpleA::Ntt),
-        "rewords" => SiteKind::SimpleA(SiteKindSimpleA::Rewords),
-        "ryugaku" => SiteKind::SimpleA(SiteKindSimpleA::Ryugaku),
-        "sumai1" => SiteKind::SimpleA(SiteKindSimpleA::Sumai1),
-        "smbcnikko" => SiteKind::SimpleA(SiteKindSimpleA::Smbcnikko),
-        "smtrc" => SiteKind::SimpleA(SiteKindSimpleA::Smtrc),
-        "soccer" => SiteKind::SimpleA(SiteKindSimpleA::Soccer),
-        "suumo" => SiteKind::SimpleA(SiteKindSimpleA::Suumo),
-        "theglenlivet" => SiteKind::SimpleB(SiteKindSimpleB::Theglenlivet),
-        "wafermeasurementinspection" => SiteKind::SimpleA(SiteKindSimpleA::WaferMeasurementInspection),
-        "webtan" => SiteKind::SimpleA(SiteKindSimpleA::Webtan),
-        &_ => panic!("not valid kind"),
-    }
-}
-
-pub async fn run(kind_str: &str) -> Vec<Term> {
-    let kind = str_to_kind(kind_str);
-    let terms = match kind {
-        SiteKind::SimpleA(k) => simple_a(k).get_terms().await,
-        SiteKind::SimpleB(k) => simple_b(k).get_terms().await,
-        SiteKind::Customize(k) => customize(k).get_terms().await,
-        SiteKind::Ajima => ajima().await,
-        SiteKind::Hiroshima => hiroshima().await,
-    };
-    terms
 }

@@ -75,7 +75,7 @@ pub struct Args {
 }
 
 impl Args {
-    pub fn simples(&self) -> Vec<&str> {
+    pub fn common(&self) -> Vec<&'static str> {
         let mut ret = vec![];
         if self.ajima {
             ret.push("ajima")
