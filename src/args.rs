@@ -71,6 +71,8 @@ pub struct Args {
     wafermeasurementinspection: bool,
     #[arg(long, default_value_t = false)]
     webtan: bool,
+    #[arg(long, default_value_t = false)]
+    zexy: bool,
 
     #[arg(long, default_value_t = false)]
     pub mitsue: bool,
@@ -185,6 +187,9 @@ impl Args {
         }
         if self.smbcnikko {
             ret.push("smbcnikko")
+        }
+        if self.zexy {
+            ret.push("zexy")
         }
         ret
     }

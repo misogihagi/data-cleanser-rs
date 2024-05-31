@@ -3,6 +3,7 @@ use crate::utils::{Flow, FlowA, Term};
 
 pub enum SiteKindCustomized {
     Hrpro,
+    Zexy,
 }
 
 pub struct CustomizedWorkFlow {
@@ -22,6 +23,7 @@ impl CustomizedWorkFlowTrait for CustomizedWorkFlow {
     fn my_kind(kind_str: &'static str) -> Option<SiteKindCustomized> {
         match kind_str {
             "hrpro" => Some(SiteKindCustomized::Hrpro),
+            "zexy" => Some(SiteKindCustomized::Zexy),
             _ => None,
         }
     }
@@ -59,6 +61,21 @@ fn customize(kind: &SiteKindCustomized) -> impl Flow {
                 title_selector: "h1.ttl",
                 body_selector: ".article-body",
                 link_links: urls,
+                ..Default::default()
+            }
+        }
+        SiteKindCustomized::Zexy => {
+            let resource = "https://zexy.net/contents/yogo/50?key=";
+            let urls = vec!["あ", "か", "さ", "た", "な", "は", "ま", "や", "ら", "わ"]
+                .into_iter()
+                .map(|s| String::from(resource) + s)
+                .collect();
+            FlowA {
+                link_links: urls,
+                base: "https://zexy.net/contents/yogo/50/",
+                link_selector: ".glossary > ul > li > a",
+                title_selector: ".textBody > h3",
+                body_selector: "#item01 > p, #item01 > dl",
                 ..Default::default()
             }
         }
