@@ -48,6 +48,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "sumai1" => Some(SiteKindSimple::A(SiteKindSimpleA::Sumai1)),
             "smbcnikko" => Some(SiteKindSimple::A(SiteKindSimpleA::Smbcnikko)),
             "smtrc" => Some(SiteKindSimple::A(SiteKindSimpleA::Smtrc)),
+            "sobien" => Some(SiteKindSimple::A(SiteKindSimpleA::Sobien)),
             "soccer" => Some(SiteKindSimple::A(SiteKindSimpleA::Soccer)),
             "sompocybersecurity" => Some(SiteKindSimple::A(SiteKindSimpleA::Sompocybersecurity)),
             "suumo" => Some(SiteKindSimple::A(SiteKindSimpleA::Suumo)),
@@ -104,6 +105,7 @@ pub enum SiteKindSimpleA {
     Sumai1,
     Smbcnikko,
     Smtrc,
+    Sobien,
     Soccer,
     Sompocybersecurity,
     Suumo,
@@ -311,6 +313,14 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector: "#list > ul> li > a",
             title_selector: ".title",
             body_selector: ".text",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Sobien => FlowA {
+            index: "http://www.so-bien.com/kimono/",
+            link_link_selector: "div.widget-tag-cloud:nth-child(3) > table:nth-child(2) > tbody:nth-child(1) > tr > td > a",
+            link_selector: ".asset-body > div:nth-child(1) > ul > li > a",
+            title_selector: "#page-title",
+            body_selector: ".asset-body > div:nth-child(1) > p",
             ..Default::default()
         },
         SiteKindSimpleA::Soccer => FlowA {

@@ -56,6 +56,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     smtrc: bool,
     #[arg(long, default_value_t = false)]
+    sobien: bool,
+    #[arg(long, default_value_t = false)]
     soccer: bool,
     #[arg(long, default_value_t = false)]
     sompocybersecurity: bool,
@@ -156,6 +158,9 @@ impl Args {
         }
         if self.smtrc {
             ret.push("smtrc")
+        }
+        if self.sobien {
+            ret.push("sobien")
         }
         if self.soccer {
             ret.push("soccer")
