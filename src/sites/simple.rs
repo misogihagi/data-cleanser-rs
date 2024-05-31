@@ -1,3 +1,5 @@
+use std::vec;
+
 use super::interface::WorkFlowTrait;
 use crate::utils::{Flow, FlowA, FlowB, Term};
 
@@ -47,6 +49,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "smbcnikko" => Some(SiteKindSimple::A(SiteKindSimpleA::Smbcnikko)),
             "smtrc" => Some(SiteKindSimple::A(SiteKindSimpleA::Smtrc)),
             "soccer" => Some(SiteKindSimple::A(SiteKindSimpleA::Soccer)),
+            "sompocybersecurity" => Some(SiteKindSimple::A(SiteKindSimpleA::Sompocybersecurity)),
             "suumo" => Some(SiteKindSimple::A(SiteKindSimpleA::Suumo)),
             "theglenlivet" => Some(SiteKindSimple::B(SiteKindSimpleB::Theglenlivet)),
             "wafermeasurementinspection" => Some(SiteKindSimple::A(
@@ -102,6 +105,7 @@ pub enum SiteKindSimpleA {
     Smbcnikko,
     Smtrc,
     Soccer,
+    Sompocybersecurity,
     Suumo,
     WaferMeasurementInspection,
     Webtan,
@@ -316,6 +320,13 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             title_selector: ".post_btn > h1:nth-child(1)",
             body_selector: ".post_box",
             image_selector: Some(".post_box_img > img:nth-child(1)"),
+            ..Default::default()
+        },
+        SiteKindSimpleA::Sompocybersecurity => FlowA {
+            link_links: vec![String::from("https://www.sompocybersecurity.com/glossary.html")],
+            link_selector: "div.glossary-list-wrap > div > div > div > div > div > div > h3 > a",
+            title_selector: ".title-blog",
+            body_selector: "#main > p",
             ..Default::default()
         },
         SiteKindSimpleA::Suumo => FlowA {

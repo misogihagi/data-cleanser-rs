@@ -58,6 +58,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     soccer: bool,
     #[arg(long, default_value_t = false)]
+    sompocybersecurity: bool,
+    #[arg(long, default_value_t = false)]
     sumai1: bool,
     #[arg(long, default_value_t = false)]
     suumo: bool,
@@ -157,6 +159,9 @@ impl Args {
         }
         if self.soccer {
             ret.push("soccer")
+        }
+        if self.sompocybersecurity {
+            ret.push("sompocybersecurity")
         }
         if self.sumai1 {
             ret.push("sumai1")
