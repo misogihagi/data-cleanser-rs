@@ -61,6 +61,6 @@ fn customize(kind: &SiteKindCustomized) -> impl Flow {
                 link_links: urls,
                 ..Default::default()
             }
-        } //    SiteKindCustomize::Mitsue => { },
+        }
     }
 }

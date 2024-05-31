@@ -38,7 +38,6 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "macromill" => Some(SiteKindSimple::A(SiteKindSimpleA::Macromill)),
             "meiwakaiun" => Some(SiteKindSimple::B(SiteKindSimpleB::Meiwakaiun)),
             "mintetsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Mintesu)),
-            "mitsue" => Some(SiteKindSimple::A(SiteKindSimpleA::Mintesu)),
             "mizuho" => Some(SiteKindSimple::A(SiteKindSimpleA::Mizuho)),
             "nomura" => Some(SiteKindSimple::A(SiteKindSimpleA::Nomura)),
             //        "ntt" => Some(SiteKindSimple::A(SiteKindSimpleA::Ntt)),
