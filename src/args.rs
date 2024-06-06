@@ -52,6 +52,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     ntt: bool,
     #[arg(long, default_value_t = false)]
+    pfa: bool,
+    #[arg(long, default_value_t = false)]
     rewords: bool,
     #[arg(long, default_value_t = false)]
     ryugaku: bool,
@@ -158,6 +160,9 @@ impl Args {
         }
         if self.ntt {
             ret.push("ntt")
+        }
+        if self.pfa {
+            ret.push("pfa")
         }
         if self.rewords {
             ret.push("rewords")

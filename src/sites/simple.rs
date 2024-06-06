@@ -44,6 +44,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "naigai" => Some(SiteKindSimple::A(SiteKindSimpleA::Naigai)),
             "nittsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Nittsu)),
             "nomura" => Some(SiteKindSimple::A(SiteKindSimpleA::Nomura)),
+            "pfa" => Some(SiteKindSimple::A(SiteKindSimpleA::Pfa)),
             //        "ntt" => Some(SiteKindSimple::A(SiteKindSimpleA::Ntt)),
             "rewords" => Some(SiteKindSimple::A(SiteKindSimpleA::Rewords)),
             "ryugaku" => Some(SiteKindSimple::A(SiteKindSimpleA::Ryugaku)),
@@ -103,6 +104,7 @@ pub enum SiteKindSimpleA {
     Nittsu,
     Naigai,
     Nomura,
+    Pfa,
     //    Ntt,
     Rewords,
     Ryugaku,
@@ -277,6 +279,14 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector: ".-transform > li > a",
             title_selector: "#term_id",
             body_selector: ".glossary-block",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Pfa => FlowA {
+            index: "https://www.pfa.or.jp/yogoshu/",
+            link_link_selector: ".colLeft > div > ul > li > a, .colRight > div > ul > li > a",
+            link_selector: "div.colLeft > div > div > div > p  a",
+            title_selector: ".textHeader",
+            body_selector: ".textIndent",
             ..Default::default()
         },
         /*
