@@ -32,6 +32,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "ena" => Some(SiteKindSimple::A(SiteKindSimpleA::Ena)),
             "esp" => Some(SiteKindSimple::A(SiteKindSimpleA::ESP)),
             "fastretailing" => Some(SiteKindSimple::A(SiteKindSimpleA::Fastretailing)),
+            "felissimo" => Some(SiteKindSimple::A(SiteKindSimpleA::Felissimo)),
             "goonet" => Some(SiteKindSimple::A(SiteKindSimpleA::Goonet)),
             "gurubi" => Some(SiteKindSimple::A(SiteKindSimpleA::Gurubi)),
             "jmac" => Some(SiteKindSimple::A(SiteKindSimpleA::JMAC)),
@@ -93,6 +94,7 @@ pub enum SiteKindSimpleA {
     Ena,
     ESP,
     Fastretailing,
+    Felissimo,
     Goonet,
     Gurubi,
     JMAC,
@@ -184,6 +186,13 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             title_selector: "#content > h1:nth-child(3)",
             body_selector: "#entry-535",
             image_selector: Some("#entry-535 img"),
+            ..Default::default()
+        },
+        SiteKindSimpleA::Felissimo => FlowA {
+            link_links: vec![String::from("https://www.felissimo.co.jp/niau/words/")],
+            link_selector: "div.words-tabContents:nth-child(3) > div:nth-child(2) > div > div > ul > li > a",
+            title_selector: ".cmn-pageTitle_main > span:nth-child(1)",
+            body_selector: ".single-wordsArticleBody_contents > p",
             ..Default::default()
         },
         SiteKindSimpleA::Goonet => FlowA {

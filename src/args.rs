@@ -22,6 +22,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     fastretailing: bool,
     #[arg(long, default_value_t = false)]
+    felissimo: bool,
+    #[arg(long, default_value_t = false)]
     goonet: bool,
     #[arg(long, default_value_t = false)]
     gurubi: bool,
@@ -115,6 +117,9 @@ impl Args {
         }
         if self.fastretailing {
             ret.push("fastretailing")
+        }
+        if self.felissimo {
+            ret.push("felissimo")
         }
         if self.goonet {
             ret.push("goonet")
