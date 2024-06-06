@@ -41,6 +41,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "meiwakaiun" => Some(SiteKindSimple::B(SiteKindSimpleB::Meiwakaiun)),
             "mintetsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Mintesu)),
             "mizuho" => Some(SiteKindSimple::A(SiteKindSimpleA::Mizuho)),
+            "nittsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Nittsu)),
             "nomura" => Some(SiteKindSimple::A(SiteKindSimpleA::Nomura)),
             //        "ntt" => Some(SiteKindSimple::A(SiteKindSimpleA::Ntt)),
             "rewords" => Some(SiteKindSimple::A(SiteKindSimpleA::Rewords)),
@@ -98,6 +99,7 @@ pub enum SiteKindSimpleA {
     Macromill,
     Mintesu,
     Mizuho,
+    Nittsu,
     Nomura,
     //    Ntt,
     Rewords,
@@ -246,6 +248,15 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector: "#list > ul > li > a",
             title_selector: "#select_word",
             body_selector: "#ue > div:nth-child(1) > div:nth-child(2)",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Nittsu => FlowA {
+            index: "https://www.nittsu.co.jp/support/words/",
+            base: "https://www.nittsu.co.jp",
+            link_link_selector: "ul.clm4:nth-child(2) > li > a",
+            link_selector: "ul.clm2 > li > a",
+            title_selector: ".h1Design2",
+            body_selector: ".section",
             ..Default::default()
         },
         SiteKindSimpleA::Nomura => FlowA {
