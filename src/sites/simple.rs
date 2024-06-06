@@ -45,6 +45,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "naigai" => Some(SiteKindSimple::A(SiteKindSimpleA::Naigai)),
             "nittsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Nittsu)),
             "nomura" => Some(SiteKindSimple::A(SiteKindSimpleA::Nomura)),
+            "nrisecure" => Some(SiteKindSimple::A(SiteKindSimpleA::Nrisecure)),
             "pfa" => Some(SiteKindSimple::A(SiteKindSimpleA::Pfa)),
             //        "ntt" => Some(SiteKindSimple::A(SiteKindSimpleA::Ntt)),
             "rewords" => Some(SiteKindSimple::A(SiteKindSimpleA::Rewords)),
@@ -106,6 +107,7 @@ pub enum SiteKindSimpleA {
     Nittsu,
     Naigai,
     Nomura,
+    Nrisecure,
     Pfa,
     //    Ntt,
     Rewords,
@@ -288,6 +290,13 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector: ".-transform > li > a",
             title_selector: "#term_id",
             body_selector: ".glossary-block",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Nrisecure => FlowA {
+            link_links: vec![String::from("https://www.nri-secure.co.jp/glossary")],
+            link_selector: "div.glossary-post > ul> li > a",
+            title_selector: "#hs_cos_wrapper_name",
+            body_selector: "#hs_cos_wrapper_post_body",
             ..Default::default()
         },
         SiteKindSimpleA::Pfa => FlowA {

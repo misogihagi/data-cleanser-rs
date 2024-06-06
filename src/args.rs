@@ -52,6 +52,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     nomura: bool,
     #[arg(long, default_value_t = false)]
+    nrisecure: bool,
+    #[arg(long, default_value_t = false)]
     ntt: bool,
     #[arg(long, default_value_t = false)]
     pfa: bool,
@@ -162,6 +164,9 @@ impl Args {
         }
         if self.nomura {
             ret.push("nomura")
+        }
+        if self.nrisecure {
+            ret.push("nrisecure")
         }
         if self.ntt {
             ret.push("ntt")
