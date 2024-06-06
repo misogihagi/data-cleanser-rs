@@ -41,6 +41,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "meiwakaiun" => Some(SiteKindSimple::B(SiteKindSimpleB::Meiwakaiun)),
             "mintetsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Mintesu)),
             "mizuho" => Some(SiteKindSimple::A(SiteKindSimpleA::Mizuho)),
+            "naigai" => Some(SiteKindSimple::A(SiteKindSimpleA::Naigai)),
             "nittsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Nittsu)),
             "nomura" => Some(SiteKindSimple::A(SiteKindSimpleA::Nomura)),
             //        "ntt" => Some(SiteKindSimple::A(SiteKindSimpleA::Ntt)),
@@ -100,6 +101,7 @@ pub enum SiteKindSimpleA {
     Mintesu,
     Mizuho,
     Nittsu,
+    Naigai,
     Nomura,
     //    Ntt,
     Rewords,
@@ -248,6 +250,15 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector: "#list > ul > li > a",
             title_selector: "#select_word",
             body_selector: "#ue > div:nth-child(1) > div:nth-child(2)",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Naigai => FlowA {
+            index: "https://www.ntl-naigai.co.jp/glossary/",
+            base: "https://www.ntl-naigai.co.jp",
+            link_link_selector: "li.-nt-naviAnchorFrame__item > a",
+            link_selector: "li.-nt-glossaryList__item > a",
+            title_selector: "h2.-nt-title6",
+            body_selector: ".-nt-note",
             ..Default::default()
         },
         SiteKindSimpleA::Nittsu => FlowA {
