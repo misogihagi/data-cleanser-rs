@@ -106,8 +106,11 @@ impl Flow for FlowA<'_> {
         }
     }
     async fn get_links(&self) -> Vec<String> {
-        let link_links = if self.links.len() > 0 {
-            self.links.clone()
+        if self.links.len() > 0 {
+            return self.links.clone();
+        }
+        let link_links = if self.link_links.len() > 0 {
+            self.link_links.clone()
         } else {
             self.get_link_links().await
         };
@@ -360,10 +363,6 @@ pub async fn get_term(
 
     let title = get_text(fragment.clone(), title_selector.clone());
     let body = get_text(fragment.clone(), body_selector.clone());
-
-    if title == "" {
-        println!("{}", html);
-    }
 
     let images: Vec<String> = match s_images {
         Some(s) => {

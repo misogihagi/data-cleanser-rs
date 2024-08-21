@@ -3,11 +3,12 @@ use futures::future::join_all;
 use scraper::{Html, Selector};
 
 use super::interface::WorkFlowTrait;
-use crate::utils::{get_html, get_text, Flow, FlowA, Term};
+use crate::utils::{get_html, get_links, get_text, Flow, FlowA, LinkQuery, Term};
 
 pub enum SiteKindHandmade {
     Ajima,
     Hiroshima,
+    Yodosha,
 }
 
 pub struct HandmadeWorkFlow {
@@ -28,6 +29,7 @@ impl HandmadeWorkFlowTrait for HandmadeWorkFlow {
         match kind_str {
             "ajima" => Some(SiteKindHandmade::Ajima),
             "hiroshima" => Some(SiteKindHandmade::Hiroshima),
+            "yodosha" => Some(SiteKindHandmade::Yodosha),
             _ => None,
         }
     }
@@ -44,6 +46,7 @@ impl WorkFlowTrait for HandmadeWorkFlow {
         match &self.kind {
             &SiteKindHandmade::Ajima => ajima().await,
             &SiteKindHandmade::Hiroshima => hiroshima().await,
+            &SiteKindHandmade::Yodosha => yodosha().await,
         }
     }
 }
@@ -145,4 +148,38 @@ pub async fn hiroshima() -> Vec<Term> {
             images: vec![],
         })
         .collect()
+}
+
+pub async fn yodosha() -> Vec<Term> {
+    let link_links = FlowA {
+        index: "https://www.yodosha.co.jp/jikkenigaku/keyword/",
+        base: "https://www.yodosha.co.jp/jikkenigaku/keyword/",
+        link_link_selector: "div.indexes > table > tbody > tr> td > a",
+        ..Default::default()
+    }
+    .get_link_links()
+    .await;
+    let links: Vec<String> = join_all(link_links.iter().map(|link_link| {
+        get_links(LinkQuery {
+            url: link_link,
+            base: "https://www.yodosha.co.jp/jikkenigaku/keyword/",
+            selector_string: "#indexlistbox > ul > li > a",
+            encoding: "utf-8",
+        })
+    }))
+    .await
+    .into_iter()
+    .flat_map(|r| r.unwrap())
+    .collect();
+
+    FlowA {
+        links: links,
+        title_selector: "div.col-sm-8:nth-child(1) > div > h1",
+        body_selector: "#ruledline > p:nth-child(1)",
+        pool_size: 100,
+        rest: 30,
+        ..Default::default()
+    }
+    .get_terms()
+    .await
 }

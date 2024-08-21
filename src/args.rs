@@ -82,6 +82,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     webtan: bool,
     #[arg(long, default_value_t = false)]
+    yodosha: bool,
+    #[arg(long, default_value_t = false)]
     zexy: bool,
 
     #[arg(long, default_value_t = false)]
@@ -212,6 +214,9 @@ impl Args {
         }
         if self.smbcnikko {
             ret.push("smbcnikko")
+        }
+        if self.yodosha {
+            ret.push("yodosha")
         }
         if self.zexy {
             ret.push("zexy")
