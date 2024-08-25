@@ -49,6 +49,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "pfa" => Some(SiteKindSimple::A(SiteKindSimpleA::Pfa)),
             //        "ntt" => Some(SiteKindSimple::A(SiteKindSimpleA::Ntt)),
             "rewords" => Some(SiteKindSimple::A(SiteKindSimpleA::Rewords)),
+            "ri" => Some(SiteKindSimple::B(SiteKindSimpleB::Ri)),
             "ryugaku" => Some(SiteKindSimple::A(SiteKindSimpleA::Ryugaku)),
             "sumai1" => Some(SiteKindSimple::A(SiteKindSimpleA::Sumai1)),
             "smbcnikko" => Some(SiteKindSimple::A(SiteKindSimpleA::Smbcnikko)),
@@ -418,13 +419,23 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
 }
 
 pub enum SiteKindSimpleB {
+    Ri,
     Meiwakaiun,
     Theglenlivet,
 }
 
 fn simple_b(kind: &SiteKindSimpleB) -> FlowB {
     match kind {
-        SiteKindSimpleB::Meiwakaiun => FlowB {
+        SiteKindSimpleB::Ri => FlowB {
+                index: "https://r-i.jp/glossary/",
+                base: "https://r-i.jp",
+                link_selector: "ul.tabInitial:nth-child(1) > li > a",
+                titles_selector:".glossary_entry_title",
+                bodies_selector: ".glossary_entry_body",
+                ..Default::default()
+    
+        },
+            SiteKindSimpleB::Meiwakaiun => FlowB {
             index: "https://www.meiwakaiun.com/meiwalabo/yougo/",
             // section.grossary typo!
             titles_selector: "main > div.page-box > div.container > div.glossary-details > section.grossary-details-box > table > tbody > tr > td > div.glossary-details > section.grossary-details-box > table > tbody > tr:not(#ki02a) > th",

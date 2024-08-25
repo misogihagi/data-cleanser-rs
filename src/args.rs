@@ -60,6 +60,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     rewords: bool,
     #[arg(long, default_value_t = false)]
+    ri: bool,
+    #[arg(long, default_value_t = false)]
     ryugaku: bool,
     #[arg(long, default_value_t = false)]
     smbcnikko: bool,
@@ -180,6 +182,9 @@ impl Args {
         }
         if self.rewords {
             ret.push("rewords")
+        }
+        if self.ri {
+            ret.push("ri")
         }
         if self.ryugaku {
             ret.push("ryugaku")
