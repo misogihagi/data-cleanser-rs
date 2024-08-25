@@ -4,7 +4,7 @@ mod utils;
 use crate::utils::use_write;
 use args::Args;
 use clap::Parser;
-use sites::special::{elite_network, mitsue};
+use sites::special::{elite_network, mitsue, token};
 use std::fs;
 
 macro_rules! cmd {
@@ -33,6 +33,13 @@ async fn main() {
         let books = elite_network();
         for (key, terms) in books.await {
             use_write(format!("elite-network/{}.json", key).to_string())(&terms);
+        }
+    }
+    if args.token {
+        fs::create_dir("token").unwrap();
+        let books = token();
+        for (key, terms) in books.await {
+            use_write(format!("token/{}.json", key).to_string())(&terms);
         }
     }
 }

@@ -58,3 +58,83 @@ pub async fn elite_network() -> HashMap<&'static str, Vec<Term>> {
     }
     books
 }
+
+pub async fn token() -> HashMap<&'static str, Vec<Term>> {
+    let mut genre = HashMap::new();
+
+    genre.insert(
+        "kenchiku",
+        (
+            "https://www.token.co.jp/estate/useful/archipedia/row_kana.php?jid=00016",
+            ".textbox",
+        ),
+    );
+    genre.insert(
+        "syougyoukenchiku",
+        (
+            "https://www.token.co.jp/estate/useful/archipedia/row_kana.php?jid=00023",
+            ".textbox",
+        ),
+    );
+    genre.insert(
+        "sumai",
+        (
+            "https://www.token.co.jp/estate/useful/archipedia/row_kana.php?jid=00022",
+            "section.terminology:nth-child(1) > div",
+        ),
+    );
+    genre.insert(
+        "omoshirokenchiku",
+        (
+            "https://www.token.co.jp/estate/useful/archipedia/row_kana.php?jid=00021",
+            ".textbox",
+        ),
+    );
+    genre.insert(
+        "interior",
+        (
+            "https://www.token.co.jp/estate/useful/archipedia/row_kana.php?jid=00018",
+            ".textbox",
+        ),
+    );
+    genre.insert(
+        "takuken",
+        (
+            "https://www.token.co.jp/estate/useful/archipedia/row_kana.php?jid=00013",
+            ".textbox",
+        ),
+    );
+    genre.insert(
+        "hudousan",
+        (
+            "https://www.token.co.jp/estate/useful/archipedia/row_kana.php?jid=00017",
+            ".textbox",
+        ),
+    );
+    genre.insert(
+        "zeikin",
+        (
+            "https://www.token.co.jp/estate/useful/archipedia/row_kana.php?jid=00019",
+            ".textbox",
+        ),
+    );
+
+    let mut books = HashMap::new();
+
+    for (g, (url, selector)) in genre {
+        books.insert(
+            g,
+            FlowA {
+                link_links: vec![String::from(url)],
+                link_base: "https://www.token.co.jp/estate/useful/archipedia/",
+                link_selector: ".contents > section > section > ul > li > a",
+                title_selector: ".terminology > h1",
+                body_selector: selector,
+                ..Default::default()
+            }
+            .get_terms()
+            .await,
+        );
+    }
+    books
+}
