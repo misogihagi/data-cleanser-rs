@@ -35,6 +35,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "felissimo" => Some(SiteKindSimple::A(SiteKindSimpleA::Felissimo)),
             "goonet" => Some(SiteKindSimple::A(SiteKindSimpleA::Goonet)),
             "gurubi" => Some(SiteKindSimple::A(SiteKindSimpleA::Gurubi)),
+            "jhs" => Some(SiteKindSimple::A(SiteKindSimpleA::JHS)),
             "jmac" => Some(SiteKindSimple::A(SiteKindSimpleA::JMAC)),
             "kenchikuyogo" => Some(SiteKindSimple::A(SiteKindSimpleA::Kenchikuyogo)),
             "livable" => Some(SiteKindSimple::A(SiteKindSimpleA::Livable)),
@@ -99,6 +100,7 @@ pub enum SiteKindSimpleA {
     Felissimo,
     Goonet,
     Gurubi,
+    JHS,
     JMAC,
     Kenchikuyogo,
     Livable,
@@ -214,6 +216,14 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector: "div.glossary-list > ul > li > a",
             title_selector: ".yogo > h2",
             body_selector: ".yogo > p",
+            ..Default::default()
+        },
+        SiteKindSimpleA::JHS => FlowA {
+            index: "https://www.jhs.ac.jp/guide/glossary/",
+            link_link_selector:".glossary_words > dl > dd > a",            
+            link_selector: ".glossary_category > div > a",
+            title_selector: ".title > h1",
+            body_selector: ".explain > p",
             ..Default::default()
         },
         SiteKindSimpleA::JMAC => FlowA {
@@ -433,7 +443,6 @@ fn simple_b(kind: &SiteKindSimpleB) -> FlowB {
                 titles_selector:".glossary_entry_title",
                 bodies_selector: ".glossary_entry_body",
                 ..Default::default()
-    
         },
             SiteKindSimpleB::Meiwakaiun => FlowB {
             index: "https://www.meiwakaiun.com/meiwalabo/yougo/",

@@ -32,6 +32,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     hrpro: bool,
     #[arg(long, default_value_t = false)]
+    jhs: bool,
+    #[arg(long, default_value_t = false)]
     jmac: bool,
     #[arg(long, default_value_t = false)]
     kenchikuyogo: bool,
@@ -137,6 +139,9 @@ impl Args {
         }
         if self.jmac {
             ret.push("jmac")
+        }
+        if self.jhs {
+            ret.push("jhs")
         }
         if self.hrpro {
             ret.push("hrpro")
