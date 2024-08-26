@@ -66,6 +66,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     ryugaku: bool,
     #[arg(long, default_value_t = false)]
+    shimauma: bool,
+    #[arg(long, default_value_t = false)]
     smbcnikko: bool,
     #[arg(long, default_value_t = false)]
     smtrc: bool,
@@ -193,6 +195,9 @@ impl Args {
         }
         if self.ryugaku {
             ret.push("ryugaku")
+        }
+        if self.shimauma {
+            ret.push("shimauma")
         }
         if self.smbcnikko {
             ret.push("smbcnikko")

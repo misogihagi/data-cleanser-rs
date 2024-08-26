@@ -1,8 +1,9 @@
 use super::interface::WorkFlowTrait;
-use crate::utils::{Flow, FlowA, Term};
+use crate::utils::{get_links, Flow, FlowA, LinkQuery, Term};
 
 pub enum SiteKindCustomized {
     Hrpro,
+    Shimauma,
     Zexy,
 }
 
@@ -23,6 +24,7 @@ impl CustomizedWorkFlowTrait for CustomizedWorkFlow {
     fn my_kind(kind_str: &'static str) -> Option<SiteKindCustomized> {
         match kind_str {
             "hrpro" => Some(SiteKindCustomized::Hrpro),
+            "shimauma" => Some(SiteKindCustomized::Shimauma),
             "zexy" => Some(SiteKindCustomized::Zexy),
             _ => None,
         }
@@ -37,11 +39,11 @@ impl WorkFlowTrait for CustomizedWorkFlow {
         }
     }
     async fn get_terms(&self) -> Vec<Term> {
-        customize(&self.kind).get_terms().await
+        customize(&self.kind).await.get_terms().await
     }
 }
 
-fn customize(kind: &SiteKindCustomized) -> impl Flow {
+async fn customize(kind: &SiteKindCustomized) -> impl Flow {
     match kind {
         SiteKindCustomized::Hrpro => {
             let resource = "https://www.hrpro.co.jp/glossary.php?";
@@ -61,6 +63,39 @@ fn customize(kind: &SiteKindCustomized) -> impl Flow {
                 title_selector: "h1.ttl",
                 body_selector: ".article-body",
                 link_links: urls,
+                ..Default::default()
+            }
+        }
+        SiteKindCustomized::Shimauma => {
+            let mut links = vec![String::from("https://makitani.net/shimauma/page/1")];
+
+            // for unexpected infinite loop
+            // in preparation for selector undetection
+            for n in 1..200 {
+                let result = get_links(LinkQuery {
+                    base: "",
+                    url: links.last().unwrap(),
+                    selector_string: ".next",
+                    encoding: "utf-8",
+                })
+                .await
+                .unwrap();
+
+                if let Some(link) = result.first() {
+                    if n > 199 {
+                        panic!("shimauma has more pages than expected!")
+                    }
+                    links.push(link.clone());
+                } else {
+                    break;
+                }
+            }
+
+            FlowA {
+                link_links: links,
+                link_selector: "#content > article > header > h1 > a",
+                title_selector: ".entry-title",
+                body_selector: ".entry-content > p",
                 ..Default::default()
             }
         }
