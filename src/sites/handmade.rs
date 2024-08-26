@@ -3,11 +3,12 @@ use futures::future::join_all;
 use scraper::{Html, Selector};
 
 use super::interface::WorkFlowTrait;
-use crate::utils::{get_html, get_links, get_text, Flow, FlowA, LinkQuery, Term};
+use crate::utils::{get_html, get_links, get_term, get_text, Flow, FlowA, LinkQuery, Term};
 
 pub enum SiteKindHandmade {
     Ajima,
     Hiroshima,
+    MoonLight,
     Yodosha,
 }
 
@@ -29,6 +30,7 @@ impl HandmadeWorkFlowTrait for HandmadeWorkFlow {
         match kind_str {
             "ajima" => Some(SiteKindHandmade::Ajima),
             "hiroshima" => Some(SiteKindHandmade::Hiroshima),
+            "moonlight" => Some(SiteKindHandmade::MoonLight),
             "yodosha" => Some(SiteKindHandmade::Yodosha),
             _ => None,
         }
@@ -46,6 +48,7 @@ impl WorkFlowTrait for HandmadeWorkFlow {
         match &self.kind {
             &SiteKindHandmade::Ajima => ajima().await,
             &SiteKindHandmade::Hiroshima => hiroshima().await,
+            &SiteKindHandmade::MoonLight => moonlight().await,
             &SiteKindHandmade::Yodosha => yodosha().await,
         }
     }
@@ -148,6 +151,82 @@ pub async fn hiroshima() -> Vec<Term> {
             images: vec![],
         })
         .collect()
+}
+
+pub async fn moonlight() -> Vec<Term> {
+    let mut links = FlowA {
+        link_links: vec![String::from("http://www.moon-light.ne.jp/termi-nology/")],
+        base: "http://www.moon-light.ne.jp/termi-nology/",
+        link_selector:
+            ".entry > table:nth-child(8) > tbody > tr > td > table > tbody > tr > td > a",
+        ..Default::default()
+    }
+    .get_links()
+    .await;
+
+    links.dedup();
+
+    let terms = FlowA {
+        links: links.clone(),
+        base: "http://www.moon-light.ne.jp/termi-nology/",
+        title_selector: ".date",
+        body_selector: ".entry-more",
+        ..Default::default()
+    }
+    .get_terms()
+    .await;
+
+    let mut renews = vec![];
+
+    for (i, t) in terms.into_iter().enumerate() {
+        if t.body != "" {
+            renews.push(t);
+            continue;
+        }
+        let link = links.get(i).unwrap();
+
+        // not found
+        if link == "http://www.moon-light.ne.jp/termi-nology/meaning/sliding-stage" {
+            continue;
+        }
+
+        let html = get_html(link, "shift-jis").await.unwrap();
+
+        let mut left = 0;
+        for left_selector in [
+            "</noscript></iframe> \n",
+            "</noscript></iframe><br>\n",
+            "</a></noscript></IFRAME>",
+            "</noscript></iframe>",
+            "border=\"0\"></a>",
+            "</table>",
+        ] {
+            if let Some(s) = html.find(left_selector) {
+                left = s + left_selector.len();
+                break;
+            }
+        }
+        if left == 0 {
+            panic!("no selectors match!")
+        };
+        let right = html
+            .find("<a href=\"http://www.moon-light.ne.jp/termi-nology/")
+            .unwrap();
+
+        let body = html[left..right].replace("<br>\n", "");
+
+        let title = get_term(link.to_string(), "title", "none", None, "shift-jis")
+            .await
+            .unwrap()
+            .title;
+
+        renews.push(Term {
+            title: title,
+            body: body,
+            images: t.images,
+        });
+    }
+    renews
 }
 
 pub async fn yodosha() -> Vec<Term> {

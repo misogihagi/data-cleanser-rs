@@ -48,6 +48,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     mizuho: bool,
     #[arg(long, default_value_t = false)]
+    moonlight: bool,
+    #[arg(long, default_value_t = false)]
     naigai: bool,
     #[arg(long, default_value_t = false)]
     nittsu: bool,
@@ -168,6 +170,9 @@ impl Args {
         }
         if self.mizuho {
             ret.push("mizuho")
+        }
+        if self.moonlight {
+            ret.push("moonlight")
         }
         if self.naigai {
             ret.push("naigai")

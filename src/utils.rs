@@ -7,6 +7,7 @@ use std::fs::File;
 use std::io::Write;
 use std::vec;
 use std::{thread, time};
+use url::{Host, Position, Url};
 
 pub struct FlowA<'a> {
     pub index: &'a str,
@@ -114,6 +115,7 @@ impl Flow for FlowA<'_> {
         } else {
             self.get_link_links().await
         };
+
         let base = if !self.link_base.is_empty() {
             self.link_base
         } else {
@@ -281,7 +283,7 @@ pub async fn get_links(q: LinkQuery<'_>) -> reqwest::Result<Vec<String>> {
 
     Ok(fragment
         .select(&selector)
-        .map(|e| q.base.to_string() + e.value().attr("href").unwrap())
+        .map(|e| join_url(q.url, e.value().attr("href").unwrap()))
         .collect())
 }
 
@@ -431,4 +433,10 @@ pub async fn get_terms(
             images: images.clone(),
         })
         .collect())
+}
+
+fn join_url(left: &str, right: &str) -> String {
+    let left_url = Url::parse(left).unwrap();
+
+    left_url.join(right).unwrap().to_string()
 }
