@@ -1,9 +1,10 @@
 use async_trait::async_trait;
+use data_cleanser_rs::constants::DEFAULT_BASE_PATH;
 use futures::future::join_all;
 use scraper::{Html, Selector};
 use serde::{Deserialize, Serialize};
 use std::default::Default;
-use std::fs::File;
+use std::fs::{create_dir_all, File};
 use std::io::Write;
 use std::vec;
 use std::{thread, time};
@@ -260,8 +261,9 @@ pub async fn get_html(url: impl AsRef<str>, encoding_str: &str) -> reqwest::Resu
 
 pub fn use_write(path: String) -> Box<dyn Fn(&Vec<Term>) -> ()> {
     Box::new(move |terms| {
+        create_dir_all(DEFAULT_BASE_PATH).unwrap();
         let serialized = serde_json::to_string(terms).unwrap();
-        let mut f = File::create(&path).unwrap();
+        let mut f = File::create(DEFAULT_BASE_PATH.clone().to_owned() + &path).unwrap();
         f.write_all(serialized.as_bytes()).unwrap();
         ()
     })
