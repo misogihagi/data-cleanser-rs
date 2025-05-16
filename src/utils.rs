@@ -13,14 +13,17 @@ use url::{Host, Position, Url};
 pub struct FlowA<'a> {
     pub index: &'a str,
     pub base: &'a str,
+    pub link_link_link_base: &'a str,
     pub link_link_base: &'a str,
     pub link_base: &'a str,
+    pub link_link_link_selector: &'a str,
     pub link_link_selector: &'a str,
     pub link_selector: &'a str,
     pub title_selector: &'a str,
     pub body_selector: &'a str,
     pub image_selector: Option<&'a str>,
     pub encoding: &'a str,
+    pub link_link_links: Vec<String>,
     pub link_links: Vec<String>,
     pub links: Vec<String>,
     pub pool_size: usize,
@@ -32,14 +35,17 @@ impl Default for FlowA<'_> {
         FlowA {
             index: "",
             base: "",
+            link_link_link_base: "",
             link_link_base: "",
             link_base: "",
+            link_link_link_selector: "",
             link_link_selector: "",
             link_selector: "",
             title_selector: "",
             body_selector: "",
             image_selector: None,
             encoding: "utf-8",
+            link_link_links: vec![],
             link_links: vec![],
             links: vec![],
             pool_size: POOL_SIZE,
@@ -74,6 +80,7 @@ impl Default for FlowB {
 //https://stackoverflow.com/questions/65028499/rust-structs-that-have-box-fields-and-that-impl-async-traits
 #[async_trait]
 pub trait Flow {
+    async fn get_link_link_links(&self) -> Vec<String>;
     async fn get_link_links(&self) -> Vec<String>;
     async fn get_links(&self) -> Vec<String>;
     async fn get_terms(&self) -> Vec<Term>;
@@ -84,9 +91,55 @@ const REST: u64 = 5;
 
 #[async_trait]
 impl Flow for FlowA<'_> {
+    async fn get_link_link_links(&self) -> Vec<String> {
+        if self.link_link_links.len() > 0 {
+            self.link_link_links.clone()
+        } else {
+            let base = if !self.link_link_link_base.is_empty() {
+                self.link_link_link_base
+            } else {
+                if !self.base.is_empty() {
+                    self.base
+                } else {
+                    ""
+                }
+            };
+            get_links(LinkQuery {
+                url: &self.index,
+                base: base,
+                selector_string: &self.link_link_link_selector,
+                encoding: &self.encoding,
+            })
+            .await
+            .unwrap()
+        }
+    }
     async fn get_link_links(&self) -> Vec<String> {
         if self.link_links.len() > 0 {
             self.link_links.clone()
+        } else if !self.link_link_selector.is_empty() {
+            let base = if !self.link_link_link_base.is_empty() {
+                self.link_link_link_base
+            } else {
+                if !self.base.is_empty() {
+                    self.base
+                } else {
+                    ""
+                }
+            };
+            let link_link_links = self.get_link_link_links().await;
+            join_all(link_link_links.iter().map(|l| {
+                get_links(LinkQuery {
+                    url: l,
+                    base: base,
+                    selector_string: self.link_selector,
+                    encoding: &self.encoding,
+                })
+            }))
+            .await
+            .into_iter()
+            .flat_map(|l| l.unwrap())
+            .collect()
         } else {
             let base = if !self.link_link_base.is_empty() {
                 self.link_link_base
@@ -127,13 +180,13 @@ impl Flow for FlowA<'_> {
             }
         };
         join_all(link_links.iter().map(|l| {
-            get_links(LinkQuery {
-                url: l,
-                base: base,
-                selector_string: self.link_selector,
-                encoding: &self.encoding,
-            })
-        }))
+                get_links(LinkQuery {
+                    url: l,
+                    base: base,
+                    selector_string: self.link_selector,
+                    encoding: &self.encoding,
+                })
+            }))
         .await
         .into_iter()
         .flat_map(|l| l.unwrap())
@@ -171,6 +224,9 @@ impl Flow for FlowA<'_> {
 }
 #[async_trait]
 impl Flow for FlowB {
+    async fn get_link_link_links(&self) -> Vec<String> {
+        vec![]
+    }
     async fn get_link_links(&self) -> Vec<String> {
         vec![]
     }
