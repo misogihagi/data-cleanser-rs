@@ -306,17 +306,30 @@ pub async fn get_html(url: impl AsRef<str>, encoding_str: &str) -> reqwest::Resu
     for i in 1..RETRY {
         let result = client.get(url.as_ref()).send().await;
         if result.is_err() {
-            println!("{} failed {} times. retrying", url.as_ref(), i);
+            println!(
+                "{} failed {} times due to {:?}. retrying",
+                url.as_ref(),
+                i,
+                result
+            );
             thread::sleep(time::Duration::from_secs(RETRY_INTERVAL));
             continue;
         }
         let response = result.unwrap();
         if response.status() == reqwest::StatusCode::SERVICE_UNAVAILABLE {
-            println!("{} failed {} times. retrying", url.as_ref(), i);
+            println!(
+                "{} failed {} times due to service unavailable. retrying",
+                url.as_ref(),
+                i
+            );
             thread::sleep(time::Duration::from_secs(RETRY_INTERVAL));
             continue;
         } else if response.status() == reqwest::StatusCode::FORBIDDEN {
-            println!("{} failed {} times. retrying", url.as_ref(), i);
+            println!(
+                "{} failed {} times due to forbidden. retrying",
+                url.as_ref(),
+                i
+            );
             thread::sleep(time::Duration::from_secs(BANNED_INTERVAL));
             continue;
         }
