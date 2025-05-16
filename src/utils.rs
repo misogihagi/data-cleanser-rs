@@ -179,7 +179,16 @@ impl Flow for FlowA<'_> {
                 ""
             }
         };
-        join_all(link_links.iter().map(|l| {
+
+        let chunks: Vec<Vec<String>> = link_links
+            .chunks(self.pool_size)
+            .map(|c| c.to_vec())
+            .collect();
+
+        let mut result = vec![];
+
+        for c in chunks.iter().map(|links| {
+            join_all(links.iter().map(|l| {
                 get_links(LinkQuery {
                     url: l,
                     base: base,
@@ -187,10 +196,14 @@ impl Flow for FlowA<'_> {
                     encoding: &self.encoding,
                 })
             }))
-        .await
-        .into_iter()
-        .flat_map(|l| l.unwrap())
-        .collect()
+        }) {
+            let mut links: Vec<_> = c.await.into_iter().flat_map(|r| r.unwrap()).collect();
+
+            thread::sleep(time::Duration::from_secs(self.rest));
+
+            result.append(&mut links);
+        }
+        result
     }
     async fn get_terms(&self) -> Vec<Term> {
         let chunks: Vec<Vec<String>> = self
