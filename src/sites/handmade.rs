@@ -1,4 +1,5 @@
 use futures::future::join_all;
+use std::{thread, time};
 
 use scraper::{Html, Selector};
 
@@ -9,6 +10,7 @@ pub enum SiteKindHandmade {
     Ajima,
     Hiroshima,
     MoonLight,
+    Nikken,
     Yodosha,
 }
 
@@ -31,6 +33,7 @@ impl HandmadeWorkFlowTrait for HandmadeWorkFlow {
             "ajima" => Some(SiteKindHandmade::Ajima),
             "hiroshima" => Some(SiteKindHandmade::Hiroshima),
             "moonlight" => Some(SiteKindHandmade::MoonLight),
+            "nikken" => Some(SiteKindHandmade::Nikken),
             "yodosha" => Some(SiteKindHandmade::Yodosha),
             _ => None,
         }
@@ -49,6 +52,7 @@ impl WorkFlowTrait for HandmadeWorkFlow {
             &SiteKindHandmade::Ajima => ajima().await,
             &SiteKindHandmade::Hiroshima => hiroshima().await,
             &SiteKindHandmade::MoonLight => moonlight().await,
+            &SiteKindHandmade::Nikken => nikken().await,
             &SiteKindHandmade::Yodosha => yodosha().await,
         }
     }
@@ -257,6 +261,68 @@ pub async fn yodosha() -> Vec<Term> {
         body_selector: "#ruledline > p:nth-child(1)",
         pool_size: 100,
         rest: 30,
+        ..Default::default()
+    }
+    .get_terms()
+    .await
+}
+
+pub async fn nikken() -> Vec<Term> {
+    let link_link_links = get_links(LinkQuery {
+        url: "https://www.nikken-times.co.jp/dictionary/",
+        base: "https://www.nikken-times.co.jp",
+        selector_string: "#content > div:nth-child(2) > a",
+        encoding: "utf-8",
+    })
+    .await
+    .unwrap();
+
+    let mut link_links = vec![];
+
+    for link_link_link in link_link_links {
+        let link = get_links(LinkQuery {
+            url: &link_link_link,
+            base: "https://www.nikken-times.co.jp",
+            selector_string: ".charNext > a",
+            encoding: "utf-8",
+        })
+        .await
+        .unwrap();
+
+        if link.len() == 0 {
+            continue;
+        }
+
+        let mut tmp_link_links = vec![link.first().unwrap().to_string()];
+
+        loop {
+            thread::sleep(time::Duration::from_secs(1));
+            let next = get_links(LinkQuery {
+                url: &tmp_link_links.last().unwrap(),
+                base: "https://www.nikken-times.co.jp",
+                selector_string: ".charNext > a",
+                encoding: "utf-8",
+            })
+            .await
+            .unwrap();
+
+            if next.len() == 0 {
+                break;
+            } else {
+                tmp_link_links.push(next.first().unwrap().to_string());
+            }
+        }
+
+        link_links.append(&mut tmp_link_links);
+    }
+
+    FlowA {
+        index: "https://www.nikken-times.co.jp/dictionary/",
+        base: "https://www.nikken-times.co.jp",
+        link_links: link_links,
+        link_selector: ".list > ul:nth-child(1) > li > a",
+        title_selector: ".post-title",
+        body_selector: ".post > p:nth-child(2)",
         ..Default::default()
     }
     .get_terms()

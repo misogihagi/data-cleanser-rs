@@ -52,6 +52,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     naigai: bool,
     #[arg(long, default_value_t = false)]
+    nikken: bool,
+    #[arg(long, default_value_t = false)]
     nittsu: bool,
     #[arg(long, default_value_t = false)]
     nomura: bool,
@@ -179,6 +181,9 @@ impl Args {
         }
         if self.nittsu {
             ret.push("nittsu")
+        }
+        if self.nikken {
+            ret.push("nikken")
         }
         if self.nomura {
             ret.push("nomura")
