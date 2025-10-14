@@ -88,6 +88,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     theglenlivet: bool,
     #[arg(long, default_value_t = false)]
+    universalooh: bool,
+    #[arg(long, default_value_t = false)]
     wafermeasurementinspection: bool,
     #[arg(long, default_value_t = false)]
     webtan: bool,
@@ -232,6 +234,9 @@ impl Args {
         }
         if self.theglenlivet {
             ret.push("theglenlivet")
+        }
+        if self.universalooh {
+            ret.push("universalooh")
         }
         if self.wafermeasurementinspection {
             ret.push("wafermeasurementinspection")

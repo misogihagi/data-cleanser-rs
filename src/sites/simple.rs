@@ -60,6 +60,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "sompocybersecurity" => Some(SiteKindSimple::A(SiteKindSimpleA::Sompocybersecurity)),
             "suumo" => Some(SiteKindSimple::A(SiteKindSimpleA::Suumo)),
             "theglenlivet" => Some(SiteKindSimple::B(SiteKindSimpleB::Theglenlivet)),
+            "universalooh" => Some(SiteKindSimple::B(SiteKindSimpleB::UniversalOOH)),
             "wafermeasurementinspection" => Some(SiteKindSimple::A(
                 SiteKindSimpleA::WaferMeasurementInspection,
             )),
@@ -432,6 +433,7 @@ pub enum SiteKindSimpleB {
     Ri,
     Meiwakaiun,
     Theglenlivet,
+    UniversalOOH,
 }
 
 fn simple_b(kind: &SiteKindSimpleB) -> FlowB {
@@ -456,6 +458,13 @@ fn simple_b(kind: &SiteKindSimpleB) -> FlowB {
             titles_selector: "section.producttext > div > h3",
             bodies_selector: "section.producttext > div > h3 + p",
             ..Default::default()
+        },
+        SiteKindSimpleB::UniversalOOH => FlowB {
+                index: "https://universal-ooh.jeki.co.jp/course_ooh/%e5%9f%ba%e6%9c%ac%e7%94%a8%e8%aa%9e%e3%81%ae%e8%a7%a3%e8%aa%ac/",
+                link_selector: "ul.is-open > li > a",
+                titles_selector:".c-chapter__ttl",
+                bodies_selector: ".c-chapter__txt",
+                ..Default::default()
         },
     }
 }
