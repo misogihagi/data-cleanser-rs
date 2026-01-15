@@ -77,6 +77,46 @@ impl Default for FlowB {
     }
 }
 
+pub struct FlowC {
+    pub index: &'static str,
+    pub base: &'static str,
+    pub link_link_base: &'static str,
+    pub link_base: &'static str,
+    pub link_link_selector: &'static str,
+    pub link_selector: &'static str,
+    pub title_selector: &'static str,
+    pub body_selector: &'static str,
+    pub image_selector: Option<&'static str>,
+    pub encoding: &'static str,
+    pub link_link_links: Vec<String>,
+    pub link_links: Vec<String>,
+    pub links: Vec<String>,
+    pub pool_size: usize,
+    pub rest: u64,
+}
+
+impl Default for FlowC {
+    fn default() -> FlowC {
+        FlowC {
+            index: "",
+            base: "",
+            link_link_base: "",
+            link_base: "",
+            link_link_selector: "",
+            link_selector: "",
+            title_selector: "",
+            body_selector: "",
+            image_selector: None,
+            encoding: "utf-8",
+            link_link_links: vec![],
+            link_links: vec![],
+            links: vec![],
+            pool_size: POOL_SIZE,
+            rest: REST,
+        }
+    }
+}
+
 //https://stackoverflow.com/questions/65028499/rust-structs-that-have-box-fields-and-that-impl-async-traits
 #[async_trait]
 pub trait Flow {
@@ -275,6 +315,81 @@ impl Flow for FlowB {
         .into_iter()
         .flat_map(|r| r.unwrap())
         .collect()
+    }
+}
+
+#[async_trait]
+impl Flow for FlowC {
+    async fn get_link_link_links(&self) -> Vec<String> {
+        vec![]
+    }
+    async fn get_link_links(&self) -> Vec<String> {
+        vec![]
+    }
+    async fn get_links(&self) -> Vec<String> {
+        let mut links = vec![];
+        if self.links.len() > 0 {
+            self.links.clone()
+        } else if self.link_selector == "" {
+            vec![self.index.to_string()]
+        } else {
+            let mut next_link = self.index.to_string();
+            loop {
+                let mut links_result = get_links(LinkQuery {
+                    url: &next_link,
+                    base: self.base,
+                    selector_string: self.link_selector,
+                    encoding: &self.encoding,
+                })
+                .await
+                .unwrap();
+                links.append(&mut links_result);
+                let next_result = get_links(LinkQuery {
+                    url: &next_link,
+                    base: self.base,
+                    selector_string: self.link_link_selector,
+                    encoding: &self.encoding,
+                })
+                .await
+                .unwrap();
+                if next_result.len() == 0 {
+                    break;
+                } else {
+                    next_link = next_result.first().unwrap().clone();
+                }
+            }
+            links
+        }
+    }
+    async fn get_terms(&self) -> Vec<Term> {
+        let chunks: Vec<Vec<String>> = self
+            .get_links()
+            .await
+            .chunks(self.pool_size)
+            .map(|c| c.to_vec())
+            .collect();
+         println!("{:?}",chunks);
+
+        let mut result = vec![];
+
+        for c in chunks.into_iter().map(|links| {
+            join_all(links.into_iter().map(|l| {
+                get_term(
+                    l,
+                    self.title_selector,
+                    self.body_selector,
+                    self.image_selector,
+                    self.encoding,
+                )
+            }))
+        }) {
+            let mut terms: Vec<_> = c.await.into_iter().map(|r| r.unwrap()).collect();
+
+            thread::sleep(time::Duration::from_secs(self.rest));
+
+            result.append(&mut terms)
+        }
+        result
     }
 }
 
