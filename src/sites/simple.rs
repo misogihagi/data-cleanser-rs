@@ -1,11 +1,12 @@
 use std::vec;
 
 use super::interface::WorkFlowTrait;
-use crate::utils::{Flow, FlowA, FlowB, Term};
+use crate::utils::{Flow, FlowA, FlowB, FlowC, Term};
 
 pub enum SiteKindSimple {
     A(SiteKindSimpleA),
     B(SiteKindSimpleB),
+    C(SiteKindSimpleC),
 }
 
 pub struct SimpleWorkFlow {
@@ -38,6 +39,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "jhs" => Some(SiteKindSimple::A(SiteKindSimpleA::JHS)),
             "jmac" => Some(SiteKindSimple::A(SiteKindSimpleA::JMAC)),
             "kenchikuyogo" => Some(SiteKindSimple::A(SiteKindSimpleA::Kenchikuyogo)),
+            "konest" => Some(SiteKindSimple::C(SiteKindSimpleC::Konest)),
             "livable" => Some(SiteKindSimple::A(SiteKindSimpleA::Livable)),
             "macromill" => Some(SiteKindSimple::A(SiteKindSimpleA::Macromill)),
             "meiwakaiun" => Some(SiteKindSimple::B(SiteKindSimpleB::Meiwakaiun)),
@@ -86,6 +88,7 @@ pub async fn simple(kind: &SiteKindSimple) -> Vec<Term> {
     match kind {
         SiteKindSimple::A(k) => simple_a(k).get_terms().await,
         SiteKindSimple::B(k) => simple_b(k).get_terms().await,
+        SiteKindSimple::C(k) => simple_c(k).get_terms().await,
     }
 }
 
@@ -467,4 +470,24 @@ fn simple_b(kind: &SiteKindSimpleB) -> FlowB {
                 ..Default::default()
         },
     }
+}
+
+pub enum SiteKindSimpleC {
+    Konest,
+}
+
+fn simple_c(kind: &SiteKindSimpleC) -> FlowC {
+    match kind {
+        SiteKindSimpleC::Konest => FlowC {
+                index: "https://www.konest.com/contents/todays_korean_list.html",
+                base: "https://www.konest.com",
+                link_base: "https://www.konest.com/contents/",
+                link_link_selector: "li.c-pagination__item:nth-last-child(2) > a:nth-child(1):not(.is-disabled)",
+                link_selector: "li.c-card > a:nth-child(1)",
+                title_selector:"#korean_title",
+                body_selector: ".c-hangul__content-main--translate, .c-hangul__content-description--item",
+                rest: 60,
+                ..Default::default()
+        },
+}
 }
