@@ -8,7 +8,7 @@ use std::fs::{create_dir_all, File};
 use std::io::Write;
 use std::vec;
 use std::{thread, time};
-use url::{Host, Position, Url};
+use url::{Url};
 
 pub struct FlowA<'a> {
     pub index: &'a str,
@@ -606,7 +606,7 @@ pub async fn get_terms(
         GetTextSelector::Selector(body_selector.clone()),
     );
 
-    if (titles.len() != bodies.len()) {
+    if titles.len() != bodies.len() {
         panic!(
             "titles and bodies is not coincident\ntitles: {}, bodies: {}",
             titles.len(),
