@@ -486,7 +486,8 @@ fn simple_c(kind: &SiteKindSimpleC) -> FlowC {
                 link_selector: "li.c-card > a:nth-child(1)",
                 title_selector:"#korean_title",
                 body_selector: ".c-hangul__content-main--translate, .c-hangul__content-description--item",
-                rest: 180,
+                pool_size:10,
+                rest:240,
                 ..Default::default()
         },
 }
