@@ -8,7 +8,7 @@ use std::fs::{create_dir_all, File};
 use std::io::Write;
 use std::vec;
 use std::{thread, time};
-use url::{Url};
+use url::Url;
 
 pub struct FlowA<'a> {
     pub index: &'a str,
@@ -368,7 +368,7 @@ impl Flow for FlowC {
             .chunks(self.pool_size)
             .map(|c| c.to_vec())
             .collect();
-         println!("{:?}",chunks);
+        println!("{:?}", chunks);
 
         let mut result = vec![];
 
@@ -460,7 +460,7 @@ pub fn use_write(path: String) -> Box<dyn Fn(&Vec<Term>) -> ()> {
     Box::new(move |terms| {
         create_dir_all(DEFAULT_BASE_PATH).unwrap();
         let serialized = serde_json::to_string(terms).unwrap();
-        let mut f = File::create(DEFAULT_BASE_PATH.clone().to_owned() + &path).unwrap();
+        let mut f = File::create(DEFAULT_BASE_PATH.to_string() + &path).unwrap();
         f.write_all(serialized.as_bytes()).unwrap();
         ()
     })
@@ -521,10 +521,6 @@ pub fn get_texts(fragment: GetTextFragment, selector: GetTextSelector) -> Vec<St
         GetTextSelector::Selector(s) => s,
         GetTextSelector::RefSelector(s) => s.clone(),
     };
-
-    let t = html_fragment.select(&css_selector).map(|e| e.children());
-
-    let mut i = 0;
 
     html_fragment
         .select(&css_selector)
