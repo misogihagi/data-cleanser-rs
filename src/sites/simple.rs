@@ -479,16 +479,18 @@ pub enum SiteKindSimpleC {
 fn simple_c(kind: &SiteKindSimpleC) -> FlowC {
     match kind {
         SiteKindSimpleC::Konest => FlowC {
-                index: "https://www.konest.com/contents/todays_korean_list.html",
-                base: "https://www.konest.com",
-                link_base: "https://www.konest.com/contents/",
-                link_link_selector: "li.c-pagination__item:nth-last-child(2) > a:nth-child(1):not(.is-disabled)",
-                link_selector: "li.c-card > a:nth-child(1)",
-                title_selector:"#korean_title",
-                body_selector: ".c-hangul__content-main--translate, .c-hangul__content-description--item",
-                pool_size:10,
-                rest:240,
-                ..Default::default()
+            index: "https://www.konest.com/contents/todays_korean_list.html",
+            base: "https://www.konest.com",
+            link_base: "https://www.konest.com/contents/",
+            link_link_selector:
+                "li.c-pagination__item:nth-last-child(2) > a:nth-child(1):not(.is-disabled)",
+            link_selector: "li.c-card > a:nth-child(1)",
+            title_selector: "#korean_title",
+            body_selector:
+                ".c-hangul__content-main--translate, .c-hangul__content-description--item",
+            pool_size: 10,
+            rest: 240,
+            ..Default::default()
         },
-}
+    }
 }
