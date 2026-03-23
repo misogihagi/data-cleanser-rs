@@ -40,6 +40,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     konest: bool,
     #[arg(long, default_value_t = false)]
+    kyokutok: bool,
+    #[arg(long, default_value_t = false)]
     livable: bool,
     #[arg(long, default_value_t = false)]
     macromill: bool,
@@ -161,6 +163,9 @@ impl Args {
         }
         if self.kenchikuyogo {
             ret.push("kenchikuyogo")
+        }
+        if self.kyokutok {
+            ret.push("kyokutok")
         }
         if self.konest {
             ret.push("konest")

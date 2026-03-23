@@ -39,6 +39,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "jhs" => Some(SiteKindSimple::A(SiteKindSimpleA::JHS)),
             "jmac" => Some(SiteKindSimple::A(SiteKindSimpleA::JMAC)),
             "kenchikuyogo" => Some(SiteKindSimple::A(SiteKindSimpleA::Kenchikuyogo)),
+            "kyokutok" => Some(SiteKindSimple::A(SiteKindSimpleA::Kyokutok)),
             "konest" => Some(SiteKindSimple::C(SiteKindSimpleC::Konest)),
             "livable" => Some(SiteKindSimple::A(SiteKindSimpleA::Livable)),
             "macromill" => Some(SiteKindSimple::A(SiteKindSimpleA::Macromill)),
@@ -107,6 +108,7 @@ pub enum SiteKindSimpleA {
     JHS,
     JMAC,
     Kenchikuyogo,
+    Kyokutok,
     Livable,
     Macromill,
     Mintesu,
@@ -245,6 +247,14 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector:".is-style-stripes > table:nth-child(1) > tbody:nth-child(1) > tr > td > a",
             title_selector: "h1.alignwide",
             body_selector: ".entry-content > p:not([class])",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Kyokutok => FlowA {
+            index: "https://www.kyokuto-k.co.jp/glossary/",
+            link_link_selector:".blog-in > div:nth-child(2) > table:nth-child(1) > tbody:nth-child(1) > tr > td > a",
+            link_selector:".col-md-7 > div:nth-child(1) > center:nth-child(2) > table:nth-child(1) > tbody:nth-child(1) > tr > td > a",
+            title_selector: ".button12_000",
+            body_selector: ".button12_002",
             ..Default::default()
         },
         SiteKindSimpleA::Livable => FlowA {
