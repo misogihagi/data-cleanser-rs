@@ -157,7 +157,7 @@ impl Flow for FlowA<'_> {
     async fn get_link_links(&self) -> Vec<String> {
         if self.link_links.len() > 0 {
             self.link_links.clone()
-        } else if !self.link_link_selector.is_empty() {
+        } else if !self.link_link_selector.is_empty() && !self.link_link_link_selector.is_empty() {
             let base = if !self.link_link_link_base.is_empty() {
                 self.link_link_link_base
             } else {
