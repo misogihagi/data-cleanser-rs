@@ -44,6 +44,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     konest: bool,
     #[arg(long, default_value_t = false)]
+    kuraemon: bool,
+    #[arg(long, default_value_t = false)]
     kyokutok: bool,
     #[arg(long, default_value_t = false)]
     livable: bool,
@@ -179,6 +181,9 @@ impl Args {
         }
         if self.konest {
             ret.push("konest")
+        }
+        if self.kuraemon {
+            ret.push("kuraemon")
         }
         if self.livable {
             ret.push("livable")

@@ -41,6 +41,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "jhs" => Some(SiteKindSimple::A(SiteKindSimpleA::JHS)),
             "jmac" => Some(SiteKindSimple::A(SiteKindSimpleA::JMAC)),
             "kenchikuyogo" => Some(SiteKindSimple::A(SiteKindSimpleA::Kenchikuyogo)),
+            "kuraemon" => Some(SiteKindSimple::A(SiteKindSimpleA::Kuraemon)),
             "kyokutok" => Some(SiteKindSimple::A(SiteKindSimpleA::Kyokutok)),
             "konest" => Some(SiteKindSimple::C(SiteKindSimpleC::Konest)),
             "livable" => Some(SiteKindSimple::A(SiteKindSimpleA::Livable)),
@@ -112,6 +113,7 @@ pub enum SiteKindSimpleA {
     JHS,
     JMAC,
     Kenchikuyogo,
+    Kuraemon,
     Kyokutok,
     Livable,
     Macromill,
@@ -269,6 +271,22 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector:".is-style-stripes > table:nth-child(1) > tbody:nth-child(1) > tr > td > a",
             title_selector: "h1.alignwide",
             body_selector: ".entry-content > p:not([class])",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Kuraemon => FlowA {
+            link_links: ["あ行",
+            "か行",
+            "さ行",
+            "た行",
+            "な行",
+            "は行",
+            "ま行",
+            "や行",
+            "ら行",
+            "わ行+/+記号"].map(|q| "https://www.kuraemon.com/special/dictionary?gyo=".to_string()+q).to_vec(),
+            link_selector:"div.glossary-item > a",
+            title_selector: ".term",
+            body_selector: ".meaning,.kana",
             ..Default::default()
         },
         SiteKindSimpleA::Kyokutok => FlowA {
