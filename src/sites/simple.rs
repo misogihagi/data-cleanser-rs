@@ -52,6 +52,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "mintetsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Mintesu)),
             "mizuho" => Some(SiteKindSimple::A(SiteKindSimpleA::Mizuho)),
             "naigai" => Some(SiteKindSimple::A(SiteKindSimpleA::Naigai)),
+            "nisso" => Some(SiteKindSimple::B(SiteKindSimpleB::Nisso)),
             "nittsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Nittsu)),
             "nomura" => Some(SiteKindSimple::A(SiteKindSimpleA::Nomura)),
             "nrisecure" => Some(SiteKindSimple::A(SiteKindSimpleA::Nrisecure)),
@@ -497,6 +498,7 @@ pub enum SiteKindSimpleB {
     Civileng,
     Ri,
     Meiwakaiun,
+    Nisso,
     Theglenlivet,
     UniversalOOH,
 }
@@ -508,6 +510,12 @@ fn simple_b(kind: &SiteKindSimpleB) -> FlowB {
                 titles_selector:"table > tbody > tr > td:nth-child(2)",
                 bodies_selector: "table > tbody > tr > td:nth-child(3)",
                 encoding: "shift-jis",
+                ..Default::default()
+        },
+        SiteKindSimpleB::Nisso => FlowB {
+                links: vec!["https://www.nisso-sangyo.co.jp/glossary".to_string()],
+                titles_selector:"section.dic-index__section > div > div > h3",
+                bodies_selector: "section.dic-index__section > div > div.dic-item__body",
                 ..Default::default()
         },
         SiteKindSimpleB::Ri => FlowB {
