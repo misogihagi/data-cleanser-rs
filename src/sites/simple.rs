@@ -29,6 +29,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "athome" => Some(SiteKindSimple::A(SiteKindSimpleA::Athome)),
             "beer" => Some(SiteKindSimple::A(SiteKindSimpleA::Beer)),
             "chemicoat" => Some(SiteKindSimple::A(SiteKindSimpleA::Chemicoat)),
+            "chintai" => Some(SiteKindSimple::A(SiteKindSimpleA::Chintai)),
             "cybernet" => Some(SiteKindSimple::A(SiteKindSimpleA::Cybernet)),
             "ena" => Some(SiteKindSimple::A(SiteKindSimpleA::Ena)),
             "esp" => Some(SiteKindSimple::A(SiteKindSimpleA::ESP)),
@@ -98,6 +99,7 @@ pub enum SiteKindSimpleA {
     Athome,
     Beer,
     Chemicoat,
+    Chintai,
     Cybernet,
     Ena,
     ESP,
@@ -162,6 +164,16 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector: ".content-list > ul > li > a",
             title_selector: ".columnh2",
             body_selector: ".columntext",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Chintai => FlowA {
+            index: "https://chintai-keiei.com/dictionary/",
+            link_link_selector: "ul.dic_index > li > a",
+            link_selector: ".ico_list > li > a",
+            link_base: "https://chintai-keiei.com/dictionary/a/",
+            title_selector: ".blog_title",
+            body_selector: "#main > p:nth-child(4)",
+            encoding: "euc-jp",
             ..Default::default()
         },
         SiteKindSimpleA::Cybernet => FlowA {
