@@ -26,6 +26,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     felissimo: bool,
     #[arg(long, default_value_t = false)]
+    fukuwatanabe: bool,
+    #[arg(long, default_value_t = false)]
     goonet: bool,
     #[arg(long, default_value_t = false)]
     gurubi: bool,
@@ -147,6 +149,9 @@ impl Args {
         }
         if self.felissimo {
             ret.push("felissimo")
+        }
+        if self.fukuwatanabe {
+            ret.push("fukuwatanabe")
         }
         if self.goonet {
             ret.push("goonet")

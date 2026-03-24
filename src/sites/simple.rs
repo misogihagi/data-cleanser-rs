@@ -35,6 +35,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "esp" => Some(SiteKindSimple::A(SiteKindSimpleA::ESP)),
             "fastretailing" => Some(SiteKindSimple::A(SiteKindSimpleA::Fastretailing)),
             "felissimo" => Some(SiteKindSimple::A(SiteKindSimpleA::Felissimo)),
+            "fukuwatanabe" => Some(SiteKindSimple::A(SiteKindSimpleA::Fukuwatanabe)),
             "goonet" => Some(SiteKindSimple::A(SiteKindSimpleA::Goonet)),
             "gurubi" => Some(SiteKindSimple::A(SiteKindSimpleA::Gurubi)),
             "jhs" => Some(SiteKindSimple::A(SiteKindSimpleA::JHS)),
@@ -105,6 +106,7 @@ pub enum SiteKindSimpleA {
     ESP,
     Fastretailing,
     Felissimo,
+    Fukuwatanabe,
     Goonet,
     Gurubi,
     JHS,
@@ -216,6 +218,14 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector: "div.words-tabContents:nth-child(3) > div:nth-child(2) > div > div > ul > li > a",
             title_selector: ".cmn-pageTitle_main > span:nth-child(1)",
             body_selector: ".single-wordsArticleBody_contents > p",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Fukuwatanabe => FlowA {
+            index: "https://fuku-watanabe.com/ec/glossary/tunnel/01a/index.html",
+            link_link_selector:"div.box-tags-tunnel > ul.clearfix > li > a",
+            link_selector: "center > table:nth-child(1) > tbody:nth-child(1) > tr > td:nth-child(1) > a",
+            title_selector: ".button_tunnel_midasi",
+            body_selector: ".col-md-8 > div:nth-child(1) > center:nth-child(3) > table:nth-child(1) > tbody:nth-child(1)",
             ..Default::default()
         },
         SiteKindSimpleA::Goonet => FlowA {
