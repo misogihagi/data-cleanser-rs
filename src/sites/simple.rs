@@ -40,6 +40,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "gurubi" => Some(SiteKindSimple::A(SiteKindSimpleA::Gurubi)),
             "jhs" => Some(SiteKindSimple::A(SiteKindSimpleA::JHS)),
             "jmac" => Some(SiteKindSimple::A(SiteKindSimpleA::JMAC)),
+            "kabuwatanabe" => Some(SiteKindSimple::A(SiteKindSimpleA::Kabuwatanabe)),
             "kenchikuyogo" => Some(SiteKindSimple::A(SiteKindSimpleA::Kenchikuyogo)),
             "kuraemon" => Some(SiteKindSimple::A(SiteKindSimpleA::Kuraemon)),
             "kyokutok" => Some(SiteKindSimple::A(SiteKindSimpleA::Kyokutok)),
@@ -112,6 +113,7 @@ pub enum SiteKindSimpleA {
     Gurubi,
     JHS,
     JMAC,
+    Kabuwatanabe,
     Kenchikuyogo,
     Kuraemon,
     Kyokutok,
@@ -263,6 +265,14 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector:".c-glossaryList > li > a",
             title_selector: "h1.c-simpleHeader_title",
             body_selector: ".l-wysiwyg",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Kabuwatanabe => FlowA {
+            index: "https://kabu-watanabe.com/glossary/tonneru/",
+            link_link_selector:".all__sidebar-item-post > div:nth-child(1) > table:nth-child(1) > tbody > tr > td > a",
+            link_selector: ".tablemokuj > tbody:nth-child(1) > tr > td:nth-child(1) > a",
+            title_selector: "h3.unttonneru_0",
+            body_selector: ".blog__details-area-box > table:nth-child(1) > tbody:nth-child(1)",
             ..Default::default()
         },
         SiteKindSimpleA::Kenchikuyogo => FlowA {

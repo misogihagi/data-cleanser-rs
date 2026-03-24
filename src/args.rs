@@ -40,6 +40,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     jmac: bool,
     #[arg(long, default_value_t = false)]
+    kabuwatanabe: bool,
+    #[arg(long, default_value_t = false)]
     kenchikuyogo: bool,
     #[arg(long, default_value_t = false)]
     konest: bool,
@@ -172,6 +174,9 @@ impl Args {
         }
         if self.hiroshima {
             ret.push("hiroshima")
+        }
+        if self.kabuwatanabe {
+            ret.push("kabuwatanabe")
         }
         if self.kenchikuyogo {
             ret.push("kenchikuyogo")
