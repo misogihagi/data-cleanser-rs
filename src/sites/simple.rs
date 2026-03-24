@@ -30,6 +30,7 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "beer" => Some(SiteKindSimple::A(SiteKindSimpleA::Beer)),
             "chemicoat" => Some(SiteKindSimple::A(SiteKindSimpleA::Chemicoat)),
             "chintai" => Some(SiteKindSimple::A(SiteKindSimpleA::Chintai)),
+            "civileng" => Some(SiteKindSimple::B(SiteKindSimpleB::Civileng)),
             "cybernet" => Some(SiteKindSimple::A(SiteKindSimpleA::Cybernet)),
             "ena" => Some(SiteKindSimple::A(SiteKindSimpleA::Ena)),
             "esp" => Some(SiteKindSimple::A(SiteKindSimpleA::ESP)),
@@ -493,6 +494,7 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
 }
 
 pub enum SiteKindSimpleB {
+    Civileng,
     Ri,
     Meiwakaiun,
     Theglenlivet,
@@ -501,6 +503,13 @@ pub enum SiteKindSimpleB {
 
 fn simple_b(kind: &SiteKindSimpleB) -> FlowB {
     match kind {
+        SiteKindSimpleB::Civileng => FlowB {
+                links: ["a","ka","sa","ta","na","ha","ma","ya","ra","wa"].map(|s| "http://civileng.ec-net.jp/yougo/".to_string()+s+".htm").to_vec(),
+                titles_selector:"table > tbody > tr > td:nth-child(2)",
+                bodies_selector: "table > tbody > tr > td:nth-child(3)",
+                encoding: "shift-jis",
+                ..Default::default()
+        },
         SiteKindSimpleB::Ri => FlowB {
                 index: "https://r-i.jp/glossary/",
                 base: "https://r-i.jp",

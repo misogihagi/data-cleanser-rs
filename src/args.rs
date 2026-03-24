@@ -16,6 +16,8 @@ pub struct Args {
     #[arg(long, default_value_t = false)]
     chintai: bool,
     #[arg(long, default_value_t = false)]
+    civileng: bool,
+    #[arg(long, default_value_t = false)]
     cybernet: bool,
     #[arg(long, default_value_t = false)]
     ena: bool,
@@ -138,6 +140,9 @@ impl Args {
         }
         if self.chintai {
             ret.push("chintai")
+        }
+        if self.civileng {
+            ret.push("civileng")
         }
         if self.cybernet {
             ret.push("cybernet")
