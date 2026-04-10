@@ -1,13 +1,13 @@
-use async_trait::async_trait;
 use crate::constants::DEFAULT_BASE_PATH;
+use async_trait::async_trait;
 use futures::future::join_all;
 use scraper::{Html, Selector};
 use serde::{Deserialize, Serialize};
 use std::default::Default;
 use std::fs::{create_dir_all, File};
 use std::io::Write;
-use std::vec;
 use std::time::Duration;
+use std::vec;
 use url::Url;
 
 pub struct FlowA<'a> {
@@ -132,41 +132,25 @@ const REST: u64 = 5;
 #[async_trait]
 impl Flow for FlowA<'_> {
     async fn get_link_link_links(&self) -> Vec<String> {
-        if self.link_link_links.len() > 0 {
-            self.link_link_links.clone()
-        } else {
-            let base = if !self.link_link_link_base.is_empty() {
-                self.link_link_link_base
-            } else {
-                if !self.base.is_empty() {
-                    self.base
-                } else {
-                    ""
-                }
-            };
-            get_links(LinkQuery {
-                url: &self.index,
-                base: base,
-                selector_string: &self.link_link_link_selector,
-                encoding: &self.encoding,
-            })
-            .await
-            .unwrap()
+        if !self.link_link_links.is_empty() {
+            return self.link_link_links.clone();
         }
+        let base = resolve_base(self.link_link_link_base, self.base);
+        get_links(LinkQuery {
+            url: &self.index,
+            base,
+            selector_string: &self.link_link_link_selector,
+            encoding: &self.encoding,
+        })
+        .await
+        .unwrap()
     }
     async fn get_link_links(&self) -> Vec<String> {
-        if self.link_links.len() > 0 {
-            self.link_links.clone()
-        } else if !self.link_link_selector.is_empty() && !self.link_link_link_selector.is_empty() {
-            let base = if !self.link_link_link_base.is_empty() {
-                self.link_link_link_base
-            } else {
-                if !self.base.is_empty() {
-                    self.base
-                } else {
-                    ""
-                }
-            };
+        if !self.link_links.is_empty() {
+            return self.link_links.clone();
+        }
+        if !self.link_link_selector.is_empty() && !self.link_link_link_selector.is_empty() {
+            let base = resolve_base(self.link_link_link_base, self.base);
             let link_link_links = self.get_link_link_links().await;
             join_all(link_link_links.iter().map(|l| {
                 get_links(LinkQuery {
@@ -181,15 +165,7 @@ impl Flow for FlowA<'_> {
             .flat_map(|l| l.unwrap())
             .collect()
         } else {
-            let base = if !self.link_link_base.is_empty() {
-                self.link_link_base
-            } else {
-                if !self.base.is_empty() {
-                    self.base
-                } else {
-                    ""
-                }
-            };
+            let base = resolve_base(self.link_link_base, self.base);
             get_links(LinkQuery {
                 url: &self.index,
                 base: base,
@@ -201,24 +177,16 @@ impl Flow for FlowA<'_> {
         }
     }
     async fn get_links(&self) -> Vec<String> {
-        if self.links.len() > 0 {
+        if !self.links.is_empty() {
             return self.links.clone();
         }
-        let link_links = if self.link_links.len() > 0 {
+        let link_links = if !self.link_links.is_empty() {
             self.link_links.clone()
         } else {
             self.get_link_links().await
         };
 
-        let base = if !self.link_base.is_empty() {
-            self.link_base
-        } else {
-            if !self.base.is_empty() {
-                self.base
-            } else {
-                ""
-            }
-        };
+        let base = resolve_base(self.link_base, self.base);
 
         let chunks: Vec<Vec<String>> = link_links
             .chunks(self.pool_size)
@@ -628,6 +596,14 @@ pub async fn get_terms(
             images: images.clone(),
         })
         .collect())
+}
+
+fn resolve_base<'a>(primary: &'a str, fallback: &'a str) -> &'a str {
+    if !primary.is_empty() {
+        primary
+    } else {
+        fallback
+    }
 }
 
 fn join_url(left: &str, right: &str) -> String {

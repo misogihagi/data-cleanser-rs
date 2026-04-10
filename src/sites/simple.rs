@@ -532,7 +532,7 @@ fn simple_b(kind: &SiteKindSimpleB) -> FlowB {
                 bodies_selector: ".glossary_entry_body",
                 ..Default::default()
         },
-            SiteKindSimpleB::Meiwakaiun => FlowB {
+        SiteKindSimpleB::Meiwakaiun => FlowB {
             index: "https://www.meiwakaiun.com/meiwalabo/yougo/",
             // section.grossary typo!
             titles_selector: "main > div.page-box > div.container > div.glossary-details > section.grossary-details-box > table > tbody > tr > td > div.glossary-details > section.grossary-details-box > table > tbody > tr:not(#ki02a) > th",
