@@ -49,9 +49,10 @@ impl SimpleWorkFlowTrait for SimpleWorkFlow {
             "livable" => Some(SiteKindSimple::A(SiteKindSimpleA::Livable)),
             "macromill" => Some(SiteKindSimple::A(SiteKindSimpleA::Macromill)),
             "meiwakaiun" => Some(SiteKindSimple::B(SiteKindSimpleB::Meiwakaiun)),
-            "mintetsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Mintesu)),
+            "mintetsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Mintetsu)),
             "mizuho" => Some(SiteKindSimple::A(SiteKindSimpleA::Mizuho)),
             "naigai" => Some(SiteKindSimple::A(SiteKindSimpleA::Naigai)),
+            "nichiren" => Some(SiteKindSimple::A(SiteKindSimpleA::Nichiren)),
             "nisso" => Some(SiteKindSimple::B(SiteKindSimpleB::Nisso)),
             "nittsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Nittsu)),
             "nomura" => Some(SiteKindSimple::A(SiteKindSimpleA::Nomura)),
@@ -121,7 +122,7 @@ pub enum SiteKindSimpleA {
     Kyokutok,
     Livable,
     Macromill,
-    Mintesu,
+    Mintetsu,
     Mizuho,
     Nittsu,
     Naigai,
@@ -140,6 +141,7 @@ pub enum SiteKindSimpleA {
     Suumo,
     WaferMeasurementInspection,
     Webtan,
+    Nichiren,
 }
 
 fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
@@ -324,7 +326,7 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             body_selector: ".un_secBlock:not(.lo_mgnTopL):not(.lo_mgnTopM),.hp_mgnTopM",
             ..Default::default()
         },
-        SiteKindSimpleA::Mintesu => FlowA {
+        SiteKindSimpleA::Mintetsu => FlowA {
             index: "https://www.mintetsu.or.jp/knowledge/",
             link_link_base: "https://www.mintetsu.or.jp",
             link_link_selector: ".ContentsList01 > ul:nth-child(1) > li:nth-child(2) > ul:nth-child(2) > li  > a",
@@ -350,6 +352,15 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             title_selector: "h2.-nt-title6",
             body_selector: ".-nt-note",
             ..Default::default()
+        },
+        SiteKindSimpleA::Nichiren => FlowA {
+            link_links: vec![String::from("https://www.nichiren.or.jp/glossary/")],
+            link_selector: ".glossary-table01 > tbody:nth-child(1) > tr > td > a",
+            title_selector: ".glossary-post .head .title",
+            body_selector: ".glossary-post .head .ruby, .glossary-post .body",
+           pool_size:10,
+            rest:10,
+             ..Default::default()
         },
         SiteKindSimpleA::Nittsu => FlowA {
             index: "https://www.nittsu.co.jp/support/words/",
