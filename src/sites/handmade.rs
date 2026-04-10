@@ -17,18 +17,13 @@ pub enum SiteKindHandmade {
 pub struct HandmadeWorkFlow {
     pub kind: SiteKindHandmade,
 }
-pub trait HandmadeWorkFlowTrait: WorkFlowTrait {
-    fn new(kind_str: &'static str) -> HandmadeWorkFlow;
-    fn my_kind(kind_str: &'static str) -> Option<SiteKindHandmade>;
-}
-
-impl HandmadeWorkFlowTrait for HandmadeWorkFlow {
-    fn new(kind_str: &'static str) -> HandmadeWorkFlow {
+impl HandmadeWorkFlow {
+    pub fn new(kind_str: &'static str) -> HandmadeWorkFlow {
         HandmadeWorkFlow {
             kind: HandmadeWorkFlow::my_kind(kind_str).unwrap(),
         }
     }
-    fn my_kind(kind_str: &'static str) -> Option<SiteKindHandmade> {
+    pub fn my_kind(kind_str: &'static str) -> Option<SiteKindHandmade> {
         match kind_str {
             "ajima" => Some(SiteKindHandmade::Ajima),
             "hiroshima" => Some(SiteKindHandmade::Hiroshima),

@@ -1,15 +1,13 @@
 mod args;
-mod sites;
-mod utils;
+use data_cleanser_rs::{sites, utils};
 use crate::utils::use_write;
 use args::Args;
-use clap::Parser;
 use sites::special::{elite_network, mitsue, token};
 use std::fs;
 
 macro_rules! cmd {
     ($e:expr) => {
-        let terms = sites::lib::run($e).await;
+        let terms = sites::run($e).await;
         use_write(format!("{}.json", $e).to_string())(&terms);
     };
 }

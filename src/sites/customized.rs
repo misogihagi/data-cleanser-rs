@@ -10,18 +10,13 @@ pub enum SiteKindCustomized {
 pub struct CustomizedWorkFlow {
     pub kind: SiteKindCustomized,
 }
-pub trait CustomizedWorkFlowTrait: WorkFlowTrait {
-    fn new(kind_str: &'static str) -> CustomizedWorkFlow;
-    fn my_kind(kind_str: &'static str) -> Option<SiteKindCustomized>;
-}
-
-impl CustomizedWorkFlowTrait for CustomizedWorkFlow {
-    fn new(kind_str: &'static str) -> CustomizedWorkFlow {
+impl CustomizedWorkFlow {
+    pub fn new(kind_str: &'static str) -> CustomizedWorkFlow {
         CustomizedWorkFlow {
             kind: CustomizedWorkFlow::my_kind(kind_str).unwrap(),
         }
     }
-    fn my_kind(kind_str: &'static str) -> Option<SiteKindCustomized> {
+    pub fn my_kind(kind_str: &'static str) -> Option<SiteKindCustomized> {
         match kind_str {
             "hrpro" => Some(SiteKindCustomized::Hrpro),
             "shimauma" => Some(SiteKindCustomized::Shimauma),

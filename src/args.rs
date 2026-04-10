@@ -90,5 +90,3 @@ define_args!(
     yodosha,
     zexy,
 );
-
-src/args.rs

@@ -12,18 +12,13 @@ pub enum SiteKindSimple {
 pub struct SimpleWorkFlow {
     pub kind: SiteKindSimple,
 }
-pub trait SimpleWorkFlowTrait: WorkFlowTrait {
-    fn new(kind_str: &'static str) -> SimpleWorkFlow;
-    fn my_kind(kind_str: &'static str) -> Option<SiteKindSimple>;
-}
-
-impl SimpleWorkFlowTrait for SimpleWorkFlow {
-    fn new(kind_str: &'static str) -> SimpleWorkFlow {
+impl SimpleWorkFlow {
+    pub fn new(kind_str: &'static str) -> SimpleWorkFlow {
         SimpleWorkFlow {
             kind: SimpleWorkFlow::my_kind(kind_str).unwrap(),
         }
     }
-    fn my_kind(kind_str: &'static str) -> Option<SiteKindSimple> {
+    pub fn my_kind(kind_str: &'static str) -> Option<SiteKindSimple> {
         match kind_str {
             "aritayaki" => Some(SiteKindSimple::A(SiteKindSimpleA::Aritayaki)),
             "athome" => Some(SiteKindSimple::A(SiteKindSimpleA::Athome)),
