@@ -1,5 +1,5 @@
 use futures::future::join_all;
-use std::{thread, time};
+use std::time::Duration;
 
 use scraper::{Html, Selector};
 
@@ -296,7 +296,7 @@ pub async fn nikken() -> Vec<Term> {
         let mut tmp_link_links = vec![link.first().unwrap().to_string()];
 
         loop {
-            thread::sleep(time::Duration::from_secs(1));
+            tokio::time::sleep(Duration::from_secs(1)).await;
             let next = get_links(LinkQuery {
                 url: &tmp_link_links.last().unwrap(),
                 base: "https://www.nikken-times.co.jp",

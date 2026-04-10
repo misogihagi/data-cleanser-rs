@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use data_cleanser_rs::constants::DEFAULT_BASE_PATH;
+use crate::constants::DEFAULT_BASE_PATH;
 use futures::future::join_all;
 use scraper::{Html, Selector};
 use serde::{Deserialize, Serialize};
@@ -7,7 +7,7 @@ use std::default::Default;
 use std::fs::{create_dir_all, File};
 use std::io::Write;
 use std::vec;
-use std::{thread, time};
+use std::time::Duration;
 use url::Url;
 
 pub struct FlowA<'a> {
@@ -239,7 +239,7 @@ impl Flow for FlowA<'_> {
         }) {
             let mut links: Vec<_> = c.await.into_iter().flat_map(|r| r.unwrap()).collect();
 
-            thread::sleep(time::Duration::from_secs(self.rest));
+            tokio::time::sleep(Duration::from_secs(self.rest)).await;
 
             result.append(&mut links);
         }
@@ -268,7 +268,7 @@ impl Flow for FlowA<'_> {
         }) {
             let mut terms: Vec<_> = c.await.into_iter().map(|r| r.unwrap()).collect();
 
-            thread::sleep(time::Duration::from_secs(self.rest));
+            tokio::time::sleep(Duration::from_secs(self.rest)).await;
 
             result.append(&mut terms)
         }
@@ -385,7 +385,7 @@ impl Flow for FlowC {
         }) {
             let mut terms: Vec<_> = c.await.into_iter().map(|r| r.unwrap()).collect();
 
-            thread::sleep(time::Duration::from_secs(self.rest));
+            tokio::time::sleep(Duration::from_secs(self.rest)).await;
 
             result.append(&mut terms)
         }
@@ -427,7 +427,7 @@ pub async fn get_html(url: impl AsRef<str>, encoding_str: &str) -> reqwest::Resu
                 i,
                 result
             );
-            thread::sleep(time::Duration::from_secs(RETRY_INTERVAL));
+            tokio::time::sleep(Duration::from_secs(RETRY_INTERVAL)).await;
             continue;
         }
         let response = result.unwrap();
@@ -437,7 +437,7 @@ pub async fn get_html(url: impl AsRef<str>, encoding_str: &str) -> reqwest::Resu
                 url.as_ref(),
                 i
             );
-            thread::sleep(time::Duration::from_secs(RETRY_INTERVAL));
+            tokio::time::sleep(Duration::from_secs(RETRY_INTERVAL)).await;
             continue;
         } else if response.status() == reqwest::StatusCode::FORBIDDEN {
             println!(
@@ -445,7 +445,7 @@ pub async fn get_html(url: impl AsRef<str>, encoding_str: &str) -> reqwest::Resu
                 url.as_ref(),
                 i
             );
-            thread::sleep(time::Duration::from_secs(BANNED_INTERVAL));
+            tokio::time::sleep(Duration::from_secs(BANNED_INTERVAL)).await;
             continue;
         }
         r = Some(response.bytes().await.unwrap());
