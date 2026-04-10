@@ -289,9 +289,6 @@ impl Args {
         if self.webtan {
             ret.push("webtan")
         }
-        if self.smbcnikko {
-            ret.push("smbcnikko")
-        }
         if self.yodosha {
             ret.push("yodosha")
         }
