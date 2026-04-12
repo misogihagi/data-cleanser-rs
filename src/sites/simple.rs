@@ -32,6 +32,7 @@ impl SimpleWorkFlow {
             "fastretailing" => Some(SiteKindSimple::A(SiteKindSimpleA::Fastretailing)),
             "felissimo" => Some(SiteKindSimple::A(SiteKindSimpleA::Felissimo)),
             "fukuwatanabe" => Some(SiteKindSimple::A(SiteKindSimpleA::Fukuwatanabe)),
+            "globis" => Some(SiteKindSimple::C(SiteKindSimpleC::Globis)),
             "goonet" => Some(SiteKindSimple::A(SiteKindSimpleA::Goonet)),
             "gurubi" => Some(SiteKindSimple::A(SiteKindSimpleA::Gurubi)),
             "jhs" => Some(SiteKindSimple::A(SiteKindSimpleA::JHS)),
@@ -556,11 +557,21 @@ fn simple_b(kind: &SiteKindSimpleB) -> FlowB {
 }
 
 pub enum SiteKindSimpleC {
+    Globis,
     Konest,
 }
 
 fn simple_c(kind: &SiteKindSimpleC) -> FlowC {
     match kind {
+        SiteKindSimpleC::Globis => FlowC {
+            index: "https://mba.globis.ac.jp/about_mba/glossary/",
+            link_link_link_selector: ".hiragana > li > a, ul.link_list:nth-child(2) > li:nth-child(1) > a:nth-child(1), .alphabet > li > a",
+            link_link_selector: ".pagination_anchor_next",
+            link_selector: ".column_main > div > a",
+            title_selector: "h1.section_title",
+            body_selector: ".cms_section",
+            ..Default::default()
+        },
         SiteKindSimpleC::Konest => FlowC {
             index: "https://www.konest.com/contents/todays_korean_list.html",
             base: "https://www.konest.com",
