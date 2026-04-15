@@ -80,8 +80,10 @@ impl Default for FlowB {
 pub struct FlowC {
     pub index: &'static str,
     pub base: &'static str,
+    pub link_link_link_base: &'static str,
     pub link_link_base: &'static str,
     pub link_base: &'static str,
+    pub link_link_link_selector: &'static str,
     pub link_link_selector: &'static str,
     pub link_selector: &'static str,
     pub title_selector: &'static str,
@@ -100,8 +102,10 @@ impl Default for FlowC {
         FlowC {
             index: "",
             base: "",
+            link_link_link_base: "",
             link_link_base: "",
             link_base: "",
+            link_link_link_selector: "",
             link_link_selector: "",
             link_selector: "",
             title_selector: "",
@@ -292,38 +296,60 @@ impl Flow for FlowC {
         vec![]
     }
     async fn get_link_links(&self) -> Vec<String> {
-        vec![]
+        if !self.link_link_links.is_empty() {
+            return self.link_link_links.clone();
+        }
+        let base = resolve_base(self.link_link_link_base, self.base);
+        get_links(LinkQuery {
+            url: &self.index,
+            base,
+            selector_string: &self.link_link_link_selector,
+            encoding: &self.encoding,
+        })
+        .await
+        .unwrap()
     }
     async fn get_links(&self) -> Vec<String> {
+        if !self.links.is_empty() {
+            return self.links.clone();
+        }
+        let link_links = if !self.link_links.is_empty() {
+            self.link_links.clone()
+        } else {
+            self.get_link_links().await
+        };
+
         let mut links = vec![];
         if self.links.len() > 0 {
             self.links.clone()
         } else if self.link_selector == "" {
             vec![self.index.to_string()]
         } else {
-            let mut next_link = self.index.to_string();
-            loop {
-                let mut links_result = get_links(LinkQuery {
-                    url: &next_link,
-                    base: self.base,
-                    selector_string: self.link_selector,
-                    encoding: &self.encoding,
-                })
-                .await
-                .unwrap();
-                links.append(&mut links_result);
-                let next_result = get_links(LinkQuery {
-                    url: &next_link,
-                    base: self.base,
-                    selector_string: self.link_link_selector,
-                    encoding: &self.encoding,
-                })
-                .await
-                .unwrap();
-                if next_result.len() == 0 {
-                    break;
-                } else {
-                    next_link = next_result.first().unwrap().clone();
+            for link_link in link_links {
+                let mut next_link = link_link.to_string();
+                loop {
+                    let mut links_result = get_links(LinkQuery {
+                        url: &next_link,
+                        base: self.base,
+                        selector_string: self.link_selector,
+                        encoding: &self.encoding,
+                    })
+                    .await
+                    .unwrap();
+                    links.append(&mut links_result);
+                    let next_result = get_links(LinkQuery {
+                        url: &next_link,
+                        base: self.base,
+                        selector_string: self.link_link_selector,
+                        encoding: &self.encoding,
+                    })
+                    .await
+                    .unwrap();
+                    if next_result.len() == 0 {
+                        break;
+                    } else {
+                        next_link = next_result.first().unwrap().clone();
+                    }
                 }
             }
             links
@@ -336,7 +362,6 @@ impl Flow for FlowC {
             .chunks(self.pool_size)
             .map(|c| c.to_vec())
             .collect();
-        println!("{:?}", chunks);
 
         let mut result = vec![];
 

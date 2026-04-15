@@ -46,6 +46,7 @@ define_args!(
     fastretailing,
     felissimo,
     fukuwatanabe,
+    globis,
     goonet,
     gurubi,
     hiroshima,
