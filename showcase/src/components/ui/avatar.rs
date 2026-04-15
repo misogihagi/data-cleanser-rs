@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 
 #[derive(Props, PartialEq, Clone)]
 pub struct AvatarProps {
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub class: String,
     pub children: Element,
 }
@@ -20,9 +20,9 @@ pub fn Avatar(props: AvatarProps) -> Element {
 #[derive(Props, PartialEq, Clone)]
 pub struct AvatarImageProps {
     pub src: String,
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub alt: String,
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub class: String,
 }
 
@@ -39,7 +39,7 @@ pub fn AvatarImage(props: AvatarImageProps) -> Element {
 
 #[derive(Props, PartialEq, Clone)]
 pub struct AvatarFallbackProps {
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub class: String,
     pub children: Element,
 }

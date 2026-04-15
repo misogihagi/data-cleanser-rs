@@ -6,7 +6,7 @@ pub struct ButtonProps {
     pub variant: String,
     #[props(default = "default".to_string())]
     pub size: String,
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub class: String,
     pub children: Element,
     pub onclick: Option<EventHandler<MouseEvent>>,

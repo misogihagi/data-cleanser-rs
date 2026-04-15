@@ -2,12 +2,12 @@ use dioxus::prelude::*;
 
 #[derive(Props, PartialEq, Clone)]
 pub struct TextareaProps {
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub placeholder: String,
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub value: String,
     pub oninput: Option<EventHandler<Event<FormData>>>,
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub class: String,
 }
 

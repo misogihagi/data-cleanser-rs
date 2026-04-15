@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 pub struct SeparatorProps {
     #[props(default = "horizontal".to_string())]
     pub orientation: String,
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub class: String,
 }
 

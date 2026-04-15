@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 
 #[derive(Props, PartialEq, Clone)]
 pub struct CardProps {
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub class: String,
     pub children: Element,
 }

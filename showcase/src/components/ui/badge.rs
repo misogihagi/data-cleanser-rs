@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 pub struct BadgeProps {
     #[props(default = "default".to_string())]
     pub variant: String,
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub class: String,
     pub children: Element,
 }

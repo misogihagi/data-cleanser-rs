@@ -4,12 +4,12 @@ use dioxus::prelude::*;
 pub struct InputProps {
     #[props(default = "text".to_string())]
     pub r#type: String,
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub placeholder: String,
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub value: String,
     pub oninput: Option<EventHandler<Event<FormData>>>,
-    #[props(default = "")]
+    #[props(default = String::new())]
     pub class: String,
 }
 
