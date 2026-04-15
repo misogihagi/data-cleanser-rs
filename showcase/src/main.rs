@@ -3,6 +3,7 @@ use dioxus::prelude::*;
 
 mod components;
 mod page;
+mod top;
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
@@ -10,6 +11,8 @@ enum Route {
     #[layout(Navbar)]
     #[route("/")]
     Home {},
+    #[route("/showcase")]
+    Showcase {},
     #[route("/blog/:id")]
     Blog { id: i32 },
 }
@@ -36,6 +39,14 @@ fn App() -> Element {
 /// Home page
 #[component]
 fn Home() -> Element {
+    rsx! {
+        top::TopPage {}
+    }
+}
+
+/// Showcase page
+#[component]
+fn Showcase() -> Element {
     rsx! {
         page::ShowcasePage {}
     }
@@ -75,6 +86,10 @@ fn Navbar() -> Element {
             Link {
                 to: Route::Home {},
                 "Home"
+            }
+            Link {
+                to: Route::Showcase {},
+                "Showcase"
             }
             Link {
                 to: Route::Blog { id: 1 },
