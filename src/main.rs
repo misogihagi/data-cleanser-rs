@@ -20,21 +20,21 @@ async fn main() {
     for mode in args.common() {
         cmd!(mode);
     }
-    if args.mitsue {
+    if args.is_mitsue() {
         fs::create_dir("mitsue").unwrap();
         let books = mitsue();
         for (i, terms) in books.await.iter().enumerate() {
             use_write(format!("mitsue/{}.json", i).to_string())(&terms);
         }
     }
-    if args.elitenetwork {
+    if args.is_elitenetwork() {
         fs::create_dir("elite-network").unwrap();
         let books = elite_network();
         for (key, terms) in books.await {
             use_write(format!("elite-network/{}.json", key).to_string())(&terms);
         }
     }
-    if args.token {
+    if args.is_token() {
         fs::create_dir("token").unwrap();
         let books = token();
         for (key, terms) in books.await {

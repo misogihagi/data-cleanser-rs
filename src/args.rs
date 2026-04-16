@@ -5,6 +5,10 @@ macro_rules! define_args {
         #[derive(Parser, Debug)]
         #[command(author, version, about, long_about = None)]
         pub struct Args {
+            /// Run all sites
+            #[arg(long, default_value_t = false)]
+            pub all: bool,
+
             $(
                 #[arg(long, default_value_t = false)]
                 pub $site: bool,
@@ -22,11 +26,23 @@ macro_rules! define_args {
             pub fn common(&self) -> Vec<&'static str> {
                 let mut ret = vec![];
                 $(
-                    if self.$site {
+                    if self.all || self.$site {
                         ret.push(stringify!($site));
                     }
                 )*
                 ret
+            }
+
+            pub fn is_elitenetwork(&self) -> bool {
+                self.all || self.elitenetwork
+            }
+
+            pub fn is_mitsue(&self) -> bool {
+                self.all || self.mitsue
+            }
+
+            pub fn is_token(&self) -> bool {
+                self.all || self.token
             }
         }
     };
