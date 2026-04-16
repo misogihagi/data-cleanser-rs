@@ -188,11 +188,11 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             ..Default::default()
         },
         SiteKindSimpleA::Cybernet => FlowA {
-            index: "https://www.cybernet.co.jp/optical/glossary/",
+            link_links: vec!["https://www.cybernet.co.jp/optical/glossary/".to_string()], 
             base: "https://www.cybernet.co.jp",
-            link_selector: ".contents_body > section > div > ul > li > a",
-            title_selector: ".page_ttl > h1",
-            body_selector: ".text_blc",
+            link_selector: "div.u-mb-40 > div > div > ul > li > a",
+            title_selector: "#title01",
+            body_selector: "div.u-mb-40:not(.c-link-block), div.c-image-block-row",
             ..Default::default()
         },
         SiteKindSimpleA::Ena => FlowA {
