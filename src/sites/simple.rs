@@ -180,6 +180,8 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             title_selector: ".blog_title",
             body_selector: "#main > p:nth-child(4)",
             encoding: "euc-jp",
+            pool_size:40,
+            rest:30,
             ..Default::default()
         },
         SiteKindSimpleA::Cybernet => FlowA {
