@@ -38,6 +38,7 @@ impl SimpleWorkFlow {
             "jhs" => Some(SiteKindSimple::A(SiteKindSimpleA::JHS)),
             "jmac" => Some(SiteKindSimple::A(SiteKindSimpleA::JMAC)),
             "kabuwatanabe" => Some(SiteKindSimple::A(SiteKindSimpleA::Kabuwatanabe)),
+            "jfa" => Some(SiteKindSimple::B(SiteKindSimpleB::Jfa)),
             "kenchikuyogo" => Some(SiteKindSimple::A(SiteKindSimpleA::Kenchikuyogo)),
             "kuraemon" => Some(SiteKindSimple::A(SiteKindSimpleA::Kuraemon)),
             "kyokutok" => Some(SiteKindSimple::A(SiteKindSimpleA::Kyokutok)),
@@ -510,6 +511,7 @@ pub enum SiteKindSimpleB {
     Nisso,
     Theglenlivet,
     UniversalOOH,
+    Jfa,
 }
 
 fn simple_b(kind: &SiteKindSimpleB) -> FlowB {
@@ -520,6 +522,12 @@ fn simple_b(kind: &SiteKindSimpleB) -> FlowB {
                 bodies_selector: "table > tbody > tr > td:nth-child(3)",
                 encoding: "shift-jis",
                 ..Default::default()
+        },
+        SiteKindSimpleB::Jfa => FlowB {
+            index: "https://www.jfa.jp/laws/soccer/glossary/",
+            titles_selector: "#main-colum > div:nth-child(3) > h5, #main-colum > div:nth-child(3) > h4:nth-child(187)",
+            bodies_selector: "#main-colum > div:nth-child(3) > p:not(:last-child)",
+            ..Default::default()
         },
         SiteKindSimpleB::Nisso => FlowB {
                 links: vec!["https://www.nisso-sangyo.co.jp/glossary".to_string()],

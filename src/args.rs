@@ -67,6 +67,7 @@ define_args!(
     gurubi,
     hiroshima,
     hrpro,
+    jfa,
     jhs,
     jmac,
     kabuwatanabe,
