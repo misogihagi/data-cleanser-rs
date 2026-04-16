@@ -66,6 +66,7 @@ define_args!(
     goonet,
     gurubi,
     hiroshima,
+    homemateresearchsoccer,
     hrpro,
     jfa,
     jhs,
