@@ -148,6 +148,8 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector: ".main-conts > article > div > div > p > a",
             title_selector: "h1.section-title",
             body_selector: ".article-body > p:nth-child(1)",
+            pool_size:40,
+            rest:10,
             ..Default::default()
         },
         SiteKindSimpleA::Athome => FlowA {
