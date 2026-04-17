@@ -101,6 +101,7 @@ define_args!(
     soccer,
     sompocybersecurity,
     sumai1,
+    sufu,
     suumo,
     theglenlivet,
     universalooh,

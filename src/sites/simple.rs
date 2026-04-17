@@ -66,6 +66,7 @@ impl SimpleWorkFlow {
             "soccer" => Some(SiteKindSimple::A(SiteKindSimpleA::Soccer)),
             "sompocybersecurity" => Some(SiteKindSimple::A(SiteKindSimpleA::Sompocybersecurity)),
             "suumo" => Some(SiteKindSimple::A(SiteKindSimpleA::Suumo)),
+            "sufu" => Some(SiteKindSimple::A(SiteKindSimpleA::Sufu)),
             "theglenlivet" => Some(SiteKindSimple::B(SiteKindSimpleB::Theglenlivet)),
             "universalooh" => Some(SiteKindSimple::B(SiteKindSimpleB::UniversalOOH)),
             "wafermeasurementinspection" => Some(SiteKindSimple::A(
@@ -139,6 +140,7 @@ pub enum SiteKindSimpleA {
     WaferMeasurementInspection,
     Webtan,
     Nichiren,
+    Sufu,
 }
 
 fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
@@ -476,6 +478,13 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             link_selector: "div.glossary-list-wrap > div > div > div > div > div > div > h3 > a",
             title_selector: ".title-blog",
             body_selector: "#main > p",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Sufu => FlowA {
+            link_links: vec![String::from("https://sufu.lifull.net/category/glossary/6")],
+            link_selector: "div.container.Glossary_index.is_wide > div > div.glossary_list > div > div > div > a",
+            title_selector: "div.container.Glossary_detail.is_wide > div > div.main_contents > div.glossary_list > h1",
+            body_selector: "div.container.Glossary_detail.is_wide > div > div.main_contents > div.glossary_list > section:nth-child(2) > p",
             ..Default::default()
         },
         SiteKindSimpleA::Suumo => FlowA {
