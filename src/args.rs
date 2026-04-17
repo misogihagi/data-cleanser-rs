@@ -57,6 +57,7 @@ define_args!(
     chintai,
     civileng,
     cybernet,
+    efjapan,
     ena,
     esp,
     fastretailing,

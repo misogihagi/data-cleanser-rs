@@ -8,6 +8,7 @@ use crate::utils::{get_html, get_links, get_term, get_text, Flow, FlowA, LinkQue
 
 pub enum SiteKindHandmade {
     Ajima,
+    Efjapan,
     Hiroshima,
     MoonLight,
     Nikken,
@@ -26,6 +27,7 @@ impl HandmadeWorkFlow {
     pub fn my_kind(kind_str: &'static str) -> Option<SiteKindHandmade> {
         match kind_str {
             "ajima" => Some(SiteKindHandmade::Ajima),
+            "efjapan" => Some(SiteKindHandmade::Efjapan),
             "hiroshima" => Some(SiteKindHandmade::Hiroshima),
             "moonlight" => Some(SiteKindHandmade::MoonLight),
             "nikken" => Some(SiteKindHandmade::Nikken),
@@ -45,6 +47,7 @@ impl WorkFlowTrait for HandmadeWorkFlow {
     async fn get_terms(&self) -> Vec<Term> {
         match &self.kind {
             &SiteKindHandmade::Ajima => ajima().await,
+            &SiteKindHandmade::Efjapan => efjapan().await,
             &SiteKindHandmade::Hiroshima => hiroshima().await,
             &SiteKindHandmade::MoonLight => moonlight().await,
             &SiteKindHandmade::Nikken => nikken().await,
@@ -114,6 +117,29 @@ pub async fn ajima() -> Vec<Term> {
                     + frequency,
                 images: vec![image],
             }
+        })
+        .collect()
+}
+
+pub async fn efjapan() -> Vec<Term> {
+    let body = get_html(
+        "https://www.efjapan.co.jp/blog/language/useful-football-terms/",
+        "utf-8",
+    )
+    .await
+    .unwrap();
+
+    let fragment = Html::parse_fragment(&body);
+
+    let selector = Selector::parse("#__next > div.cn-content-area.content-article > div > div > article > div.Post_content__qHjjk.insert-tldr-above > p:not(:first-child)").unwrap();
+
+    let g: Vec<_> = fragment.select(&selector).flat_map(|e| e.text()).collect();
+
+    g.chunks(2)
+        .map(|chunk| Term {
+            title: chunk[0].to_string(),
+            body: chunk.get(1).copied().unwrap_or("").to_string(),
+            images: vec![],
         })
         .collect()
 }
