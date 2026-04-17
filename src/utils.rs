@@ -240,7 +240,7 @@ impl Flow for FlowB {
         vec![]
     }
     async fn get_links(&self) -> Vec<String> {
-        if self.links.len() > 0 {
+        if !self.links.is_empty() {
             self.links.clone()
         } else if self.link_selector == "" {
             vec![self.index.to_string()]
@@ -304,7 +304,7 @@ impl Flow for FlowC {
         };
 
         let mut links = vec![];
-        if self.links.len() > 0 {
+        if !self.links.is_empty() {
             self.links.clone()
         } else if self.link_selector == "" {
             vec![self.index.to_string()]
@@ -329,7 +329,7 @@ impl Flow for FlowC {
                     })
                     .await
                     .unwrap();
-                    if next_result.len() == 0 {
+                    if next_result.is_empty() {
                         break;
                     } else {
                         next_link = next_result.first().unwrap().clone();

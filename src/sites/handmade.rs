@@ -284,7 +284,7 @@ pub async fn nikken() -> Vec<Term> {
         .await
         .unwrap();
 
-        if link.len() == 0 {
+        if link.is_empty() {
             continue;
         }
 
@@ -301,7 +301,7 @@ pub async fn nikken() -> Vec<Term> {
             .await
             .unwrap();
 
-            if next.len() == 0 {
+            if next.is_empty() {
                 break;
             } else {
                 tmp_link_links.push(next.first().unwrap().to_string());
