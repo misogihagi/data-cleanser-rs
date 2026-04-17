@@ -218,33 +218,17 @@ impl Flow for FlowA<'_> {
         result
     }
     async fn get_terms(&self) -> Vec<Term> {
-        let chunks: Vec<Vec<String>> = self
-            .get_links()
-            .await
-            .chunks(self.pool_size)
-            .map(|c| c.to_vec())
-            .collect();
-
-        let mut result = vec![];
-
-        for c in chunks.into_iter().map(|links| {
-            join_all(links.into_iter().map(|l| {
-                get_term(
-                    l,
-                    self.title_selector,
-                    self.body_selector,
-                    self.image_selector,
-                    self.encoding,
-                )
-            }))
-        }) {
-            let mut terms: Vec<_> = c.await.into_iter().map(|r| r.unwrap()).collect();
-
-            tokio::time::sleep(Duration::from_secs(self.rest)).await;
-
-            result.append(&mut terms)
-        }
-        result
+        let links = self.get_links().await;
+        get_terms_chunked(
+            links,
+            self.pool_size,
+            self.rest,
+            self.title_selector,
+            self.body_selector,
+            self.image_selector,
+            self.encoding,
+        )
+        .await
     }
 }
 #[async_trait]
@@ -356,33 +340,17 @@ impl Flow for FlowC {
         }
     }
     async fn get_terms(&self) -> Vec<Term> {
-        let chunks: Vec<Vec<String>> = self
-            .get_links()
-            .await
-            .chunks(self.pool_size)
-            .map(|c| c.to_vec())
-            .collect();
-
-        let mut result = vec![];
-
-        for c in chunks.into_iter().map(|links| {
-            join_all(links.into_iter().map(|l| {
-                get_term(
-                    l,
-                    self.title_selector,
-                    self.body_selector,
-                    self.image_selector,
-                    self.encoding,
-                )
-            }))
-        }) {
-            let mut terms: Vec<_> = c.await.into_iter().map(|r| r.unwrap()).collect();
-
-            tokio::time::sleep(Duration::from_secs(self.rest)).await;
-
-            result.append(&mut terms)
-        }
-        result
+        let links = self.get_links().await;
+        get_terms_chunked(
+            links,
+            self.pool_size,
+            self.rest,
+            self.title_selector,
+            self.body_selector,
+            self.image_selector,
+            self.encoding,
+        )
+        .await
     }
 }
 
@@ -621,6 +589,39 @@ pub async fn get_terms(
             images: images.clone(),
         })
         .collect())
+}
+
+async fn get_terms_chunked(
+    links: Vec<String>,
+    pool_size: usize,
+    rest_secs: u64,
+    title_selector: &str,
+    body_selector: &str,
+    image_selector: Option<&str>,
+    encoding: &str,
+) -> Vec<Term> {
+    let mut result = vec![];
+    for chunk in links.chunks(pool_size) {
+        let terms: Vec<_> = join_all(chunk.iter().map(|l| {
+            get_term(
+                l.clone(),
+                title_selector,
+                body_selector,
+                image_selector,
+                encoding,
+            )
+        }))
+        .await
+        .into_iter()
+        .map(|r| r.unwrap())
+        .collect();
+
+        result.extend(terms);
+        if links.len() > pool_size {
+            tokio::time::sleep(Duration::from_secs(rest_secs)).await;
+        }
+    }
+    result
 }
 
 fn resolve_base<'a>(primary: &'a str, fallback: &'a str) -> &'a str {
