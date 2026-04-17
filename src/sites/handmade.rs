@@ -9,6 +9,7 @@ use crate::utils::{get_html, get_links, get_term, get_text, Flow, FlowA, LinkQue
 pub enum SiteKindHandmade {
     Ajima,
     Efjapan,
+    Footballbox,
     Hiroshima,
     Jfadocuments,
     MoonLight,
@@ -29,6 +30,7 @@ impl HandmadeWorkFlow {
         match kind_str {
             "ajima" => Some(SiteKindHandmade::Ajima),
             "efjapan" => Some(SiteKindHandmade::Efjapan),
+            "footballbox" => Some(SiteKindHandmade::Footballbox),
             "hiroshima" => Some(SiteKindHandmade::Hiroshima),
             "jfadocuments" => Some(SiteKindHandmade::Jfadocuments),
             "moonlight" => Some(SiteKindHandmade::MoonLight),
@@ -50,6 +52,7 @@ impl WorkFlowTrait for HandmadeWorkFlow {
         match &self.kind {
             &SiteKindHandmade::Ajima => ajima().await,
             &SiteKindHandmade::Efjapan => efjapan().await,
+            &SiteKindHandmade::Footballbox => footballbox().await,
             &SiteKindHandmade::Hiroshima => hiroshima().await,
             &SiteKindHandmade::Jfadocuments => jfadocuments().await,
             &SiteKindHandmade::MoonLight => moonlight().await,
@@ -146,6 +149,42 @@ pub async fn efjapan() -> Vec<Term> {
         })
         .collect()
 }
+
+// nth-childでは指定できなかったので手書き
+pub async fn footballbox() -> Vec<Term> {
+    let body = get_html("https://footballbox.club/word.html", "utf-8")
+        .await
+        .unwrap();
+
+    let fragment = Html::parse_fragment(&body);
+
+    let titles_selector =
+        Selector::parse("#leftside > article > section > section > dl > dt").unwrap();
+    let bodies_selector =
+        Selector::parse("#leftside > article > section > section > dl > dd").unwrap();
+
+    let titles: Vec<_> = fragment
+        .select(&titles_selector)
+        .flat_map(|e| e.text())
+        .collect();
+    let bodies: Vec<_> = fragment
+        .select(&bodies_selector)
+        .enumerate()
+        .filter(|(index, _)| *index != 104 && *index != 152 && *index != 180)
+        .map(|(_, e)| e.text().collect::<String>())
+        .collect();
+
+    titles
+        .iter()
+        .zip(bodies.iter())
+        .map(|(t, b)| Term {
+            title: t.to_string(),
+            body: b.to_string(),
+            images: vec![],
+        })
+        .collect()
+}
+
 pub async fn hiroshima() -> Vec<Term> {
     /*
     FlowB {
@@ -188,7 +227,9 @@ pub async fn jfadocuments() -> Vec<Term> {
 
     let fragment = Html::parse_fragment(&body);
 
-    let selector = Selector::parse("#main-colum > div.section-block.doc_QA > div > table > tbody > tr > td").unwrap();
+    let selector =
+        Selector::parse("#main-colum > div.section-block.doc_QA > div > table > tbody > tr > td")
+            .unwrap();
 
     let g: Vec<_> = fragment.select(&selector).flat_map(|e| e.text()).collect();
 
