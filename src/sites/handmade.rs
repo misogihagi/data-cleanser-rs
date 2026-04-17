@@ -10,6 +10,7 @@ pub enum SiteKindHandmade {
     Ajima,
     Efjapan,
     Hiroshima,
+    Jfadocuments,
     MoonLight,
     Nikken,
     Yodosha,
@@ -29,6 +30,7 @@ impl HandmadeWorkFlow {
             "ajima" => Some(SiteKindHandmade::Ajima),
             "efjapan" => Some(SiteKindHandmade::Efjapan),
             "hiroshima" => Some(SiteKindHandmade::Hiroshima),
+            "jfadocuments" => Some(SiteKindHandmade::Jfadocuments),
             "moonlight" => Some(SiteKindHandmade::MoonLight),
             "nikken" => Some(SiteKindHandmade::Nikken),
             "yodosha" => Some(SiteKindHandmade::Yodosha),
@@ -49,6 +51,7 @@ impl WorkFlowTrait for HandmadeWorkFlow {
             &SiteKindHandmade::Ajima => ajima().await,
             &SiteKindHandmade::Efjapan => efjapan().await,
             &SiteKindHandmade::Hiroshima => hiroshima().await,
+            &SiteKindHandmade::Jfadocuments => jfadocuments().await,
             &SiteKindHandmade::MoonLight => moonlight().await,
             &SiteKindHandmade::Nikken => nikken().await,
             &SiteKindHandmade::Yodosha => yodosha().await,
@@ -173,6 +176,30 @@ pub async fn hiroshima() -> Vec<Term> {
         .map(|i| Term {
             title: g[i].to_string(),
             body: g[i + 4].to_string(),
+            images: vec![],
+        })
+        .collect()
+}
+
+pub async fn jfadocuments() -> Vec<Term> {
+    let body = get_html("https://www.jfa.jp/documents/faq/terminology.html", "utf-8")
+        .await
+        .unwrap();
+
+    let fragment = Html::parse_fragment(&body);
+
+    let selector = Selector::parse("#main-colum > div.section-block.doc_QA > div > table > tbody > tr > td").unwrap();
+
+    let g: Vec<_> = fragment.select(&selector).flat_map(|e| e.text()).collect();
+
+    g.chunks(4)
+        .map(|chunk| Term {
+            title: chunk[0].to_string(),
+            body: chunk.get(1).copied().unwrap_or("").to_string()
+                + "\n"
+                + chunk.get(2).copied().unwrap_or("")
+                + "\n"
+                + chunk.get(3).copied().unwrap_or(""),
             images: vec![],
         })
         .collect()

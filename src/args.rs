@@ -70,6 +70,7 @@ define_args!(
     homemateresearchsoccer,
     hrpro,
     jfa,
+    jfadocuments,
     jhs,
     jmac,
     kabuwatanabe,
