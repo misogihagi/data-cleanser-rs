@@ -66,8 +66,8 @@ pub async fn ajima() -> Vec<Term> {
     let links = FlowA {
         index: "https://hougen.ajima.jp/gojyuon/",
         base: "https://hougen.ajima.jp",
-        link_link_selector: "ul.gojyuon > li > a",
-        link_selector: ".list_hougen > li > article > a",
+        level2_selector: "ul.gojyuon > li > a",
+        level1_selector: ".list_hougen > li > article > a",
         ..Default::default()
     }
     .get_links()
@@ -248,9 +248,9 @@ pub async fn jfadocuments() -> Vec<Term> {
 
 pub async fn moonlight() -> Vec<Term> {
     let mut links = FlowA {
-        link_links: vec![String::from("http://www.moon-light.ne.jp/termi-nology/")],
+        level2_links: vec![String::from("http://www.moon-light.ne.jp/termi-nology/")],
         base: "http://www.moon-light.ne.jp/termi-nology/",
-        link_selector:
+        level1_selector:
             ".entry > table:nth-child(8) > tbody > tr > td > table > tbody > tr > td > a",
         ..Default::default()
     }
@@ -323,15 +323,15 @@ pub async fn moonlight() -> Vec<Term> {
 }
 
 pub async fn yodosha() -> Vec<Term> {
-    let link_links = FlowA {
+    let level2_links = FlowA {
         index: "https://www.yodosha.co.jp/jikkenigaku/keyword/",
         base: "https://www.yodosha.co.jp/jikkenigaku/keyword/",
-        link_link_selector: "div.indexes > table > tbody > tr> td > a",
+        level2_selector: "div.indexes > table > tbody > tr> td > a",
         ..Default::default()
     }
-    .get_link_links()
+    .get_level2_links()
     .await;
-    let links: Vec<String> = join_all(link_links.iter().map(|link_link| {
+    let links: Vec<String> = join_all(level2_links.iter().map(|link_link| {
         get_links(LinkQuery {
             url: link_link,
             base: "https://www.yodosha.co.jp/jikkenigaku/keyword/",
@@ -357,7 +357,7 @@ pub async fn yodosha() -> Vec<Term> {
 }
 
 pub async fn nikken() -> Vec<Term> {
-    let link_link_links = get_links(LinkQuery {
+    let level3_links = get_links(LinkQuery {
         url: "https://www.nikken-times.co.jp/dictionary/",
         base: "https://www.nikken-times.co.jp",
         selector_string: "#content > div:nth-child(2) > a",
@@ -366,11 +366,11 @@ pub async fn nikken() -> Vec<Term> {
     .await
     .unwrap();
 
-    let mut link_links = vec![];
+    let mut level2_links = vec![];
 
-    for link_link_link in link_link_links {
+    for level3_link in level3_links {
         let link = get_links(LinkQuery {
-            url: &link_link_link,
+            url: &level3_link,
             base: "https://www.nikken-times.co.jp",
             selector_string: ".charNext > a",
             encoding: "utf-8",
@@ -382,12 +382,12 @@ pub async fn nikken() -> Vec<Term> {
             continue;
         }
 
-        let mut tmp_link_links = vec![link.first().unwrap().to_string()];
+        let mut tmp_level2_links = vec![link.first().unwrap().to_string()];
 
         loop {
             tokio::time::sleep(Duration::from_secs(1)).await;
             let next = get_links(LinkQuery {
-                url: &tmp_link_links.last().unwrap(),
+                url: &tmp_level2_links.last().unwrap(),
                 base: "https://www.nikken-times.co.jp",
                 selector_string: ".charNext > a",
                 encoding: "utf-8",
@@ -398,18 +398,18 @@ pub async fn nikken() -> Vec<Term> {
             if next.is_empty() {
                 break;
             } else {
-                tmp_link_links.push(next.first().unwrap().to_string());
+                tmp_level2_links.push(next.first().unwrap().to_string());
             }
         }
 
-        link_links.append(&mut tmp_link_links);
+        level2_links.append(&mut tmp_level2_links);
     }
 
     FlowA {
         index: "https://www.nikken-times.co.jp/dictionary/",
         base: "https://www.nikken-times.co.jp",
-        link_links: link_links,
-        link_selector: ".list > ul:nth-child(1) > li > a",
+        level2_links: level2_links,
+        level1_selector: ".list > ul:nth-child(1) > li > a",
         title_selector: ".post-title",
         body_selector: ".post > p:nth-child(2)",
         ..Default::default()

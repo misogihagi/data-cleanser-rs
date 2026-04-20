@@ -11,9 +11,9 @@ pub async fn mitsue() -> Vec<Vec<Term>> {
         let index = format!("https://www.mitsue.co.jp/case/glossary/{}_index.html", c);
         books.push(
             FlowA {
-                link_links: vec![String::from(index)],
+                level2_links: vec![String::from(index)],
                 base: "https://www.mitsue.co.jp/case/glossary/",
-                link_selector: "li.bullet__item > a",
+                level1_selector: "li.bullet__item > a",
                 title_selector: ".level1__heading",
                 body_selector: ".text,.bullet,.description,.number,.number__item,.level3",
                 ..Default::default()
@@ -46,8 +46,8 @@ pub async fn elite_network() -> HashMap<&'static str, Vec<Term>> {
         books.insert(
             c,
             FlowA {
-                link_links: vec![String::from(index)],
-                link_selector: "div.word_idx_list > a",
+                level2_links: vec![String::from(index)],
+                level1_selector: "div.word_idx_list > a",
                 title_selector: ".midasi",
                 body_selector: ".contentsleft > div:nth-child(4)",
                 ..Default::default()
@@ -125,9 +125,9 @@ pub async fn token() -> HashMap<&'static str, Vec<Term>> {
         books.insert(
             g,
             FlowA {
-                link_links: vec![String::from(url)],
-                link_base: "https://www.token.co.jp/estate/useful/archipedia/",
-                link_selector: ".contents > section > section > ul > li > a",
+                level2_links: vec![String::from(url)],
+                level1_base: "https://www.token.co.jp/estate/useful/archipedia/",
+                level1_selector: ".contents > section > section > ul > li > a",
                 title_selector: ".terminology > h1",
                 body_selector: selector,
                 ..Default::default()

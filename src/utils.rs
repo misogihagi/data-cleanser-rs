@@ -13,18 +13,18 @@ use url::Url;
 pub struct FlowA<'a> {
     pub index: &'a str,
     pub base: &'a str,
-    pub link_link_link_base: &'a str,
-    pub link_link_base: &'a str,
-    pub link_base: &'a str,
-    pub link_link_link_selector: &'a str,
-    pub link_link_selector: &'a str,
-    pub link_selector: &'a str,
+    pub level3_base: &'a str,
+    pub level2_base: &'a str,
+    pub level1_base: &'a str,
+    pub level3_selector: &'a str,
+    pub level2_selector: &'a str,
+    pub level1_selector: &'a str,
     pub title_selector: &'a str,
     pub body_selector: &'a str,
     pub image_selector: Option<&'a str>,
     pub encoding: &'a str,
-    pub link_link_links: Vec<String>,
-    pub link_links: Vec<String>,
+    pub level3_links: Vec<String>,
+    pub level2_links: Vec<String>,
     pub links: Vec<String>,
     pub pool_size: usize,
     pub rest: u64,
@@ -35,18 +35,18 @@ impl Default for FlowA<'_> {
         FlowA {
             index: "",
             base: "",
-            link_link_link_base: "",
-            link_link_base: "",
-            link_base: "",
-            link_link_link_selector: "",
-            link_link_selector: "",
-            link_selector: "",
+            level3_base: "",
+            level2_base: "",
+            level1_base: "",
+            level3_selector: "",
+            level2_selector: "",
+            level1_selector: "",
             title_selector: "",
             body_selector: "",
             image_selector: None,
             encoding: "utf-8",
-            link_link_links: vec![],
-            link_links: vec![],
+            level3_links: vec![],
+            level2_links: vec![],
             links: vec![],
             pool_size: POOL_SIZE,
             rest: REST,
@@ -57,7 +57,7 @@ impl Default for FlowA<'_> {
 pub struct FlowB {
     pub index: &'static str,
     pub base: &'static str,
-    pub link_selector: &'static str,
+    pub level1_selector: &'static str,
     pub titles_selector: &'static str,
     pub bodies_selector: &'static str,
     pub encoding: &'static str,
@@ -68,7 +68,7 @@ impl Default for FlowB {
         FlowB {
             index: "",
             base: "",
-            link_selector: "",
+            level1_selector: "",
             titles_selector: "",
             bodies_selector: "",
             encoding: "utf-8",
@@ -80,18 +80,18 @@ impl Default for FlowB {
 pub struct FlowC {
     pub index: &'static str,
     pub base: &'static str,
-    pub link_link_link_base: &'static str,
-    pub link_link_base: &'static str,
-    pub link_base: &'static str,
-    pub link_link_link_selector: &'static str,
-    pub link_link_selector: &'static str,
-    pub link_selector: &'static str,
+    pub level3_base: &'static str,
+    pub level2_base: &'static str,
+    pub level1_base: &'static str,
+    pub level3_selector: &'static str,
+    pub level2_selector: &'static str,
+    pub level1_selector: &'static str,
     pub title_selector: &'static str,
     pub body_selector: &'static str,
     pub image_selector: Option<&'static str>,
     pub encoding: &'static str,
-    pub link_link_links: Vec<String>,
-    pub link_links: Vec<String>,
+    pub level3_links: Vec<String>,
+    pub level2_links: Vec<String>,
     pub links: Vec<String>,
     pub pool_size: usize,
     pub rest: u64,
@@ -102,18 +102,18 @@ impl Default for FlowC {
         FlowC {
             index: "",
             base: "",
-            link_link_link_base: "",
-            link_link_base: "",
-            link_base: "",
-            link_link_link_selector: "",
-            link_link_selector: "",
-            link_selector: "",
+            level3_base: "",
+            level2_base: "",
+            level1_base: "",
+            level3_selector: "",
+            level2_selector: "",
+            level1_selector: "",
             title_selector: "",
             body_selector: "",
             image_selector: None,
             encoding: "utf-8",
-            link_link_links: vec![],
-            link_links: vec![],
+            level3_links: vec![],
+            level2_links: vec![],
             links: vec![],
             pool_size: POOL_SIZE,
             rest: REST,
@@ -124,10 +124,10 @@ impl Default for FlowC {
 //https://stackoverflow.com/questions/65028499/rust-structs-that-have-box-fields-and-that-impl-async-traits
 #[async_trait]
 pub trait Flow {
-    async fn get_link_link_links(&self) -> Vec<String> {
+    async fn get_level3_links(&self) -> Vec<String> {
         vec![]
     }
-    async fn get_link_links(&self) -> Vec<String> {
+    async fn get_level2_links(&self) -> Vec<String> {
         vec![]
     }
     async fn get_links(&self) -> Vec<String>;
@@ -139,32 +139,32 @@ const REST: u64 = 5;
 
 #[async_trait]
 impl Flow for FlowA<'_> {
-    async fn get_link_link_links(&self) -> Vec<String> {
-        if !self.link_link_links.is_empty() {
-            return self.link_link_links.clone();
+    async fn get_level3_links(&self) -> Vec<String> {
+        if !self.level3_links.is_empty() {
+            return self.level3_links.clone();
         }
-        let base = resolve_base(self.link_link_link_base, self.base);
+        let base = resolve_base(self.level3_base, self.base);
         get_links(LinkQuery {
             url: &self.index,
             base,
-            selector_string: &self.link_link_link_selector,
+            selector_string: &self.level3_selector,
             encoding: &self.encoding,
         })
         .await
         .unwrap()
     }
-    async fn get_link_links(&self) -> Vec<String> {
-        if !self.link_links.is_empty() {
-            return self.link_links.clone();
+    async fn get_level2_links(&self) -> Vec<String> {
+        if !self.level2_links.is_empty() {
+            return self.level2_links.clone();
         }
-        if !self.link_link_selector.is_empty() && !self.link_link_link_selector.is_empty() {
-            let base = resolve_base(self.link_link_link_base, self.base);
-            let link_link_links = self.get_link_link_links().await;
-            join_all(link_link_links.iter().map(|l| {
+        if !self.level2_selector.is_empty() && !self.level3_selector.is_empty() {
+            let base = resolve_base(self.level3_base, self.base);
+            let level3_links = self.get_level3_links().await;
+            join_all(level3_links.iter().map(|l| {
                 get_links(LinkQuery {
                     url: l,
                     base: base,
-                    selector_string: self.link_selector,
+                    selector_string: self.level1_selector,
                     encoding: &self.encoding,
                 })
             }))
@@ -173,11 +173,11 @@ impl Flow for FlowA<'_> {
             .flat_map(|l| l.unwrap())
             .collect()
         } else {
-            let base = resolve_base(self.link_link_base, self.base);
+            let base = resolve_base(self.level2_base, self.base);
             get_links(LinkQuery {
                 url: &self.index,
                 base: base,
-                selector_string: &self.link_link_selector,
+                selector_string: &self.level2_selector,
                 encoding: &self.encoding,
             })
             .await
@@ -188,15 +188,15 @@ impl Flow for FlowA<'_> {
         if !self.links.is_empty() {
             return self.links.clone();
         }
-        let link_links = if !self.link_links.is_empty() {
-            self.link_links.clone()
+        let level2_links = if !self.level2_links.is_empty() {
+            self.level2_links.clone()
         } else {
-            self.get_link_links().await
+            self.get_level2_links().await
         };
 
-        let base = resolve_base(self.link_base, self.base);
+        let base = resolve_base(self.level1_base, self.base);
 
-        let chunks: Vec<Vec<String>> = link_links
+        let chunks: Vec<Vec<String>> = level2_links
             .chunks(self.pool_size)
             .map(|c| c.to_vec())
             .collect();
@@ -208,7 +208,7 @@ impl Flow for FlowA<'_> {
                 get_links(LinkQuery {
                     url: l,
                     base: base,
-                    selector_string: self.link_selector,
+                    selector_string: self.level1_selector,
                     encoding: &self.encoding,
                 })
             }))
@@ -240,13 +240,13 @@ impl Flow for FlowB {
     async fn get_links(&self) -> Vec<String> {
         if !self.links.is_empty() {
             self.links.clone()
-        } else if self.link_selector == "" {
+        } else if self.level1_selector == "" {
             vec![self.index.to_string()]
         } else {
             get_links(LinkQuery {
                 url: self.index,
                 base: self.base,
-                selector_string: self.link_selector,
+                selector_string: self.level1_selector,
                 encoding: &self.encoding,
             })
             .await
@@ -274,15 +274,15 @@ impl Flow for FlowB {
 
 #[async_trait]
 impl Flow for FlowC {
-    async fn get_link_links(&self) -> Vec<String> {
-        if !self.link_link_links.is_empty() {
-            return self.link_link_links.clone();
+    async fn get_level2_links(&self) -> Vec<String> {
+        if !self.level3_links.is_empty() {
+            return self.level3_links.clone();
         }
-        let base = resolve_base(self.link_link_link_base, self.base);
+        let base = resolve_base(self.level3_base, self.base);
         get_links(LinkQuery {
             url: &self.index,
             base,
-            selector_string: &self.link_link_link_selector,
+            selector_string: &self.level3_selector,
             encoding: &self.encoding,
         })
         .await
@@ -292,25 +292,25 @@ impl Flow for FlowC {
         if !self.links.is_empty() {
             return self.links.clone();
         }
-        let link_links = if !self.link_links.is_empty() {
-            self.link_links.clone()
+        let level2_links = if !self.level2_links.is_empty() {
+            self.level2_links.clone()
         } else {
-            self.get_link_links().await
+            self.get_level2_links().await
         };
 
         let mut links = vec![];
         if !self.links.is_empty() {
             self.links.clone()
-        } else if self.link_selector == "" {
+        } else if self.level1_selector == "" {
             vec![self.index.to_string()]
         } else {
-            for link_link in link_links {
+            for link_link in level2_links {
                 let mut next_link = link_link.to_string();
                 loop {
                     let mut links_result = get_links(LinkQuery {
                         url: &next_link,
                         base: self.base,
-                        selector_string: self.link_selector,
+                        selector_string: self.level1_selector,
                         encoding: &self.encoding,
                     })
                     .await
@@ -319,7 +319,7 @@ impl Flow for FlowC {
                     let next_result = get_links(LinkQuery {
                         url: &next_link,
                         base: self.base,
-                        selector_string: self.link_link_selector,
+                        selector_string: self.level2_selector,
                         encoding: &self.encoding,
                     })
                     .await

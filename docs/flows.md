@@ -6,8 +6,8 @@
 ```rust
 #[async_trait]
 pub trait Flow {
-    async fn get_link_link_links(&self) -> Vec<String>;
-    async fn get_link_links(&self) -> Vec<String>;
+    async fn get_level3_links(&self) -> Vec<String>;
+    async fn get_level2_links(&self) -> Vec<String>;
     async fn get_links(&self) -> Vec<String>;
     async fn get_terms(&self) -> Vec<Term>;
 }
@@ -23,15 +23,15 @@ pub trait Flow {
 
 ```mermaid
 graph LR
-    Index["index (URL)"] -->|link_link_link_selector| LLL["link_link_links"]
-    LLL -->|link_link_selector| LL["link_links"]
-    LL -->|link_selector| L["links (用語ページ)"]
+    Index["index (URL)"] -->|level3_selector| LLL["level3_links"]
+    LLL -->|level2_selector| LL["level2_links"]
+    LL -->|level1_selector| L["links (用語ページ)"]
     L -->|title_selector / body_selector| T["Term (タイトル・本文・画像)"]
 ```
 
 > **省略可能**: 上位のリンク階層は省略できます。  
-> 例えば `link_link_link_selector` が空なら、`index` → `link_links` → `links` の2段階になります。  
-> `link_links` を直接指定することもできます。
+> 例えば `level3_selector` が空なら、`index` → `level2_links` → `links` の2段階になります。  
+> `level2_links` を直接指定することもできます。
 
 ### フィールド一覧
 
@@ -39,18 +39,18 @@ graph LR
 |---|---|---|
 | `index` | `&str` | 起点となるインデックスページの URL |
 | `base` | `&str` | 相対 URL を解決するためのベース URL |
-| `link_link_link_base` | `&str` | 3段目リンク専用のベース URL（空なら `base` を使用） |
-| `link_link_base` | `&str` | 2段目リンク専用のベース URL（空なら `base` を使用） |
-| `link_base` | `&str` | 1段目リンク専用のベース URL（空なら `base` を使用） |
-| `link_link_link_selector` | `&str` | 3段目リンクの CSS セレクタ |
-| `link_link_selector` | `&str` | 2段目リンクの CSS セレクタ |
-| `link_selector` | `&str` | 用語ページへのリンクの CSS セレクタ |
+| `level3_base` | `&str` | 3段目リンク専用のベース URL（空なら `base` を使用） |
+| `level2_base` | `&str` | 2段目リンク専用のベース URL（空なら `base` を使用） |
+| `level1_base` | `&str` | 1段目リンク専用のベース URL（空なら `base` を使用） |
+| `level3_selector` | `&str` | 3段目リンクの CSS セレクタ |
+| `level2_selector` | `&str` | 2段目リンクの CSS セレクタ |
+| `level1_selector` | `&str` | 用語ページへのリンクの CSS セレクタ |
 | `title_selector` | `&str` | 用語タイトルの CSS セレクタ |
 | `body_selector` | `&str` | 用語本文の CSS セレクタ |
 | `image_selector` | `Option<&str>` | 画像の CSS セレクタ（任意） |
 | `encoding` | `&str` | 文字エンコーディング（デフォルト: `utf-8`） |
-| `link_link_links` | `Vec<String>` | 3段目リンクの直接指定（空なら自動取得） |
-| `link_links` | `Vec<String>` | 2段目リンクの直接指定（空なら自動取得） |
+| `level3_links` | `Vec<String>` | 3段目リンクの直接指定（空なら自動取得） |
+| `level2_links` | `Vec<String>` | 2段目リンクの直接指定（空なら自動取得） |
 | `links` | `Vec<String>` | 用語ページの URL の直接指定（空なら自動取得） |
 | `pool_size` | `usize` | 並行リクエスト数（デフォルト: `50`） |
 | `rest` | `u64` | チャンク間の待機秒数（デフォルト: `5`） |
@@ -58,21 +58,21 @@ graph LR
 ### 使用例
 
 ```rust
-// 2段階リンク: index → link_links → links → terms
+// 2段階リンク: index → level2_links → links → terms
 FlowA {
     index: "https://example.com/glossary/",
     base: "https://example.com",
-    link_link_selector: ".category-list > li > a",
-    link_selector: ".term-list > li > a",
+    level2_selector: ".category-list > li > a",
+    level1_selector: ".term-list > li > a",
     title_selector: "h1.term-title",
     body_selector: ".term-body",
     ..Default::default()
 }
 
-// link_links を直接指定
+// level2_links を直接指定
 FlowA {
-    link_links: vec![String::from("https://example.com/glossary/")],
-    link_selector: ".term-list > li > a",
+    level2_links: vec![String::from("https://example.com/glossary/")],
+    level1_selector: ".term-list > li > a",
     title_selector: "h1.term-title",
     body_selector: ".term-body",
     ..Default::default()
@@ -90,11 +90,11 @@ FlowA {
 
 ```mermaid
 graph LR
-    Index["index (URL)"] -->|link_selector| L["links (用語一覧ページ)"]
+    Index["index (URL)"] -->|level1_selector| L["links (用語一覧ページ)"]
     L -->|titles_selector / bodies_selector| T["Vec<Term> (複数の用語)"]
 ```
 
-> **注意**: `link_selector` が空の場合、`index` 自体を用語一覧ページとして扱います。  
+> **注意**: `level1_selector` が空の場合、`index` 自体を用語一覧ページとして扱います。  
 > `links` を直接指定することもできます。
 
 ### フィールド一覧
@@ -103,7 +103,7 @@ graph LR
 |---|---|---|
 | `index` | `&str` | 起点の URL |
 | `base` | `&str` | 相対 URL を解決するためのベース URL |
-| `link_selector` | `&str` | 用語一覧ページへのリンクの CSS セレクタ（空なら `index` 自体が対象） |
+| `level1_selector` | `&str` | 用語一覧ページへのリンクの CSS セレクタ（空なら `index` 自体が対象） |
 | `titles_selector` | `&str` | **複数の**用語タイトルを一括取得する CSS セレクタ |
 | `bodies_selector` | `&str` | **複数の**用語本文を一括取得する CSS セレクタ |
 | `encoding` | `&str` | 文字エンコーディング（デフォルト: `utf-8`） |
@@ -142,16 +142,16 @@ FlowB {
 ページネーション（「次のページ」リンク）をたどりながら用語リンクを収集するパターンです。  
 主に、ページ数が不定で次ページリンクを順にたどる必要があるサイトに使われます。
 
-> **ページネーション**: `link_link_selector`（二階層目）は、FlowA のようにカテゴリページへのリンクではなく、**次ページへのリンク**を取得するために使われます。次ページが見つからなくなるまでループでページを巡回し、各ページから `link_selector` で用語ページへのリンクを収集します。
+> **ページネーション**: `level2_selector`（二階層目）は、FlowA のようにカテゴリページへのリンクではなく、**次ページへのリンク**を取得するために使われます。次ページが見つからなくなるまでループでページを巡回し、各ページから `level1_selector` で用語ページへのリンクを収集します。
 
 ### データフロー
 
 ```mermaid
 graph LR
-    Index["index (URL)"] -->|link_selector| L1["links (1ページ目)"]
-    Index -->|link_link_selector| NP["next page URL"]
-    NP -->|link_selector| L2["links (2ページ目)"]
-    NP -->|link_link_selector| NP2["next page URL"]
+    Index["index (URL)"] -->|level1_selector| L1["links (1ページ目)"]
+    Index -->|level2_selector| NP["next page URL"]
+    NP -->|level1_selector| L2["links (2ページ目)"]
+    NP -->|level2_selector| NP2["next page URL"]
     NP2 -.->|繰り返し| MORE["..."]
     L1 & L2 & MORE -->|title_selector / body_selector| T["Term"]
 ```
@@ -162,24 +162,24 @@ graph LR
 |---|---|---|
 | `index` | `&str` | 起点の URL |
 | `base` | `&str` | 相対 URL を解決するためのベース URL |
-| `link_link_base` | `&str` | 2段目リンク専用のベース URL |
-| `link_base` | `&str` | 1段目リンク専用のベース URL |
-| `link_link_selector` | `&str` | **次ページ**へのリンクの CSS セレクタ |
-| `link_selector` | `&str` | 用語ページへのリンクの CSS セレクタ |
+| `level2_base` | `&str` | 2段目リンク専用のベース URL |
+| `level1_base` | `&str` | 1段目リンク専用のベース URL |
+| `level2_selector` | `&str` | **次ページ**へのリンクの CSS セレクタ |
+| `level1_selector` | `&str` | 用語ページへのリンクの CSS セレクタ |
 | `title_selector` | `&str` | 用語タイトルの CSS セレクタ |
 | `body_selector` | `&str` | 用語本文の CSS セレクタ |
 | `image_selector` | `Option<&str>` | 画像の CSS セレクタ（任意） |
 | `encoding` | `&str` | 文字エンコーディング（デフォルト: `utf-8`） |
-| `link_link_links` | `Vec<String>` | 未使用（常に空を返す） |
-| `link_links` | `Vec<String>` | 未使用（常に空を返す） |
+| `level3_links` | `Vec<String>` | 未使用（常に空を返す） |
+| `level2_links` | `Vec<String>` | 未使用（常に空を返す） |
 | `links` | `Vec<String>` | 用語ページの URL の直接指定（空なら自動取得） |
 | `pool_size` | `usize` | 並行リクエスト数（デフォルト: `50`） |
 | `rest` | `u64` | チャンク間の待機秒数（デフォルト: `5`） |
 
 ### FlowA との違い
 
-- **FlowA** の `link_link_selector` は、インデックスからカテゴリページへのリンクを表す
-- **FlowC** の `link_link_selector` は、**次ページ**へのリンクを表す（ページネーション用）
+- **FlowA** の `level2_selector` は、インデックスからカテゴリページへのリンクを表す
+- **FlowC** の `level2_selector` は、**次ページ**へのリンクを表す（ページネーション用）
 - FlowC の `get_links()` は、次ページが見つからなくなるまでループで収集を続ける
 
 ### 使用例
@@ -188,8 +188,8 @@ graph LR
 FlowC {
     index: "https://example.com/glossary/list.html",
     base: "https://example.com",
-    link_link_selector: "li.pagination__next > a",  // 次ページリンク
-    link_selector: "li.term-card > a",               // 用語ページリンク
+    level2_selector: "li.pagination__next > a",  // 次ページリンク
+    level1_selector: "li.term-card > a",               // 用語ページリンク
     title_selector: "#term-title",
     body_selector: ".term-description",
     pool_size: 10,

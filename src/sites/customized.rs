@@ -79,10 +79,10 @@ async fn customize(kind: &SiteKindCustomized) -> Box<dyn Flow> {
             Box::new(FlowA {
                 index: "https://www.hrpro.co.jp/glossary.php",
                 base: "https://www.hrpro.co.jp/",
-                link_selector: ".rlt-list > li > a",
+                level1_selector: ".rlt-list > li > a",
                 title_selector: "h1.ttl",
                 body_selector: ".article-body",
-                link_links: urls,
+                level2_links: urls,
                 ..Default::default()
             })
         }
@@ -112,8 +112,8 @@ async fn customize(kind: &SiteKindCustomized) -> Box<dyn Flow> {
             }
 
             Box::new(FlowA {
-                link_links: links,
-                link_selector: "#content > article > header > h1 > a",
+                level2_links: links,
+                level1_selector: "#content > article > header > h1 > a",
                 title_selector: ".entry-title",
                 body_selector: ".entry-content > p",
                 ..Default::default()
@@ -126,9 +126,9 @@ async fn customize(kind: &SiteKindCustomized) -> Box<dyn Flow> {
                 .map(|s| String::from(resource) + s)
                 .collect();
             Box::new(FlowA {
-                link_links: urls,
+                level2_links: urls,
                 base: "https://zexy.net/contents/yogo/50/",
-                link_selector: ".glossary > ul > li > a",
+                level1_selector: ".glossary > ul > li > a",
                 title_selector: ".textBody > h3",
                 body_selector: "#item01 > p, #item01 > dl",
                 ..Default::default()
