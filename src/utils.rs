@@ -373,7 +373,7 @@ pub async fn get_html(url: impl AsRef<str>, encoding_str: &str) -> reqwest::Resu
         _ => encoding_rs::UTF_8,
     };
     println!("{} is getting", url.as_ref());
-    let mut r = None;
+    let mut bytes_opt = None;
     for i in 1..RETRY {
         let result = client.get(url.as_ref()).send().await;
         if result.is_err() {
@@ -404,10 +404,10 @@ pub async fn get_html(url: impl AsRef<str>, encoding_str: &str) -> reqwest::Resu
             tokio::time::sleep(Duration::from_secs(BANNED_INTERVAL)).await;
             continue;
         }
-        r = Some(response.bytes().await.unwrap());
+        bytes_opt = Some(response.bytes().await.unwrap());
         break;
     }
-    let bytes = r.expect("the number of retries exceeded");
+    let bytes = bytes_opt.expect("the number of retries exceeded");
     let (res, _, _) = encoding.decode(&bytes);
     Ok(res.to_string())
 }
