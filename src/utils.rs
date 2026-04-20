@@ -124,8 +124,12 @@ impl Default for FlowC {
 //https://stackoverflow.com/questions/65028499/rust-structs-that-have-box-fields-and-that-impl-async-traits
 #[async_trait]
 pub trait Flow {
-    async fn get_link_link_links(&self) -> Vec<String>;
-    async fn get_link_links(&self) -> Vec<String>;
+    async fn get_link_link_links(&self) -> Vec<String> {
+        vec![]
+    }
+    async fn get_link_links(&self) -> Vec<String> {
+        vec![]
+    }
     async fn get_links(&self) -> Vec<String>;
     async fn get_terms(&self) -> Vec<Term>;
 }
@@ -233,12 +237,6 @@ impl Flow for FlowA<'_> {
 }
 #[async_trait]
 impl Flow for FlowB {
-    async fn get_link_link_links(&self) -> Vec<String> {
-        vec![]
-    }
-    async fn get_link_links(&self) -> Vec<String> {
-        vec![]
-    }
     async fn get_links(&self) -> Vec<String> {
         if !self.links.is_empty() {
             self.links.clone()
@@ -276,9 +274,6 @@ impl Flow for FlowB {
 
 #[async_trait]
 impl Flow for FlowC {
-    async fn get_link_link_links(&self) -> Vec<String> {
-        vec![]
-    }
     async fn get_link_links(&self) -> Vec<String> {
         if !self.link_link_links.is_empty() {
             return self.link_link_links.clone();
