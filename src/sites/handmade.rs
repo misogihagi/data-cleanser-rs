@@ -14,6 +14,7 @@ pub enum SiteKindHandmade {
     Jfadocuments,
     MoonLight,
     Nikken,
+    Toraiz,
     Yodosha,
 }
 
@@ -35,6 +36,7 @@ impl HandmadeWorkFlow {
             "jfadocuments" => Some(SiteKindHandmade::Jfadocuments),
             "moonlight" => Some(SiteKindHandmade::MoonLight),
             "nikken" => Some(SiteKindHandmade::Nikken),
+            "toraiz" => Some(SiteKindHandmade::Toraiz),
             "yodosha" => Some(SiteKindHandmade::Yodosha),
             _ => None,
         }
@@ -57,6 +59,7 @@ impl WorkFlowTrait for HandmadeWorkFlow {
             &SiteKindHandmade::Jfadocuments => jfadocuments().await,
             &SiteKindHandmade::MoonLight => moonlight().await,
             &SiteKindHandmade::Nikken => nikken().await,
+            &SiteKindHandmade::Toraiz => toraiz().await,
             &SiteKindHandmade::Yodosha => yodosha().await,
         }
     }
@@ -320,6 +323,46 @@ pub async fn moonlight() -> Vec<Term> {
         });
     }
     renews
+}
+
+// CSSでは指定できなかったので手書き
+pub async fn toraiz() -> Vec<Term> {
+    let body = get_html("https://toraiz.jp/english-times/book/10573/", "utf-8")
+        .await
+        .unwrap();
+
+    let fragment = Html::parse_fragment(&body);
+
+    let titles_selector = Selector::parse("div.relative.hidden > main > div.l-main__inner > div > article > div.articleSection__content > h4").unwrap();
+    let titles: Vec<_> = fragment
+        .select(&titles_selector)
+        .map(|e| e.text().collect::<String>())
+        .collect();
+
+    println!("{:?}", titles);
+
+    // called `Result::unwrap()` on an `Err` value: UnexpectedSelectorParseError(UnsupportedPseudoClassOrElement("has"))
+    // let bodies_selector = Selector::parse("div.relative.hidden > main > div.l-main__inner > div > article > div.articleSection__content > p:not(:has(img)))").unwrap();
+    // JSでクラスいじってた
+    // let bodies_selector = Selector::parse("div.relative.hidden > main > div.l-main__inner > div > article > div.articleSection__content > p:not(.hasImg)").unwrap();
+    let bodies_selector = Selector::parse("div.relative.hidden > main > div.l-main__inner > div > article > div.articleSection__content > p").unwrap();
+    let img_selector = Selector::parse("img").unwrap();
+    let bodies: Vec<_> = fragment
+        .select(&bodies_selector)
+        .filter(|e| e.select(&img_selector).next().is_none())
+        .map(|e| e.text().collect::<String>())
+        .skip(4)
+        .collect();
+
+    titles
+        .iter()
+        .zip(bodies.iter())
+        .map(|(t, b): (_, _)| Term {
+            title: t.to_string(),
+            body: b.to_string(),
+            images: vec![],
+        })
+        .collect()
 }
 
 pub async fn yodosha() -> Vec<Term> {
