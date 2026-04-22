@@ -4,10 +4,13 @@ use std::time::Duration;
 use scraper::{Html, Selector};
 
 use super::interface::WorkFlowTrait;
-use crate::utils::{get_html, get_links, get_term, get_text, Flow, FlowA, LinkQuery, Term};
+use crate::utils::{
+    get_html, get_links, get_term, get_terms, get_text, Flow, FlowA, LinkQuery, Term,
+};
 
 pub enum SiteKindHandmade {
     Ajima,
+    Coocan,
     Efjapan,
     Footballbox,
     Hiroshima,
@@ -30,6 +33,7 @@ impl HandmadeWorkFlow {
     pub fn my_kind(kind_str: &'static str) -> Option<SiteKindHandmade> {
         match kind_str {
             "ajima" => Some(SiteKindHandmade::Ajima),
+            "coocan" => Some(SiteKindHandmade::Coocan),
             "efjapan" => Some(SiteKindHandmade::Efjapan),
             "footballbox" => Some(SiteKindHandmade::Footballbox),
             "hiroshima" => Some(SiteKindHandmade::Hiroshima),
@@ -53,6 +57,7 @@ impl WorkFlowTrait for HandmadeWorkFlow {
     async fn get_terms(&self) -> Vec<Term> {
         match &self.kind {
             &SiteKindHandmade::Ajima => ajima().await,
+            &SiteKindHandmade::Coocan => coocan().await,
             &SiteKindHandmade::Efjapan => efjapan().await,
             &SiteKindHandmade::Footballbox => footballbox().await,
             &SiteKindHandmade::Hiroshima => hiroshima().await,
@@ -128,6 +133,226 @@ pub async fn ajima() -> Vec<Term> {
             }
         })
         .collect()
+}
+
+pub async fn coocan() -> Vec<Term> {
+    let links: Vec<String> =
+        get_links(LinkQuery {
+            url: "https://moz.la.coocan.jp/fussball/lexikon/top.html",
+            base: "https://moz.la.coocan.jp/fussball/lexikon/",
+            selector_string: "div > table > tbody > tr > td > font:not(:nth-child(3)):not(:nth-child(7)) a, div > table > tbody > tr:nth-child(5) > td > a",
+            encoding: "utf-8",
+        })
+    .await.unwrap();
+
+    let s_title = "div > table > tbody > tr > td > dl:nth-of-type(odd) > dt";
+    let s_body = "div > table > tbody > tr > td > dl:nth-of-type(odd) > dd";
+    let s_title2 =
+        "div > table > tbody > tr > td > dl:nth-of-type(even) > dd > font:nth-of-type(2)";
+    let s_body2 = "div > table > tbody > tr > td > dl:nth-of-type(even) > dd";
+    let encoding = "utf-8";
+    join_all(links.iter().map(|link| async move {
+        if link.ends_with("b.html") {
+            let (res1, res2) = futures::join!(
+                get_terms(link.to_string(), s_title, s_body, None, encoding),
+                get_term(
+                    link.to_string(),
+                    "body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(3) > dd:nth-child(312) > blockquote > dl > dt > font:nth-child(2) > b",
+                    "body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(3) > dd:nth-child(312) > blockquote > dl > dt > font:nth-child(2)",
+                    None,
+                    encoding
+                ),
+            );
+            match (res1, res2) {
+                (Ok(mut r1), Ok(r2)) => {
+                    r1.push(r2);
+                    Ok(r1)
+                }
+                (Err(e), _) => Err(e),
+                (_, Err(e)) => Err(e),
+            }
+        } else if link.ends_with("f.html") {
+            let (res1, res2) = futures::join!(
+                get_terms(link.to_string(), s_title, s_body, None, encoding),
+                get_terms(
+                    link.to_string(),
+                    "body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(even) > dd:nth-of-type(1)",
+                    "body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(even) > dd:nth-of-type(2)",
+                    None,
+                    encoding
+                ),
+            );
+            match (res1, res2) {
+                (Ok(mut r1), Ok(r2)) => {
+                    r1.extend(r2);
+                    Ok(r1)
+                }
+                (Err(e), _) => Err(e),
+                (_, Err(e)) => Err(e),
+            }
+        } else if link.ends_with("k.html") {
+            let (res1, res2, res3, res4) = futures::join!(
+                get_terms(link.to_string(), s_title, s_body, None, encoding),
+                get_term(
+                    link.to_string(),
+                    "div > table > tbody > tr:nth-child(1) > td > dl:nth-child(6) > dd:nth-child(1)",
+                    "div > table > tbody > tr:nth-child(1) > td > dl:nth-child(6) > dd:nth-child(2)",
+                    None, encoding
+                ),
+                get_term(
+                    link.to_string(),
+                    "div > table > tbody > tr:nth-child(1) > td > dl:nth-child(8) > dd > font:nth-child(2) > b",
+                    "div > table > tbody > tr:nth-child(1) > td > dl:nth-child(8) > dd > font:nth-child(2),div > table > tbody > tr:nth-child(1) > td > dl:nth-child(8) > dd > font:nth-child(3)",
+                    None, encoding
+                ),
+                get_term(
+                    link.to_string(),
+                    "div > table > tbody > tr:nth-child(1) > td > dl:nth-child(4) > dd > font:nth-child(2) > b",
+                    "div > table > tbody > tr:nth-child(1) > td > dl:nth-child(4) > dd > font:nth-child(2)", 
+                    None, encoding
+                ),
+            );
+            match (res1, res2, res3, res4) {
+                (Ok(mut r1), Ok(r2), Ok(r3), Ok(r4)) => {
+                    r1.push(r2);
+                    r1.push(r3);
+                    r1.push(r4);
+                    Ok(r1)
+                }
+                (Err(e), _, _, _) => Err(e),
+                (_, Err(e), _, _) => Err(e),
+                (_, _, Err(e), _) => Err(e),
+                (_, _, _, Err(e)) => Err(e),
+            }
+        } else if link.ends_with("m.html") {
+            let (res1, res2) = futures::join!(
+                get_terms(link.to_string(), s_title, s_body, None, encoding),
+                get_term(
+                    link.to_string(),
+                    "div > table > tbody > tr > td > dl:nth-of-type(even) > dd:nth-of-type(1)",
+                    "div > table > tbody > tr > td > dl:nth-of-type(even) > dd:nth-of-type(2)",
+                    None,
+                    encoding
+                )
+            );
+            match (res1, res2) {
+                (Ok(mut r1), Ok(r2)) => {
+                    r1.push(r2);
+                    Ok(r1)
+                }
+                (Err(e), _) => Err(e),
+                (_, Err(e)) => Err(e),
+            }
+         } else if link.ends_with("s.html") {
+            let (res1, res2) = futures::join!(
+                get_terms(
+                    link.to_string(),
+                    "body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(even) > dt",
+                    "body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(even) > dd",
+                    None,
+                    encoding
+                ),
+                get_terms(
+                    link.to_string(),
+                    "div > table > tbody > tr:nth-child(1) > td > dl:nth-child(odd) > dd:nth-of-type(1)",
+                    "div > table > tbody > tr:nth-child(1) > td > dl:nth-child(odd) > dd:nth-of-type(2)",
+                    None,
+                    encoding
+                ),
+            );
+            match (res1, res2) {
+                (Ok(mut r1), Ok(r2)) => {
+                    r1.extend(r2);
+                    Ok(r1)
+                }
+                (Err(e), _) => Err(e),
+                (_, Err(e)) => Err(e),
+            }
+        } else if link.ends_with("w.html") {
+            let (res1, res2, res3) = futures::join!(
+                get_terms(link.to_string(), s_title, s_body, None, encoding),
+                get_term(
+                    link.to_string(),
+                    "body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(4) > dd:nth-child(1) > font:nth-child(2)",
+                    "body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(4) > dd:nth-child(2),body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(4) > dd:nth-child(3),body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(4) > dd:nth-child(4)",
+                    None,
+                    encoding
+                ),
+                get_term(
+                    link.to_string(),
+                    "body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(6) > dd:nth-child(1) > font:nth-child(2)",
+                    "body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(6) > dd:nth-child(2) > font",
+                    None,
+                    encoding
+                )
+            );
+            match (res1, res2, res3) {
+                (Ok(mut r1), Ok(r2), Ok(r3)) => {
+                    r1.push(r2);
+                    r1.push(r3);
+                    Ok(r1)
+                }
+                (Err(e), _, _) => Err(e),
+                (_, Err(e), _) => Err(e),
+                (_, _, Err(e)) => Err(e),
+            }
+        } else if link.ends_with("y.html") {
+            let (res1, res2) = futures::join!(
+                get_terms(
+                    link.to_string(),
+                    "div > table > tbody > tr > td > dl > dt:first-child",
+                    s_body,
+                    None,
+                    encoding
+                ),
+                get_terms(link.to_string(), s_title2, s_body2, None, encoding)
+            );
+            match (res1, res2) {
+                (Ok(mut r1), Ok(r2)) => {
+                    r1.extend(r2);
+                    Ok(r1)
+                }
+                (Err(e), _) => Err(e),
+                (_, Err(e)) => Err(e),
+            }
+        } else if link.ends_with("z.html") {
+            let (res1, res2) = futures::join!(
+                get_terms(link.to_string(), s_title, s_body, None, encoding),
+                get_term(
+                    link.to_string(),
+                    "body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(4) > dd:nth-child(1) > font:nth-child(2)", 
+                    "body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(4) > dd:nth-child(2), body > div > table > tbody > tr:nth-child(1) > td > dl:nth-child(4) > dd:nth-child(3)", 
+                    None,
+                    encoding
+                )
+            );
+            match (res1, res2) {
+                (Ok(mut r1), Ok(r2)) => {
+                    r1.push(r2);
+                    Ok(r1)
+                }
+                (Err(e), _) => Err(e),
+                (_, Err(e)) => Err(e),
+            }
+        } else {
+            let (res1, res2) = futures::join!(
+                get_terms(link.to_string(), s_title, s_body, None, encoding),
+                get_terms(link.to_string(), s_title2, s_body2, None, encoding)
+            );
+            match (res1, res2) {
+                (Ok(mut r1), Ok(r2)) => {
+                    r1.extend(r2);
+                    Ok(r1)
+                }
+                (Err(e), _) => Err(e),
+                (_, Err(e)) => Err(e),
+            }
+        }
+    }))
+    .await
+    .into_iter()
+    .flat_map(|x| x.unwrap())
+    .collect()
 }
 
 pub async fn efjapan() -> Vec<Term> {

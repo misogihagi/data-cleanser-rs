@@ -56,6 +56,7 @@ define_args!(
     chemicoat,
     chintai,
     civileng,
+    coocan,
     cybernet,
     efjapan,
     ena,
