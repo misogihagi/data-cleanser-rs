@@ -64,6 +64,7 @@ define_args!(
     fastretailing,
     felissimo,
     footballbox,
+    footballzone,
     fukuwatanabe,
     globis,
     goonet,

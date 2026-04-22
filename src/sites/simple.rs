@@ -31,6 +31,7 @@ impl SimpleWorkFlow {
             "esp" => Some(SiteKindSimple::A(SiteKindSimpleA::ESP)),
             "fastretailing" => Some(SiteKindSimple::A(SiteKindSimpleA::Fastretailing)),
             "felissimo" => Some(SiteKindSimple::A(SiteKindSimpleA::Felissimo)),
+            "footballzone" => Some(SiteKindSimple::A(SiteKindSimpleA::Footballzone)),
             "fukuwatanabe" => Some(SiteKindSimple::A(SiteKindSimpleA::Fukuwatanabe)),
             "globis" => Some(SiteKindSimple::C(SiteKindSimpleC::Globis)),
             "goonet" => Some(SiteKindSimple::A(SiteKindSimpleA::Goonet)),
@@ -109,6 +110,7 @@ pub enum SiteKindSimpleA {
     ESP,
     Fastretailing,
     Felissimo,
+    Footballzone,
     Fukuwatanabe,
     Goonet,
     Gurubi,
@@ -229,6 +231,13 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             level1_selector: "div.words-tabContents:nth-child(3) > div:nth-child(2) > div > div > ul > li > a",
             title_selector: ".cmn-pageTitle_main > span:nth-child(1)",
             body_selector: ".single-wordsArticleBody_contents > p",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Footballzone => FlowA {
+            level2_links: vec![String::from("https://www.football-zone.net/archives/411025")],
+            level1_selector: "#content > section.detail > div.paragraph > p:not(:nth-child(3)) > a",
+            title_selector: "#content > section.detail > div.paragraph > p:nth-child(2) > strong",
+            body_selector: "#content > section.detail > div.paragraph > p:nth-child(2)",
             ..Default::default()
         },
         SiteKindSimpleA::Fukuwatanabe => FlowA {
