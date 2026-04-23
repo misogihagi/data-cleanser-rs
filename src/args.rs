@@ -87,6 +87,7 @@ define_args!(
     mintetsu,
     mizuho,
     moonlight,
+    naganofc,
     naigai,
     nichiren,
     nikken,

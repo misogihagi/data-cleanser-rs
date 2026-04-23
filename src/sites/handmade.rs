@@ -19,6 +19,7 @@ pub enum SiteKindHandmade {
     Nikken,
     Toraiz,
     Yodosha,
+    Naganofc,
 }
 
 pub struct HandmadeWorkFlow {
@@ -42,6 +43,7 @@ impl HandmadeWorkFlow {
             "nikken" => Some(SiteKindHandmade::Nikken),
             "toraiz" => Some(SiteKindHandmade::Toraiz),
             "yodosha" => Some(SiteKindHandmade::Yodosha),
+            "naganofc" => Some(SiteKindHandmade::Naganofc),
             _ => None,
         }
     }
@@ -66,6 +68,7 @@ impl WorkFlowTrait for HandmadeWorkFlow {
             &SiteKindHandmade::Nikken => nikken().await,
             &SiteKindHandmade::Toraiz => toraiz().await,
             &SiteKindHandmade::Yodosha => yodosha().await,
+            &SiteKindHandmade::Naganofc => naganofc().await,
         }
     }
 }
@@ -684,4 +687,85 @@ pub async fn nikken() -> Vec<Term> {
     }
     .get_terms()
     .await
+}
+
+pub async fn naganofc() -> Vec<Term> {
+    let body = get_html(
+        "https://www.naganofc.com/wp/aboutus/knowledge/tactics",
+        "utf-8",
+    )
+    .await
+    .unwrap();
+
+    let fragment = Html::parse_fragment(&body);
+
+    // 親要素である .entry-body 直下の全要素を上から順番に取得する
+    let selector = Selector::parse(".entry-body > *").unwrap();
+
+    let mut terms = vec![];
+    let mut current_title = String::new();
+    let mut current_body = String::new();
+    let mut is_in_defence = false;
+
+    // 順番にループ
+    for el in fragment.select(&selector) {
+        let tag_name = el.value().name(); // "h3", "p", "div" 等
+        let t = el.text().collect::<String>();
+        let trimmed = t.trim();
+
+        if trimmed == "１１．ゾーンプレス" {
+            is_in_defence = false;
+        }
+
+        if tag_name == "h3" {
+            // 新しいh3が来た時点で、これまでにパースしたものを保存する
+            if !current_title.is_empty() {
+                terms.push(Term {
+                    title: current_title.clone(),
+                    body: current_body.trim().to_string(),
+                    images: vec![],
+                });
+            }
+            // 新しいTitleを設定し、Bodyを空にリセットする
+            current_title = el.text().collect::<String>().trim().to_string();
+            current_body = String::new();
+        } else if is_in_defence {
+            if !trimmed.is_empty() && tag_name == "h5" {
+                if !current_title.is_empty() {
+                    terms.push(Term {
+                        title: current_title.clone(),
+                        body: current_body.trim().to_string(),
+                        images: vec![],
+                    });
+                }
+                // 新しいTitleを設定し、Bodyを空にリセットする
+                current_title = trimmed.to_string();
+                current_body = String::new();
+            } else if !trimmed.is_empty() && tag_name == "p" {
+                current_body.push_str(trimmed);
+                current_body.push('\n');
+            }
+        } else if !current_title.is_empty() {
+            if trimmed == "(ア)ディフェンスの用語" {
+                // ディフェンスの用語と判断して、TitleとBodyを空にリセットする
+                current_title = String::new();
+                current_body = String::new();
+                is_in_defence = true;
+            } else if !trimmed.is_empty() {
+                current_body.push_str(trimmed);
+                current_body.push('\n');
+            }
+        }
+    }
+
+    // 最後のH3以降の段落も忘れずにPushする
+    if !current_title.is_empty() {
+        terms.push(Term {
+            title: current_title,
+            body: current_body.trim().to_string(),
+            images: vec![],
+        });
+    }
+
+    terms
 }
