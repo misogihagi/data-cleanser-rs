@@ -31,6 +31,7 @@ impl SimpleWorkFlow {
             "esp" => Some(SiteKindSimple::A(SiteKindSimpleA::ESP)),
             "fastretailing" => Some(SiteKindSimple::A(SiteKindSimpleA::Fastretailing)),
             "felissimo" => Some(SiteKindSimple::A(SiteKindSimpleA::Felissimo)),
+            "footballcottage" => Some(SiteKindSimple::A(SiteKindSimpleA::Footballcottage)),
             "footballzone" => Some(SiteKindSimple::A(SiteKindSimpleA::Footballzone)),
             "fukuwatanabe" => Some(SiteKindSimple::A(SiteKindSimpleA::Fukuwatanabe)),
             "globis" => Some(SiteKindSimple::C(SiteKindSimpleC::Globis)),
@@ -111,6 +112,7 @@ pub enum SiteKindSimpleA {
     ESP,
     Fastretailing,
     Felissimo,
+    Footballcottage,
     Footballzone,
     Fukuwatanabe,
     Goonet,
@@ -233,6 +235,13 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             level1_selector: "div.words-tabContents:nth-child(3) > div:nth-child(2) > div > div > ul > li > a",
             title_selector: ".cmn-pageTitle_main > span:nth-child(1)",
             body_selector: ".single-wordsArticleBody_contents > p",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Footballcottage => FlowA {
+            level2_links: vec![String::from("https://footballcottage.com/article/soccer_words/")],
+            level1_selector: "#nocopy > div.entry-content > ul > li > a",
+            title_selector: "#nocopy > div.entry-content > h1",
+            body_selector: "#nocopy > div.entry-content > p",
             ..Default::default()
         },
         SiteKindSimpleA::Footballzone => FlowA {
