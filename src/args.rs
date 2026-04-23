@@ -100,6 +100,7 @@ define_args!(
     rewords,
     ri,
     ryugaku,
+    sakaiku,
     shimauma,
     smbcnikko,
     smtrc,

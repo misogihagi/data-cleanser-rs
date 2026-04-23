@@ -58,6 +58,7 @@ impl SimpleWorkFlow {
             "pfa" => Some(SiteKindSimple::A(SiteKindSimpleA::Pfa)),
             //        "ntt" => Some(SiteKindSimple::A(SiteKindSimpleA::Ntt)),
             "rewords" => Some(SiteKindSimple::A(SiteKindSimpleA::Rewords)),
+            "sakaiku" => Some(SiteKindSimple::A(SiteKindSimpleA::Sakaiku)),
             "ri" => Some(SiteKindSimple::B(SiteKindSimpleB::Ri)),
             "ryugaku" => Some(SiteKindSimple::A(SiteKindSimpleA::Ryugaku)),
             "sumai1" => Some(SiteKindSimple::A(SiteKindSimpleA::Sumai1)),
@@ -132,6 +133,7 @@ pub enum SiteKindSimpleA {
     //    Ntt,
     Rewords,
     Ryugaku,
+    Sakaiku,
     Sumai1,
     Smbcnikko,
     Smtrc,
@@ -424,6 +426,14 @@ fn simple_a(kind: &SiteKindSimpleA) -> FlowA<'static> {
             level1_selector: "#list > ul:nth-child(1) > li > a",
             title_selector: "#ue > div:nth-child(1) > h2:nth-child(1)",
             body_selector: "div.contents:nth-child(3)",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Sakaiku => FlowA {
+            index: "https://www.sakaiku.jp/words/",
+            level2_selector: "#main > div:nth-child(3) > ul > li > a",
+            level1_selector: "#main > dl > dt > a",
+            title_selector: "#main > div.explanation-article > h2",
+            body_selector: "#main > div.explanation-article",
             ..Default::default()
         },
         SiteKindSimpleA::Ryugaku => FlowA {
