@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use std::default::Default;
 use std::fs::{create_dir_all, File};
 use std::io::Write;
+use std::sync::OnceLock;
 use std::time::Duration;
 use std::vec;
 use url::Url;
@@ -361,10 +362,18 @@ const RETRY_INTERVAL: u64 = 5;
 const BANNED_INTERVAL: u64 = 600;
 const APP_USER_AGENT: &str = "Mozilla/5.0 (MSIE; Windows 10)";
 
+fn http_client() -> &'static reqwest::Client {
+    static CLIENT: OnceLock<reqwest::Client> = OnceLock::new();
+    CLIENT.get_or_init(|| {
+        reqwest::Client::builder()
+            .user_agent(APP_USER_AGENT)
+            .build()
+            .expect("Failed to build HTTP client")
+    })
+}
+
 pub async fn get_html(url: impl AsRef<str>, encoding_str: &str) -> reqwest::Result<String> {
-    let client = reqwest::Client::builder()
-        .user_agent(APP_USER_AGENT)
-        .build()?;
+    let client = http_client();
 
     let encoding = match encoding_str {
         "utf-8" => encoding_rs::UTF_8,
