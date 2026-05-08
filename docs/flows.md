@@ -1,4 +1,4 @@
-# Flow Types: FlowA, FlowB, FlowC
+# Flow Types: HierarchicalFlow, SinglepageFlow, PageLinkFlow
 
 本プロジェクトでは、用語集サイトのスクレイピングパターンを3つの **Flow** 型として定義しています。  
 すべての Flow は共通の `Flow` トレイトを実装し、以下の4つのメソッドを持ちます。
@@ -15,7 +15,7 @@ pub trait Flow {
 
 ---
 
-## FlowA — 階層型リンク構造
+## HierarchicalFlow — 階層型リンク構造
 
 最も利用されるパターンです。最大3段階のリンクをたどって用語詳細ページに到達します。
 
@@ -59,7 +59,7 @@ graph LR
 
 ```rust
 // 2段階リンク: index → level2_links → links → terms
-FlowA {
+HierarchicalFlow {
     index: "https://example.com/glossary/",
     base: "https://example.com",
     level2_selector: ".category-list > li > a",
@@ -70,7 +70,7 @@ FlowA {
 }
 
 // level2_links を直接指定
-FlowA {
+HierarchicalFlow {
     level2_links: vec![String::from("https://example.com/glossary/")],
     level1_selector: ".term-list > li > a",
     title_selector: "h1.term-title",
@@ -81,7 +81,7 @@ FlowA {
 
 ---
 
-## FlowB — ページ集約型
+## SinglepageFlow — ページ集約型
 
 1つのページ内に複数の用語（タイトルと本文）がまとまっているパターンです。  
 用語が個別ページを持たず、一覧ページから一括取得します。
@@ -109,17 +109,17 @@ graph LR
 | `encoding` | `&str` | 文字エンコーディング（デフォルト: `utf-8`） |
 | `links` | `Vec<String>` | 用語一覧ページの URL の直接指定 |
 
-### 重要な違い: FlowA vs FlowB
+### 重要な違い: HierarchicalFlow vs SinglepageFlow
 
-- **FlowA**: 各用語ページから `get_term()` で **1つの Term** を取得
-- **FlowB**: 各ページから `get_terms()` で **複数の Term** を一括取得  
+- **HierarchicalFlow**: 各用語ページから `get_term()` で **1つの Term** を取得
+- **SinglepageFlow**: 各ページから `get_terms()` で **複数の Term** を一括取得  
   → `titles_selector` と `bodies_selector` は同数の要素にマッチする必要があります
 
 ### 使用例
 
 ```rust
 // index ページから直接用語を取得
-FlowB {
+SinglepageFlow {
     index: "https://example.com/glossary/",
     titles_selector: "table > tbody > tr > td:nth-child(1)",
     bodies_selector: "table > tbody > tr > td:nth-child(2)",
@@ -127,7 +127,7 @@ FlowB {
 }
 
 // 複数ページの URL を直接指定
-FlowB {
+SinglepageFlow {
     links: vec!["https://example.com/glossary/a".to_string()],
     titles_selector: ".term-title",
     bodies_selector: ".term-body",
@@ -137,12 +137,12 @@ FlowB {
 
 ---
 
-## FlowC — ページネーション型
+## PageLinkFlow — ページネーション型
 
 ページネーション（「次のページ」リンク）をたどりながら用語リンクを収集するパターンです。  
 主に、ページ数が不定で次ページリンクを順にたどる必要があるサイトに使われます。
 
-> **ページネーション**: `level2_selector`（二階層目）は、FlowA のようにカテゴリページへのリンクではなく、**次ページへのリンク**を取得するために使われます。次ページが見つからなくなるまでループでページを巡回し、各ページから `level1_selector` で用語ページへのリンクを収集します。
+> **ページネーション**: `level2_selector`（二階層目）は、HierarchicalFlow のようにカテゴリページへのリンクではなく、**次ページへのリンク**を取得するために使われます。次ページが見つからなくなるまでループでページを巡回し、各ページから `level1_selector` で用語ページへのリンクを収集します。
 
 ### データフロー
 
@@ -176,16 +176,16 @@ graph LR
 | `pool_size` | `usize` | 並行リクエスト数（デフォルト: `50`） |
 | `rest` | `u64` | チャンク間の待機秒数（デフォルト: `5`） |
 
-### FlowA との違い
+### HierarchicalFlow との違い
 
-- **FlowA** の `level2_selector` は、インデックスからカテゴリページへのリンクを表す
-- **FlowC** の `level2_selector` は、**次ページ**へのリンクを表す（ページネーション用）
-- FlowC の `get_links()` は、次ページが見つからなくなるまでループで収集を続ける
+- **HierarchicalFlow** の `level2_selector` は、インデックスからカテゴリページへのリンクを表す
+- **PageLinkFlow** の `level2_selector` は、**次ページ**へのリンクを表す（ページネーション用）
+- PageLinkFlow の `get_links()` は、次ページが見つからなくなるまでループで収集を続ける
 
 ### 使用例
 
 ```rust
-FlowC {
+PageLinkFlow {
     index: "https://example.com/glossary/list.html",
     base: "https://example.com",
     level2_selector: "li.pagination__next > a",  // 次ページリンク
@@ -202,7 +202,7 @@ FlowC {
 
 ## 比較まとめ
 
-| 特徴 | FlowA | FlowB | FlowC |
+| 特徴 | HierarchicalFlow | SinglepageFlow | PageLinkFlow |
 |---|---|---|---|
 | **典型的な用途** | 階層型リンクの用語集 | 1ページに複数用語がある用語集 | ページネーションのある用語集 |
 | **リンク階層** | 最大3段階 | 0〜1段階 | ページネーションで動的 |
@@ -218,9 +218,9 @@ FlowC {
 
 | docs/README.md の分類 | 対応する Flow 型 |
 |---|---|
-| 1. 階層型リンク構造 | **FlowA** |
-| 2. カテゴリページ集約型 | **FlowB** |
+| 1. 階層型リンク構造 | **HierarchicalFlow** |
+| 2. カテゴリページ集約型 | **SinglepageFlow** |
 | 3. API利用型 | 該当なし（個別実装） |
 | 4. 正規化されていないパターン | `handmade` モジュール（個別実装） |
 
-> FlowC は README.md の分類に明示的には含まれていませんが、FlowA の変種としてページネーション対応に特化した型です。
+> PageLinkFlow は README.md の分類に明示的には含まれていませんが、HierarchicalFlow の変種としてページネーション対応に特化した型です。

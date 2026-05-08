@@ -11,7 +11,7 @@ use std::time::Duration;
 use std::vec;
 use url::Url;
 
-pub struct FlowA<'a> {
+pub struct HierarchicalFlow<'a> {
     pub index: &'a str,
     pub base: &'a str,
     pub level3_base: &'a str,
@@ -31,9 +31,9 @@ pub struct FlowA<'a> {
     pub rest: u64,
 }
 
-impl Default for FlowA<'_> {
-    fn default() -> FlowA<'static> {
-        FlowA {
+impl Default for HierarchicalFlow<'_> {
+    fn default() -> HierarchicalFlow<'static> {
+        HierarchicalFlow {
             index: "",
             base: "",
             level3_base: "",
@@ -55,7 +55,7 @@ impl Default for FlowA<'_> {
     }
 }
 
-pub struct FlowB {
+pub struct SinglepageFlow {
     pub index: &'static str,
     pub base: &'static str,
     pub level1_selector: &'static str,
@@ -64,9 +64,9 @@ pub struct FlowB {
     pub encoding: &'static str,
     pub links: Vec<String>,
 }
-impl Default for FlowB {
-    fn default() -> FlowB {
-        FlowB {
+impl Default for SinglepageFlow {
+    fn default() -> SinglepageFlow {
+        SinglepageFlow {
             index: "",
             base: "",
             level1_selector: "",
@@ -78,7 +78,7 @@ impl Default for FlowB {
     }
 }
 
-pub struct FlowC {
+pub struct PageLinkFlow {
     pub index: &'static str,
     pub base: &'static str,
     pub level3_base: &'static str,
@@ -98,9 +98,9 @@ pub struct FlowC {
     pub rest: u64,
 }
 
-impl Default for FlowC {
-    fn default() -> FlowC {
-        FlowC {
+impl Default for PageLinkFlow {
+    fn default() -> PageLinkFlow {
+        PageLinkFlow {
             index: "",
             base: "",
             level3_base: "",
@@ -139,7 +139,7 @@ const POOL_SIZE: usize = 50;
 const REST: u64 = 5;
 
 #[async_trait]
-impl Flow for FlowA<'_> {
+impl Flow for HierarchicalFlow<'_> {
     async fn get_level3_links(&self) -> Vec<String> {
         if !self.level3_links.is_empty() {
             return self.level3_links.clone();
@@ -237,7 +237,7 @@ impl Flow for FlowA<'_> {
     }
 }
 #[async_trait]
-impl Flow for FlowB {
+impl Flow for SinglepageFlow {
     async fn get_links(&self) -> Vec<String> {
         if !self.links.is_empty() {
             self.links.clone()
@@ -274,7 +274,7 @@ impl Flow for FlowB {
 }
 
 #[async_trait]
-impl Flow for FlowC {
+impl Flow for PageLinkFlow {
     async fn get_level2_links(&self) -> Vec<String> {
         if !self.level3_links.is_empty() {
             return self.level3_links.clone();

@@ -1,5 +1,5 @@
 use super::interface::WorkFlowTrait;
-use crate::utils::{get_links, Flow, FlowA, FlowB, LinkQuery, Term};
+use crate::utils::{get_links, Flow, HierarchicalFlow, SinglepageFlow, LinkQuery, Term};
 
 pub enum SiteKindCustomized {
     Hrpro,
@@ -58,7 +58,7 @@ async fn customize(kind: &SiteKindCustomized) -> Box<dyn Flow> {
             ];
             links.extend(from_the_second_links);
 
-            Box::new(FlowB {
+            Box::new(SinglepageFlow {
                 links: links,
                 titles_selector: "#article > section > section > h3",
                 bodies_selector: "#article > section > section > p",
@@ -76,7 +76,7 @@ async fn customize(kind: &SiteKindCustomized) -> Box<dyn Flow> {
                     ]);
                     total
                 });
-            Box::new(FlowA {
+            Box::new(HierarchicalFlow {
                 index: "https://www.hrpro.co.jp/glossary.php",
                 base: "https://www.hrpro.co.jp/",
                 level1_selector: ".rlt-list > li > a",
@@ -111,7 +111,7 @@ async fn customize(kind: &SiteKindCustomized) -> Box<dyn Flow> {
                 }
             }
 
-            Box::new(FlowA {
+            Box::new(HierarchicalFlow {
                 level2_links: links,
                 level1_selector: "#content > article > header > h1 > a",
                 title_selector: ".entry-title",
@@ -125,7 +125,7 @@ async fn customize(kind: &SiteKindCustomized) -> Box<dyn Flow> {
                 .into_iter()
                 .map(|s| String::from(resource) + s)
                 .collect();
-            Box::new(FlowA {
+            Box::new(HierarchicalFlow {
                 level2_links: urls,
                 base: "https://zexy.net/contents/yogo/50/",
                 level1_selector: ".glossary > ul > li > a",

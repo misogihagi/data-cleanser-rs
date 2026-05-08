@@ -1,4 +1,4 @@
-use crate::utils::{Flow, FlowA, Term};
+use crate::utils::{Flow, HierarchicalFlow, Term};
 
 use std::collections::HashMap;
 
@@ -10,7 +10,7 @@ pub async fn mitsue() -> Vec<Vec<Term>> {
     for c in chars {
         let index = format!("https://www.mitsue.co.jp/case/glossary/{}_index.html", c);
         books.push(
-            FlowA {
+            HierarchicalFlow {
                 level2_links: vec![String::from(index)],
                 base: "https://www.mitsue.co.jp/case/glossary/",
                 level1_selector: "li.bullet__item > a",
@@ -45,7 +45,7 @@ pub async fn elite_network() -> HashMap<&'static str, Vec<Term>> {
         let index = format!("https://www.elite-network.co.jp/dictionary/words_{}/", c);
         books.insert(
             c,
-            FlowA {
+            HierarchicalFlow {
                 level2_links: vec![String::from(index)],
                 level1_selector: "div.word_idx_list > a",
                 title_selector: ".midasi",
@@ -124,7 +124,7 @@ pub async fn token() -> HashMap<&'static str, Vec<Term>> {
     for (g, (url, selector)) in genre {
         books.insert(
             g,
-            FlowA {
+            HierarchicalFlow {
                 level2_links: vec![String::from(url)],
                 level1_base: "https://www.token.co.jp/estate/useful/archipedia/",
                 level1_selector: ".contents > section > section > ul > li > a",

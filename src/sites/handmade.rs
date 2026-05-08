@@ -5,7 +5,7 @@ use scraper::{Html, Selector};
 
 use super::interface::WorkFlowTrait;
 use crate::utils::{
-    get_html, get_links, get_term, get_terms, get_text, Flow, FlowA, LinkQuery, Term,
+    get_html, get_links, get_term, get_terms, get_text, Flow, HierarchicalFlow, LinkQuery, Term,
 };
 
 pub enum SiteKindHandmade {
@@ -74,7 +74,7 @@ impl WorkFlowTrait for HandmadeWorkFlow {
 }
 
 pub async fn ajima() -> Vec<Term> {
-    let links = FlowA {
+    let links = HierarchicalFlow {
         index: "https://hougen.ajima.jp/gojyuon/",
         base: "https://hougen.ajima.jp",
         level2_selector: "ul.gojyuon > li > a",
@@ -418,7 +418,7 @@ pub async fn footballbox() -> Vec<Term> {
 
 pub async fn hiroshima() -> Vec<Term> {
     /*
-    FlowB {
+    SinglepageFlow {
         index: "https://www.pref.hiroshima.lg.jp/soshiki/19/1178070843217.html",
         // html broken?
         //            titles_selector: ".sp_table_wrap > div:nth-child(1) > table:nth-child(1) > tbody:nth-child(1) > tr > td:nth-child(1)",
@@ -478,7 +478,7 @@ pub async fn jfadocuments() -> Vec<Term> {
 }
 
 pub async fn moonlight() -> Vec<Term> {
-    let mut links = FlowA {
+    let mut links = HierarchicalFlow {
         level2_links: vec![String::from("http://www.moon-light.ne.jp/termi-nology/")],
         base: "http://www.moon-light.ne.jp/termi-nology/",
         level1_selector:
@@ -490,7 +490,7 @@ pub async fn moonlight() -> Vec<Term> {
 
     links.dedup();
 
-    let terms = FlowA {
+    let terms = HierarchicalFlow {
         links: links.clone(),
         base: "http://www.moon-light.ne.jp/termi-nology/",
         title_selector: ".date",
@@ -594,7 +594,7 @@ pub async fn toraiz() -> Vec<Term> {
 }
 
 pub async fn yodosha() -> Vec<Term> {
-    let level2_links = FlowA {
+    let level2_links = HierarchicalFlow {
         index: "https://www.yodosha.co.jp/jikkenigaku/keyword/",
         base: "https://www.yodosha.co.jp/jikkenigaku/keyword/",
         level2_selector: "div.indexes > table > tbody > tr> td > a",
@@ -615,7 +615,7 @@ pub async fn yodosha() -> Vec<Term> {
     .flat_map(|r| r.unwrap())
     .collect();
 
-    FlowA {
+    HierarchicalFlow {
         links: links,
         title_selector: "div.col-sm-8:nth-child(1) > div > h1",
         body_selector: "#ruledline > p:nth-child(1)",
@@ -676,7 +676,7 @@ pub async fn nikken() -> Vec<Term> {
         level2_links.append(&mut tmp_level2_links);
     }
 
-    FlowA {
+    HierarchicalFlow {
         index: "https://www.nikken-times.co.jp/dictionary/",
         base: "https://www.nikken-times.co.jp",
         level2_links: level2_links,
