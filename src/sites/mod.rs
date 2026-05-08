@@ -15,14 +15,54 @@ use self::interface::WorkFlowTrait;
 use self::simple::SimpleWorkFlow;
 use crate::utils::Term;
 
+pub enum SiteKind {
+    Simple(SimpleWorkFlow),
+    Customized(CustomizedWorkFlow),
+    Handmade(HandmadeWorkFlow),
+}
+
+impl SiteKind {
+    pub fn from_str(s: &'static str) -> Option<Self> {
+        SimpleWorkFlow::my_kind(s)
+            .map(|k| SiteKind::Simple(SimpleWorkFlow { kind: k }))
+            .or_else(|| {
+                CustomizedWorkFlow::my_kind(s)
+                    .map(|k| SiteKind::Customized(CustomizedWorkFlow { kind: k }))
+            })
+            .or_else(|| {
+                HandmadeWorkFlow::my_kind(s).map(|k| SiteKind::Handmade(HandmadeWorkFlow { kind: k }))
+            })
+    }
+
+    pub async fn get_terms(self) -> Vec<Term> {
+        match self {
+            SiteKind::Simple(w) => w.get_terms().await,
+            SiteKind::Customized(w) => w.get_terms().await,
+            SiteKind::Handmade(w) => w.get_terms().await,
+        }
+    }
+}
+
 pub async fn run(kind_str: &'static str) -> Vec<Term> {
-    if SimpleWorkFlow::is_my_kind(kind_str) {
-        SimpleWorkFlow::new(kind_str).get_terms().await
-    } else if CustomizedWorkFlow::is_my_kind(kind_str) {
-        CustomizedWorkFlow::new(kind_str).get_terms().await
-    } else if HandmadeWorkFlow::is_my_kind(kind_str) {
-        HandmadeWorkFlow::new(kind_str).get_terms().await
-    } else {
-        panic!("not valid kind");
+    SiteKind::from_str(kind_str)
+        .expect("not valid kind")
+        .get_terms()
+        .await
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_site_kind_from_str() {
+        // Simple
+        assert!(SiteKind::from_str("aritayaki").is_some());
+        // Customized
+        assert!(SiteKind::from_str("hrpro").is_some());
+        // Handmade
+        assert!(SiteKind::from_str("ajima").is_some());
+        // Invalid
+        assert!(SiteKind::from_str("invalid_site").is_none());
     }
 }
