@@ -1,4 +1,5 @@
 use futures::future::join_all;
+use regex::Regex;
 use std::time::Duration;
 
 use scraper::{Html, Selector};
@@ -17,6 +18,7 @@ pub enum SiteKindHandmade {
     Jfadocuments,
     MoonLight,
     Nikken,
+    Ntt,
     Toraiz,
     Yodosha,
     Naganofc,
@@ -40,6 +42,7 @@ impl HandmadeWorkFlow {
             "hiroshima" => Some(SiteKindHandmade::Hiroshima),
             "jfadocuments" => Some(SiteKindHandmade::Jfadocuments),
             "moonlight" => Some(SiteKindHandmade::MoonLight),
+            "ntt" => Some(SiteKindHandmade::Ntt),
             "nikken" => Some(SiteKindHandmade::Nikken),
             "toraiz" => Some(SiteKindHandmade::Toraiz),
             "yodosha" => Some(SiteKindHandmade::Yodosha),
@@ -66,6 +69,7 @@ impl WorkFlowTrait for HandmadeWorkFlow {
             &SiteKindHandmade::Jfadocuments => jfadocuments().await,
             &SiteKindHandmade::MoonLight => moonlight().await,
             &SiteKindHandmade::Nikken => nikken().await,
+            &SiteKindHandmade::Ntt => ntt().await,
             &SiteKindHandmade::Toraiz => toraiz().await,
             &SiteKindHandmade::Yodosha => yodosha().await,
             &SiteKindHandmade::Naganofc => naganofc().await,
@@ -553,6 +557,54 @@ pub async fn moonlight() -> Vec<Term> {
     renews
 }
 
+fn extract_urls(js_text: &str) -> Vec<String> {
+    // `"url": "実際のURL"` というパターンにマッチさせる正規表現
+    // キャプチャグループ1（[^"]+）でURLの中身を抽出します
+    let re = Regex::new(r#""url"\s*:\s*"([^"]+)""#).unwrap();
+    let mut urls = Vec::new();
+
+    // テキスト全体から条件に一致する部分をすべて検索
+    for cap in re.captures_iter(js_text) {
+        // cap[1] が抽出したURL文字列
+        urls.push(cap[1].to_string());
+    }
+
+    urls
+}
+pub async fn ntt() -> Vec<Term> {
+    let body = get_html(
+        "https://www.ntt.com/etc/designs/nttcom/hq/jp/bizon/js/2024/glossary-list-reading.js",
+        "utf-8",
+    )
+    .await
+    .unwrap();
+
+    let extracted_urls = extract_urls(&body);
+
+    let s_title = ".article-title";
+    let s_body = ".article-wrap > p";
+
+    let mut results = vec![];
+
+    for chunk in extracted_urls.chunks(10) {
+        let futures = chunk.iter().map(|url| {
+            get_term(
+                "https://www.ntt.com".to_string() + url,
+                s_title,
+                s_body,
+                None,
+                "utf-8",
+            )
+        });
+        
+        let chunk_results = join_all(futures).await;
+        results.extend(chunk_results.into_iter().map(|res| res.unwrap()));
+        tokio::time::sleep(Duration::from_secs(1)).await;
+    }
+
+    results
+}
+
 // CSSでは指定できなかったので手書き
 pub async fn toraiz() -> Vec<Term> {
     let body = get_html("https://toraiz.jp/english-times/book/10573/", "utf-8")
@@ -566,8 +618,6 @@ pub async fn toraiz() -> Vec<Term> {
         .select(&titles_selector)
         .map(|e| e.text().collect::<String>())
         .collect();
-
-    println!("{:?}", titles);
 
     // called `Result::unwrap()` on an `Err` value: UnexpectedSelectorParseError(UnsupportedPseudoClassOrElement("has"))
     // let bodies_selector = Selector::parse("div.relative.hidden > main > div.l-main__inner > div > article > div.articleSection__content > p:not(:has(img)))").unwrap();
