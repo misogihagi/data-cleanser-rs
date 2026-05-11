@@ -1,7 +1,7 @@
 use std::vec;
 
 use super::interface::WorkFlowTrait;
-use crate::utils::{Flow, HierarchicalFlow, SinglepageFlow, PageLinkFlow, Term};
+use crate::utils::{Flow, HierarchicalFlow, PageLinkFlow, SinglepageFlow, Term};
 
 pub enum SiteKindSimple {
     A(SiteKindSimpleA),
@@ -57,7 +57,6 @@ impl SimpleWorkFlow {
             "nomura" => Some(SiteKindSimple::A(SiteKindSimpleA::Nomura)),
             "nrisecure" => Some(SiteKindSimple::A(SiteKindSimpleA::Nrisecure)),
             "pfa" => Some(SiteKindSimple::A(SiteKindSimpleA::Pfa)),
-            //        "ntt" => Some(SiteKindSimple::A(SiteKindSimpleA::Ntt)),
             "rewords" => Some(SiteKindSimple::A(SiteKindSimpleA::Rewords)),
             "sakaiku" => Some(SiteKindSimple::A(SiteKindSimpleA::Sakaiku)),
             "ri" => Some(SiteKindSimple::B(SiteKindSimpleB::Ri)),
@@ -132,7 +131,6 @@ pub enum SiteKindSimpleA {
     Nomura,
     Nrisecure,
     Pfa,
-    //    Ntt,
     Rewords,
     Ryugaku,
     Sakaiku,
@@ -418,16 +416,6 @@ fn simple_a(kind: &SiteKindSimpleA) -> HierarchicalFlow<'static> {
             body_selector: ".textIndent",
             ..Default::default()
         },
-        /*
-        SiteKindSimpleA::Ntt => HierarchicalFlow {
-            index: "https://www.ntt.com/bizon/glossary.html",
-            base: "https://www.ntt.com",
-            level1_selector: "#it-glossary-list-tab-words > div > div > div > ul > li > a",            
-            title_selector: ".article-title",
-            body_selector: ".article-contents",
-            ..Default::default()
-        },
-        */
         SiteKindSimpleA::Rewords => HierarchicalFlow {
             index: "https://www.re-words.net/japan/",
             base: "https://www.re-words.net/japan/",
