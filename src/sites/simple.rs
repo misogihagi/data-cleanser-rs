@@ -208,7 +208,7 @@ fn simple_a(kind: &SiteKindSimpleA) -> HierarchicalFlow<'static> {
             ..Default::default()
         },
         SiteKindSimpleA::Ena => HierarchicalFlow {
-            index: "https://www.ena.travel/glossary/all/",
+            level2_links: vec!["https://www.ena.travel/glossary/all/".to_string()],
             base: "https://www.ena.travel",
             level1_selector: "div.body > dl > dd:nth-child(2) > ul:nth-child(1) > li > a",
             title_selector: "div.guide > h2 > span > span",
