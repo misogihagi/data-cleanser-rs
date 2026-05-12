@@ -41,6 +41,7 @@ impl SimpleWorkFlow {
             "jmac" => Some(SiteKindSimple::A(SiteKindSimpleA::JMAC)),
             "kabuwatanabe" => Some(SiteKindSimple::A(SiteKindSimpleA::Kabuwatanabe)),
             "jfa" => Some(SiteKindSimple::B(SiteKindSimpleB::Jfa)),
+            "jiki" => Some(SiteKindSimple::B(SiteKindSimpleB::Jiki)),
             "kenchikuyogo" => Some(SiteKindSimple::A(SiteKindSimpleA::Kenchikuyogo)),
             "kddi" => Some(SiteKindSimple::A(SiteKindSimpleA::Kddi)),
             "kuraemon" => Some(SiteKindSimple::A(SiteKindSimpleA::Kuraemon)),
@@ -543,6 +544,7 @@ fn simple_a(kind: &SiteKindSimpleA) -> HierarchicalFlow<'static> {
 
 pub enum SiteKindSimpleB {
     Civileng,
+    Jiki,
     Ri,
     Meiwakaiun,
     Nisso,
@@ -565,6 +567,13 @@ fn simple_b(kind: &SiteKindSimpleB) -> SinglepageFlow {
             titles_selector: "#main-colum > div:nth-child(3) > h5, #main-colum > div:nth-child(3) > h4:nth-child(187)",
             bodies_selector: "#main-colum > div:nth-child(3) > p:not(:last-child)",
             ..Default::default()
+        },
+        SiteKindSimpleB::Jiki => SinglepageFlow {
+                index: "https://www.jiki.jp/words/",
+                level1_selector: "div.entry > table > tbody:nth-child(1) > tr > td > a",
+                titles_selector:".entry > h3",
+                bodies_selector: ".entry > p",
+                ..Default::default()
         },
         SiteKindSimpleB::Nisso => SinglepageFlow {
                 links: vec!["https://www.nisso-sangyo.co.jp/glossary".to_string()],

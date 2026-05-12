@@ -76,6 +76,7 @@ define_args!(
     jfa,
     jfadocuments,
     jhs,
+    jiki,
     jmac,
     kabuwatanabe,
     kenchikuyogo,
