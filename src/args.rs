@@ -63,6 +63,7 @@ define_args!(
     esp,
     fastretailing,
     felissimo,
+    fooddies,
     footballbox,
     footballcottage,
     footballzone,

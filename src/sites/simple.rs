@@ -31,6 +31,7 @@ impl SimpleWorkFlow {
             "esp" => Some(SiteKindSimple::A(SiteKindSimpleA::ESP)),
             "fastretailing" => Some(SiteKindSimple::A(SiteKindSimpleA::Fastretailing)),
             "felissimo" => Some(SiteKindSimple::A(SiteKindSimpleA::Felissimo)),
+            "fooddies" => Some(SiteKindSimple::C(SiteKindSimpleC::Fooddies)),
             "footballcottage" => Some(SiteKindSimple::A(SiteKindSimpleA::Footballcottage)),
             "footballzone" => Some(SiteKindSimple::A(SiteKindSimpleA::Footballzone)),
             "fukuwatanabe" => Some(SiteKindSimple::A(SiteKindSimpleA::Fukuwatanabe)),
@@ -613,12 +614,21 @@ fn simple_b(kind: &SiteKindSimpleB) -> SinglepageFlow {
 }
 
 pub enum SiteKindSimpleC {
+    Fooddies,
     Globis,
     Konest,
 }
 
 fn simple_c(kind: &SiteKindSimpleC) -> PageLinkFlow {
     match kind {
+        SiteKindSimpleC::Fooddies => PageLinkFlow {
+            level2_links: vec!["https://fooddies.tokyo/".to_string()],
+            level2_selector: ".next",
+            level1_selector: "a.entry-card-wrap",
+            title_selector: ".entry-title",
+            body_selector: "p.whitespace-pre-wrap:nth-child(4), p.whitespace-pre-wrap:nth-child(5), .entry-content > p:nth-child(1), .entry-content > p:nth-child(2), .entry-content > p:nth-child(3), div.group:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(1), .markdown, .entry-content > p:nth-child(6)",
+            ..Default::default()
+        },
         SiteKindSimpleC::Globis => PageLinkFlow {
             index: "https://mba.globis.ac.jp/about_mba/glossary/",
             level3_selector: ".hiragana > li > a, ul.link_list:nth-child(2) > li:nth-child(1) > a:nth-child(1), .alphabet > li > a",
