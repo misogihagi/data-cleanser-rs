@@ -116,6 +116,7 @@ define_args!(
     suumo,
     theglenlivet,
     toraiz,
+    unew,
     universalooh,
     wafermeasurementinspection,
     webtan,

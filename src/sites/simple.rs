@@ -73,6 +73,7 @@ impl SimpleWorkFlow {
             "suumo" => Some(SiteKindSimple::A(SiteKindSimpleA::Suumo)),
             "sufu" => Some(SiteKindSimple::A(SiteKindSimpleA::Sufu)),
             "theglenlivet" => Some(SiteKindSimple::B(SiteKindSimpleB::Theglenlivet)),
+            "unew" => Some(SiteKindSimple::A(SiteKindSimpleA::Unew)),
             "universalooh" => Some(SiteKindSimple::B(SiteKindSimpleB::UniversalOOH)),
             "wafermeasurementinspection" => Some(SiteKindSimple::A(
                 SiteKindSimpleA::WaferMeasurementInspection,
@@ -149,6 +150,7 @@ pub enum SiteKindSimpleA {
     Webtan,
     Nichiren,
     Sufu,
+    Unew,
 }
 
 fn simple_a(kind: &SiteKindSimpleA) -> HierarchicalFlow<'static> {
@@ -522,6 +524,14 @@ fn simple_a(kind: &SiteKindSimpleA) -> HierarchicalFlow<'static> {
             level1_selector: "div.ui-section_h3 > div > div > ul > li > div > a",
             title_selector: ".ui-section--h1 > div > h1",
             body_selector: ".pagecaption-txt",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Unew => HierarchicalFlow {
+            index: "http://www.u-new.com/word/",
+            level2_selector: "table.wording_list_table01 > tbody > tr > td > a, div.width_700 > table > tbody > tr> td > a",
+            level1_selector: "div.text_04 > a",
+            title_selector: ".obi_02 > h2",
+            body_selector: ".text_01, .text_02",
             ..Default::default()
         },
         SiteKindSimpleA::WaferMeasurementInspection => HierarchicalFlow {
