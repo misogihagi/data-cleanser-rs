@@ -42,6 +42,7 @@ impl SimpleWorkFlow {
             "kabuwatanabe" => Some(SiteKindSimple::A(SiteKindSimpleA::Kabuwatanabe)),
             "jfa" => Some(SiteKindSimple::B(SiteKindSimpleB::Jfa)),
             "kenchikuyogo" => Some(SiteKindSimple::A(SiteKindSimpleA::Kenchikuyogo)),
+            "kddi" => Some(SiteKindSimple::A(SiteKindSimpleA::Kddi)),
             "kuraemon" => Some(SiteKindSimple::A(SiteKindSimpleA::Kuraemon)),
             "kyokutok" => Some(SiteKindSimple::A(SiteKindSimpleA::Kyokutok)),
             "konest" => Some(SiteKindSimple::C(SiteKindSimpleC::Konest)),
@@ -120,6 +121,7 @@ pub enum SiteKindSimpleA {
     JMAC,
     Kabuwatanabe,
     Kenchikuyogo,
+    Kddi,
     Kuraemon,
     Kyokutok,
     Livable,
@@ -306,6 +308,14 @@ fn simple_a(kind: &SiteKindSimpleA) -> HierarchicalFlow<'static> {
             level1_selector:".is-style-stripes > table:nth-child(1) > tbody:nth-child(1) > tr > td > a",
             title_selector: "h1.alignwide",
             body_selector: ".entry-content > p:not([class])",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Kddi => HierarchicalFlow {
+            index: "https://biz.kddi.com/content/glossary/",
+            level2_selector:"#termInitialsJapanese > li > a, #termInitialsAlphabet > li > a",
+            level1_selector:"li.biz-p-glossary__ListItem > a",
+            title_selector: ".biz-c-glossary__detailHeader__mainText",
+            body_selector: "p.biz-c-glossary__detailHeader__text, .biz-c-glossary__detailContent",
             ..Default::default()
         },
         SiteKindSimpleA::Kuraemon => HierarchicalFlow {

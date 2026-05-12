@@ -79,6 +79,7 @@ define_args!(
     jmac,
     kabuwatanabe,
     kenchikuyogo,
+    kddi,
     konest,
     kuraemon,
     kyokutok,
