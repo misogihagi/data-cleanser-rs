@@ -445,9 +445,11 @@ pub async fn get_links(q: LinkQuery<'_>) -> reqwest::Result<Vec<String>> {
 
     let selector = Selector::parse(q.selector_string).unwrap();
 
+    // hrefだけ書いてあることがあったり、その他は正常だったりするので、正常なもののみ抽出
     Ok(fragment
         .select(&selector)
-        .map(|e| join_url(q.url, e.value().attr("href").unwrap()))
+        .map(|e| join_url(q.url, e.value().attr("href").unwrap_or("")))
+        .filter(|l| !l.is_empty())
         .collect())
 }
 
