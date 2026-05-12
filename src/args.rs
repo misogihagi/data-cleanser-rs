@@ -117,5 +117,6 @@ define_args!(
     wafermeasurementinspection,
     webtan,
     yodosha,
+    yatsuhashi,
     zexy,
 );
