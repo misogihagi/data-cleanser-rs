@@ -649,12 +649,12 @@ fn simple_c(kind: &SiteKindSimpleC) -> PageLinkFlow {
             ..Default::default()
         },
         SiteKindSimpleC::Konest => PageLinkFlow {
-            index: "https://www.konest.com/contents/todays_korean_list.html",
+            level2_links: vec!["https://www.konest.com/contents/todays_korean_list.html".to_string()],
             base: "https://www.konest.com",
             level1_base: "https://www.konest.com/contents/",
             level2_selector:
-                "li.c-pagination__item:nth-last-child(2) > a:nth-child(1):not(.is-disabled)",
-            level1_selector: "li.c-card > a:nth-child(1)",
+                "li.c-pagination__item:nth-child(9) > a:nth-child(1):not(.is-disabled)",
+            level1_selector: " a",
             title_selector: "#korean_title",
             body_selector:
                 ".c-hangul__content-main--translate, .c-hangul__content-description--item",
