@@ -20,6 +20,7 @@ impl SimpleWorkFlow {
     }
     pub fn my_kind(kind_str: &'static str) -> Option<SiteKindSimple> {
         match kind_str {
+            "amazonpay" => Some(SiteKindSimple::B(SiteKindSimpleB::Amazonpay)),
             "aritayaki" => Some(SiteKindSimple::A(SiteKindSimpleA::Aritayaki)),
             "athome" => Some(SiteKindSimple::A(SiteKindSimpleA::Athome)),
             "beer" => Some(SiteKindSimple::A(SiteKindSimpleA::Beer)),
@@ -554,6 +555,7 @@ fn simple_a(kind: &SiteKindSimpleA) -> HierarchicalFlow<'static> {
 }
 
 pub enum SiteKindSimpleB {
+    Amazonpay,
     Civileng,
     Jiki,
     Ri,
@@ -566,6 +568,12 @@ pub enum SiteKindSimpleB {
 
 fn simple_b(kind: &SiteKindSimpleB) -> SinglepageFlow {
     match kind {
+        SiteKindSimpleB::Amazonpay => SinglepageFlow {
+                links: vec!["https://pay.amazon.co.jp/resources/ecommerce-glossary".to_string()],
+                titles_selector:"div > div > bsp-faq-question > .FaqQuestion-header",
+                bodies_selector:"div > div > bsp-faq-question > .FaqQuestion-answer",
+                ..Default::default()
+        },
         SiteKindSimpleB::Civileng => SinglepageFlow {
                 links: ["a","ka","sa","ta","na","ha","ma","ya","ra","wa"].map(|s| "http://civileng.ec-net.jp/yougo/".to_string()+s+".htm").to_vec(),
                 titles_selector:"table > tbody > tr > td:nth-child(2)",

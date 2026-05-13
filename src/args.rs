@@ -50,6 +50,7 @@ macro_rules! define_args {
 
 define_args!(
     ajima,
+    amazonpay,
     aritayaki,
     athome,
     beer,
