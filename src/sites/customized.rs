@@ -1,5 +1,5 @@
 use super::interface::WorkFlowTrait;
-use crate::utils::{get_links, Flow, HierarchicalFlow, SinglepageFlow, LinkQuery, Term};
+use crate::utils::{get_links, Flow, HierarchicalFlow, LinkQuery, SinglepageFlow, Term};
 
 pub enum SiteKindCustomized {
     Hrpro,

@@ -33,11 +33,10 @@ impl SiteKind {
                     .map(|k| SiteKind::Customized(CustomizedWorkFlow { kind: k }))
             })
             .or_else(|| {
-                HandmadeWorkFlow::my_kind(s).map(|k| SiteKind::Handmade(HandmadeWorkFlow { kind: k }))
+                HandmadeWorkFlow::my_kind(s)
+                    .map(|k| SiteKind::Handmade(HandmadeWorkFlow { kind: k }))
             })
-            .or_else(|| {
-                PdfWorkFlow::my_kind(s).map(|k| SiteKind::Pdf(PdfWorkFlow { kind: k }))
-            })
+            .or_else(|| PdfWorkFlow::my_kind(s).map(|k| SiteKind::Pdf(PdfWorkFlow { kind: k })))
     }
 
     pub async fn get_terms(self) -> Vec<Term> {
