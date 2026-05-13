@@ -59,6 +59,7 @@ define_args!(
     civileng,
     coocan,
     cybernet,
+    daiichilife,
     efjapan,
     ena,
     esp,

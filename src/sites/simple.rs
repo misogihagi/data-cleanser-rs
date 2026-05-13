@@ -28,6 +28,7 @@ impl SimpleWorkFlow {
             "chintai" => Some(SiteKindSimple::A(SiteKindSimpleA::Chintai)),
             "civileng" => Some(SiteKindSimple::B(SiteKindSimpleB::Civileng)),
             "cybernet" => Some(SiteKindSimple::A(SiteKindSimpleA::Cybernet)),
+            "daiichilife" => Some(SiteKindSimple::A(SiteKindSimpleA::Daiichilife)),
             "ena" => Some(SiteKindSimple::A(SiteKindSimpleA::Ena)),
             "esp" => Some(SiteKindSimple::A(SiteKindSimpleA::ESP)),
             "fastretailing" => Some(SiteKindSimple::A(SiteKindSimpleA::Fastretailing)),
@@ -112,6 +113,7 @@ pub enum SiteKindSimpleA {
     Chemicoat,
     Chintai,
     Cybernet,
+    Daiichilife,
     Ena,
     ESP,
     Fastretailing,
@@ -206,6 +208,14 @@ fn simple_a(kind: &SiteKindSimpleA) -> HierarchicalFlow<'static> {
             level1_selector: "div.u-mb-40 > div > div > ul > li > a",
             title_selector: "#title01",
             body_selector: "div.u-mb-40:not(.c-link-block), div.c-image-block-row",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Daiichilife => HierarchicalFlow {
+            index: "https://www.dai-ichi-life.co.jp/support/glossary/initial/",
+            level2_selector: "div > dl > dd > a, .key > ul> li > a",
+            level1_selector: ".textcolumnLink2 > li > a",
+            title_selector: ".titleH3",
+            body_selector: ".fs14",
             ..Default::default()
         },
         SiteKindSimpleA::Ena => HierarchicalFlow {
