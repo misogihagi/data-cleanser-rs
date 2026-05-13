@@ -29,6 +29,7 @@ impl SimpleWorkFlow {
             "civileng" => Some(SiteKindSimple::B(SiteKindSimpleB::Civileng)),
             "cybernet" => Some(SiteKindSimple::A(SiteKindSimpleA::Cybernet)),
             "daiichilife" => Some(SiteKindSimple::A(SiteKindSimpleA::Daiichilife)),
+            "ebcc" => Some(SiteKindSimple::A(SiteKindSimpleA::Ebcc)),
             "ena" => Some(SiteKindSimple::A(SiteKindSimpleA::Ena)),
             "esp" => Some(SiteKindSimple::A(SiteKindSimpleA::ESP)),
             "fastretailing" => Some(SiteKindSimple::A(SiteKindSimpleA::Fastretailing)),
@@ -114,6 +115,7 @@ pub enum SiteKindSimpleA {
     Chintai,
     Cybernet,
     Daiichilife,
+    Ebcc,
     Ena,
     ESP,
     Fastretailing,
@@ -216,6 +218,14 @@ fn simple_a(kind: &SiteKindSimpleA) -> HierarchicalFlow<'static> {
             level1_selector: ".textcolumnLink2 > li > a",
             title_selector: ".titleH3",
             body_selector: ".fs14",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Ebcc => HierarchicalFlow {
+            index: "https://www.e-bcc.co.jp/glossary/outsourcing/?category=all",
+            level2_selector: "li.cmp-filter__item:nth-of-type(n+3) > a",
+            level1_selector: "#content-list > li > div > div > div > a",
+            title_selector: ".cmp-title > div:nth-child(1) > h1:nth-child(1)",
+            body_selector: "div.cmp.cmp-text > div:nth-child(1)",
             ..Default::default()
         },
         SiteKindSimpleA::Ena => HierarchicalFlow {

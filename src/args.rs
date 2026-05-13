@@ -61,6 +61,7 @@ define_args!(
     cybernet,
     daiichilife,
     efjapan,
+    ebcc,
     ena,
     esp,
     fastretailing,
