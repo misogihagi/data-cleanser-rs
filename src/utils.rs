@@ -1,11 +1,12 @@
 use crate::constants::DEFAULT_BASE_PATH;
 use async_trait::async_trait;
+use flate2::read::GzDecoder;
 use futures::future::join_all;
 use scraper::{Html, Selector};
 use serde::{Deserialize, Serialize};
 use std::default::Default;
 use std::fs::{create_dir_all, File};
-use std::io::Write;
+use std::io::{Read, Write};
 use std::sync::OnceLock;
 use std::time::Duration;
 use std::vec;
@@ -416,7 +417,13 @@ pub async fn get_html(url: impl AsRef<str>, encoding_str: &str) -> reqwest::Resu
         bytes_opt = Some(response.bytes().await.unwrap());
         break;
     }
-    let bytes = bytes_opt.expect("the number of retries exceeded");
+    let mut bytes = bytes_opt.expect("the number of retries exceeded");
+    if bytes.starts_with(&[0x1f, 0x8b]) {
+        let mut decoder = GzDecoder::new(&bytes[..]);
+        let mut decoded_bytes = Vec::new();
+        decoder.read_to_end(&mut decoded_bytes).unwrap();
+        bytes = decoded_bytes.into();
+    }
     let (res, _, _) = encoding.decode(&bytes);
     Ok(res.to_string())
 }

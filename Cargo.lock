@@ -332,6 +332,7 @@ dependencies = [
  "async-trait",
  "clap",
  "encoding_rs",
+ "flate2",
  "futures",
  "pdf-extract",
  "regex",
