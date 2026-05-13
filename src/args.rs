@@ -108,6 +108,7 @@ define_args!(
     ri,
     ryugaku,
     sakaiku,
+    scsk,
     shimauma,
     smbcnikko,
     smtrc,

@@ -67,6 +67,7 @@ impl SimpleWorkFlow {
             "sakaiku" => Some(SiteKindSimple::A(SiteKindSimpleA::Sakaiku)),
             "ri" => Some(SiteKindSimple::B(SiteKindSimpleB::Ri)),
             "ryugaku" => Some(SiteKindSimple::A(SiteKindSimpleA::Ryugaku)),
+            "scsk" => Some(SiteKindSimple::A(SiteKindSimpleA::Scsk)),
             "sumai1" => Some(SiteKindSimple::A(SiteKindSimpleA::Sumai1)),
             "smbcnikko" => Some(SiteKindSimple::A(SiteKindSimpleA::Smbcnikko)),
             "smtrc" => Some(SiteKindSimple::A(SiteKindSimpleA::Smtrc)),
@@ -144,6 +145,7 @@ pub enum SiteKindSimpleA {
     Rewords,
     Ryugaku,
     Sakaiku,
+    Scsk,
     Sumai1,
     Smbcnikko,
     Smtrc,
@@ -475,6 +477,13 @@ fn simple_a(kind: &SiteKindSimpleA) -> HierarchicalFlow<'static> {
             level1_selector: ".word-list > li > a",
             title_selector: ".header-title",
             body_selector: ".markdown",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Scsk => HierarchicalFlow {
+            level2_links: vec![String::from("https://www.scsk.jp/sp/itpnavi/glossary/")],
+            level1_selector: "div.listbox_a  a, div.listbox_b a",
+            title_selector: "h1.title",
+            body_selector: ".lead",
             ..Default::default()
         },
         SiteKindSimpleA::Sumai1 => HierarchicalFlow {
