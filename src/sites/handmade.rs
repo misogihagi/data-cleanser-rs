@@ -16,6 +16,7 @@ pub enum SiteKindHandmade {
     Footballbox,
     Hiroshima,
     Jfadocuments,
+    Kddi,
     MoonLight,
     Nikken,
     Ntt,
@@ -41,6 +42,7 @@ impl HandmadeWorkFlow {
             "footballbox" => Some(SiteKindHandmade::Footballbox),
             "hiroshima" => Some(SiteKindHandmade::Hiroshima),
             "jfadocuments" => Some(SiteKindHandmade::Jfadocuments),
+            "kddi" => Some(SiteKindHandmade::Kddi),
             "moonlight" => Some(SiteKindHandmade::MoonLight),
             "ntt" => Some(SiteKindHandmade::Ntt),
             "nikken" => Some(SiteKindHandmade::Nikken),
@@ -67,6 +69,7 @@ impl WorkFlowTrait for HandmadeWorkFlow {
             &SiteKindHandmade::Footballbox => footballbox().await,
             &SiteKindHandmade::Hiroshima => hiroshima().await,
             &SiteKindHandmade::Jfadocuments => jfadocuments().await,
+            &SiteKindHandmade::Kddi => kddi().await,
             &SiteKindHandmade::MoonLight => moonlight().await,
             &SiteKindHandmade::Nikken => nikken().await,
             &SiteKindHandmade::Ntt => ntt().await,
@@ -481,6 +484,86 @@ pub async fn jfadocuments() -> Vec<Term> {
         .collect()
 }
 
+fn get_ids(body: &str, start_marker: &str) -> Vec<String> {
+    let mut urls = Vec::new();
+    let end_marker = "}]\n  </script>";
+
+    if let Some(start_idx) = body.find(start_marker) {
+        let start = start_idx + start_marker.len();
+        let tail = &body[start..];
+        if let Some(end) = tail.find(end_marker) {
+            let json_str = &tail[..=end + 1];
+            println!("{}", json_str);
+
+            if let Ok(value) = serde_json::from_str::<serde_json::Value>(json_str) {
+                let mut stack = vec![&value];
+                while let Some(v) = stack.pop() {
+                    match v {
+                        serde_json::Value::String(s) => {
+                            if s.starts_with("http://") || s.starts_with("https://") {
+                                urls.push(s.to_string());
+                            }
+                        }
+                        serde_json::Value::Array(arr) => {
+                            for item in arr {
+                                stack.push(item);
+                            }
+                        }
+                        serde_json::Value::Object(obj) => {
+                            if obj.contains_key("id") {
+                                urls.push(obj["id"].as_str().unwrap().to_string());
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        }
+    }
+
+    urls
+}
+
+pub async fn kddi() -> Vec<Term> {
+    let body = get_html("https://biz.kddi.com/content/glossary/", "utf-8")
+        .await
+        .unwrap();
+
+    let alphabet_ids = get_ids(&body, "BIZ.Vars.EmbedTaglist.termAlphabet = ");
+    let japanese_ids = get_ids(&body, "BIZ.Vars.EmbedTaglist.termJapanese = ");
+
+    let json_bodies = join_all([alphabet_ids, japanese_ids].concat().iter().map(|id| {
+        get_html(
+            "https://biz.kddi.com/bin/glossary.json?ck_lang=ja&ck_initial=".to_string() + id,
+            "utf-8",
+        )
+    }))
+    .await
+    .into_iter()
+    .map(|b| b.unwrap())
+    .map(|b| serde_json::from_str::<serde_json::Value>(&b).unwrap())
+    .into_iter()
+    .flat_map(|v| {
+        v.as_array()
+            .unwrap()
+            .into_iter()
+            .map(|v| v.as_object().unwrap()["url"].as_str().unwrap().to_string())
+            .collect::<Vec<_>>()
+    })
+    .collect::<Vec<_>>();
+
+    let terms = HierarchicalFlow {
+        links: json_bodies,
+        title_selector: "h2.biz-c-glossary__detailHeading:nth-child(1)",
+        body_selector: ".biz-c-glossary__detailParagraph",
+        ..Default::default()
+    }
+    .get_terms()
+    .await;
+
+    terms
+}
+
 pub async fn moonlight() -> Vec<Term> {
     let mut links = HierarchicalFlow {
         level2_links: vec![String::from("http://www.moon-light.ne.jp/termi-nology/")],
@@ -596,7 +679,7 @@ pub async fn ntt() -> Vec<Term> {
                 "utf-8",
             )
         });
-        
+
         let chunk_results = join_all(futures).await;
         results.extend(chunk_results.into_iter().map(|res| res.unwrap()));
         tokio::time::sleep(Duration::from_secs(1)).await;
