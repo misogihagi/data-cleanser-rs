@@ -56,6 +56,7 @@ impl SimpleWorkFlow {
             "meiwakaiun" => Some(SiteKindSimple::B(SiteKindSimpleB::Meiwakaiun)),
             "mintetsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Mintetsu)),
             "mizuho" => Some(SiteKindSimple::A(SiteKindSimpleA::Mizuho)),
+            "mwords" => Some(SiteKindSimple::C(SiteKindSimpleC::Mwords)),
             "naigai" => Some(SiteKindSimple::A(SiteKindSimpleA::Naigai)),
             "nichiren" => Some(SiteKindSimple::A(SiteKindSimpleA::Nichiren)),
             "nisso" => Some(SiteKindSimple::B(SiteKindSimpleB::Nisso)),
@@ -664,6 +665,7 @@ pub enum SiteKindSimpleC {
     Fooddies,
     Globis,
     Konest,
+    Mwords,
 }
 
 fn simple_c(kind: &SiteKindSimpleC) -> PageLinkFlow {
@@ -697,6 +699,15 @@ fn simple_c(kind: &SiteKindSimpleC) -> PageLinkFlow {
                 ".c-hangul__content-main--translate, .c-hangul__content-description--item",
             pool_size: 10,
             rest: 240,
+            ..Default::default()
+        },
+        SiteKindSimpleC::Mwords => PageLinkFlow {
+            index: "https://m-words.jp/",
+            level3_selector: "p.has-text-align-center:nth-child(-n+5) > a",
+            level2_selector: "a.page-numbers.-to-next",
+            level1_selector: "ul.p-postList:nth-child(1) > li > a",
+            title_selector: ".c-postTitle__ttl",
+            body_selector: "div.post_content > p",
             ..Default::default()
         },
     }

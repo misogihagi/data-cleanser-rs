@@ -94,6 +94,7 @@ define_args!(
     mintetsu,
     mizuho,
     moonlight,
+    mwords,
     naganofc,
     naigai,
     nichiren,
