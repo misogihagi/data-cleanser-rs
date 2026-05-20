@@ -516,7 +516,7 @@ fn simple_a(kind: &SiteKindSimpleA) -> HierarchicalFlow<'static> {
             ..Default::default()
         },
         SiteKindSimpleA::Soccer => HierarchicalFlow {
-            index: "https://www.homemate-research-soccer.com/useful/glossary/soccer/",
+            level2_links: vec![String::from("https://www.homemate-research-soccer.com/useful/glossary/soccer/")],
             base: "https://www.homemate-research-soccer.com",
             level1_selector: "section.sec_cmn:nth-child(4) > div > ul > li > a",
             title_selector: ".post_btn > h1:nth-child(1)",
