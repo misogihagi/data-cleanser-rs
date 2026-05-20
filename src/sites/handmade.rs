@@ -568,8 +568,7 @@ pub async fn moonlight() -> Vec<Term> {
     let mut links = HierarchicalFlow {
         level2_links: vec![String::from("http://www.moon-light.ne.jp/termi-nology/")],
         base: "http://www.moon-light.ne.jp/termi-nology/",
-        level1_selector:
-            ".entry > table:nth-child(8) > tbody > tr > td > table > tbody > tr > td > a",
+        level1_selector: "table > tbody > tr > td > table > tbody > tr > td > a",
         ..Default::default()
     }
     .get_links()
@@ -580,7 +579,7 @@ pub async fn moonlight() -> Vec<Term> {
     let terms = HierarchicalFlow {
         links: links.clone(),
         base: "http://www.moon-light.ne.jp/termi-nology/",
-        title_selector: ".date",
+        title_selector: "h3",
         body_selector: ".entry-more",
         ..Default::default()
     }
