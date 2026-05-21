@@ -8,13 +8,16 @@ pub mod customized;
 pub mod handmade;
 pub mod pdf;
 // others
+pub mod browser;
 pub mod special;
 
+use self::browser::BrowserWorkFlow;
 use self::customized::CustomizedWorkFlow;
 use self::handmade::HandmadeWorkFlow;
 use self::interface::WorkFlowTrait;
 use self::pdf::PdfWorkFlow;
 use self::simple::SimpleWorkFlow;
+
 use crate::utils::Term;
 
 pub enum SiteKind {
@@ -22,6 +25,7 @@ pub enum SiteKind {
     Customized(CustomizedWorkFlow),
     Handmade(HandmadeWorkFlow),
     Pdf(PdfWorkFlow),
+    Browser(BrowserWorkFlow),
 }
 
 impl SiteKind {
@@ -37,6 +41,9 @@ impl SiteKind {
                     .map(|k| SiteKind::Handmade(HandmadeWorkFlow { kind: k }))
             })
             .or_else(|| PdfWorkFlow::my_kind(s).map(|k| SiteKind::Pdf(PdfWorkFlow { kind: k })))
+            .or_else(|| {
+                BrowserWorkFlow::my_kind(s).map(|k| SiteKind::Browser(BrowserWorkFlow { kind: k }))
+            })
     }
 
     pub async fn get_terms(self) -> Vec<Term> {
@@ -45,6 +52,7 @@ impl SiteKind {
             SiteKind::Customized(w) => w.get_terms().await,
             SiteKind::Handmade(w) => w.get_terms().await,
             SiteKind::Pdf(w) => w.get_terms().await,
+            SiteKind::Browser(w) => w.get_terms().await,
         }
     }
 }
