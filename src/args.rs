@@ -106,6 +106,7 @@ define_args!(
     nrisecure,
     ntt,
     pfa,
+    restec,
     rewords,
     ri,
     ryugaku,

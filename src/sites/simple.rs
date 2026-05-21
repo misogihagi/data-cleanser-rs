@@ -63,6 +63,7 @@ impl SimpleWorkFlow {
             "nomura" => Some(SiteKindSimple::A(SiteKindSimpleA::Nomura)),
             "nrisecure" => Some(SiteKindSimple::A(SiteKindSimpleA::Nrisecure)),
             "pfa" => Some(SiteKindSimple::A(SiteKindSimpleA::Pfa)),
+            "restec" => Some(SiteKindSimple::A(SiteKindSimpleA::Restec)),
             "rewords" => Some(SiteKindSimple::A(SiteKindSimpleA::Rewords)),
             "sakaiku" => Some(SiteKindSimple::A(SiteKindSimpleA::Sakaiku)),
             "ri" => Some(SiteKindSimple::B(SiteKindSimpleB::Ri)),
@@ -141,6 +142,7 @@ pub enum SiteKindSimpleA {
     Nomura,
     Nrisecure,
     Pfa,
+    Restec,
     Rewords,
     Ryugaku,
     Sakaiku,
@@ -442,6 +444,14 @@ fn simple_a(kind: &SiteKindSimpleA) -> HierarchicalFlow<'static> {
             level1_selector: "div.colLeft > div > div > div > p  a",
             title_selector: ".textHeader",
             body_selector: ".textIndent",
+            ..Default::default()
+        },
+        SiteKindSimpleA::Restec => HierarchicalFlow {
+            index: "https://www.restec.or.jp/glossary/index.html",
+            level2_selector: "div.search-initial > ul > li > a:not(.is-disabled)",
+            level1_selector: "li.word-item-hiragana > a, li.word-item > a",
+            title_selector: ".clearfix > li:nth-child(3)",
+            body_selector: ".glossary-detail-info",
             ..Default::default()
         },
         SiteKindSimpleA::Rewords => HierarchicalFlow {
