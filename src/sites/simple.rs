@@ -27,6 +27,7 @@ impl SimpleWorkFlow {
             "chemicoat" => Some(SiteKindSimple::A(SiteKindSimpleA::Chemicoat)),
             "chintai" => Some(SiteKindSimple::A(SiteKindSimpleA::Chintai)),
             "civileng" => Some(SiteKindSimple::B(SiteKindSimpleB::Civileng)),
+            "comperu" => Some(SiteKindSimple::C(SiteKindSimpleC::Comperu)),
             "cybernet" => Some(SiteKindSimple::A(SiteKindSimpleA::Cybernet)),
             "daiichilife" => Some(SiteKindSimple::A(SiteKindSimpleA::Daiichilife)),
             "ebcc" => Some(SiteKindSimple::A(SiteKindSimpleA::Ebcc)),
@@ -651,6 +652,7 @@ fn simple_b(kind: &SiteKindSimpleB) -> SinglepageFlow {
 }
 
 pub enum SiteKindSimpleC {
+    Comperu,
     Fooddies,
     Globis,
     Mwords,
@@ -658,6 +660,14 @@ pub enum SiteKindSimpleC {
 
 fn simple_c(kind: &SiteKindSimpleC) -> PageLinkFlow {
     match kind {
+        SiteKindSimpleC::Comperu => PageLinkFlow {
+            level2_links: vec![String::from("https://comperu.jp/library/tag/%E3%83%93%E3%82%B8%E3%83%8D%E3%82%B9%E7%94%A8%E8%AA%9E/")],
+            level2_selector: ".page-numbers.current + a",
+            level1_selector: "article.item > a.image",
+            title_selector: "h1.title",
+            body_selector: ".tcdce-body",
+            ..Default::default()
+        },
         SiteKindSimpleC::Fooddies => PageLinkFlow {
             level2_links: vec!["https://fooddies.tokyo/".to_string()],
             level2_selector: ".next",

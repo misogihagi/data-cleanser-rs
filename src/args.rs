@@ -57,6 +57,7 @@ define_args!(
     chemicoat,
     chintai,
     civileng,
+    comperu,
     coocan,
     cybernet,
     daiichilife,
