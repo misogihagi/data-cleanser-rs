@@ -35,7 +35,38 @@ impl WorkFlowTrait for BrowserWorkFlow {
 
     async fn get_terms(&self) -> Vec<Term> {
         match self.kind {
-            SiteKindBrowser::Konest => {}
+            SiteKindBrowser::Konest => {
+                let url = "https://www.konest.com/contents/todays_korean_list.html";
+                let html = get_html_with_browser(url).await.unwrap();
+                let fragment = Html::parse_document(&html);
+                let next_selector = Selector::parse(
+                    "li.c-pagination__item:nth-child(9) > a:nth-child(1):not(.is-disabled)",
+                )
+                .unwrap();
+                let link_selector = Selector::parse("li.c-card > a").unwrap();
+                let title_selector = Selector::parse("#korean_title").unwrap();
+                let body_selector = Selector::parse(
+                    ".c-hangul__content-main--translate, .c-hangul__content-description--item",
+                )
+                .unwrap();
+
+                let title = fragment
+                    .select(&title_selector)
+                    .next()
+                    .map(|e| e.text().collect::<String>())
+                    .unwrap_or_default();
+                let body = fragment
+                    .select(&body_selector)
+                    .next()
+                    .map(|e| e.text().collect::<String>())
+                    .unwrap_or_default();
+
+                vec![Term {
+                    title,
+                    body,
+                    images: vec![],
+                }]
+            }
         }
     }
 }
