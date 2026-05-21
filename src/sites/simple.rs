@@ -49,7 +49,6 @@ impl SimpleWorkFlow {
             "kenchikuyogo" => Some(SiteKindSimple::A(SiteKindSimpleA::Kenchikuyogo)),
             "kuraemon" => Some(SiteKindSimple::A(SiteKindSimpleA::Kuraemon)),
             "kyokutok" => Some(SiteKindSimple::A(SiteKindSimpleA::Kyokutok)),
-            "konest" => Some(SiteKindSimple::C(SiteKindSimpleC::Konest)),
             "livable" => Some(SiteKindSimple::A(SiteKindSimpleA::Livable)),
             "macromill" => Some(SiteKindSimple::A(SiteKindSimpleA::Macromill)),
             "meiwakaiun" => Some(SiteKindSimple::B(SiteKindSimpleB::Meiwakaiun)),
@@ -654,7 +653,6 @@ fn simple_b(kind: &SiteKindSimpleB) -> SinglepageFlow {
 pub enum SiteKindSimpleC {
     Fooddies,
     Globis,
-    Konest,
     Mwords,
 }
 
@@ -675,20 +673,6 @@ fn simple_c(kind: &SiteKindSimpleC) -> PageLinkFlow {
             level1_selector: ".column_main > div > a",
             title_selector: "h1.section_title",
             body_selector: ".cms_section",
-            ..Default::default()
-        },
-        SiteKindSimpleC::Konest => PageLinkFlow {
-            level2_links: vec!["https://www.konest.com/contents/todays_korean_list.html".to_string()],
-            base: "https://www.konest.com",
-            level1_base: "https://www.konest.com/contents/",
-            level2_selector:
-                "li.c-pagination__item:nth-child(9) > a:nth-child(1):not(.is-disabled)",
-            level1_selector: " a",
-            title_selector: "#korean_title",
-            body_selector:
-                ".c-hangul__content-main--translate, .c-hangul__content-description--item",
-            pool_size: 10,
-            rest: 240,
             ..Default::default()
         },
         SiteKindSimpleC::Mwords => PageLinkFlow {
