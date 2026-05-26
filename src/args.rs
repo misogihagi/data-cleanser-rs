@@ -93,6 +93,7 @@ define_args!(
     macromill,
     meiwakaiun,
     mintetsu,
+    mitsujp,
     mizuho,
     moonlight,
     mwords,

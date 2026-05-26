@@ -54,6 +54,7 @@ impl SimpleWorkFlow {
             "macromill" => Some(SiteKindSimple::A(SiteKindSimpleA::Macromill)),
             "meiwakaiun" => Some(SiteKindSimple::B(SiteKindSimpleB::Meiwakaiun)),
             "mintetsu" => Some(SiteKindSimple::A(SiteKindSimpleA::Mintetsu)),
+            "mitsujp" => Some(SiteKindSimple::B(SiteKindSimpleB::Mitsujp)),
             "mizuho" => Some(SiteKindSimple::A(SiteKindSimpleA::Mizuho)),
             "mwords" => Some(SiteKindSimple::C(SiteKindSimpleC::Mwords)),
             "naigai" => Some(SiteKindSimple::A(SiteKindSimpleA::Naigai)),
@@ -588,6 +589,7 @@ pub enum SiteKindSimpleB {
     Amazonpay,
     Civileng,
     Jiki,
+    Mitsujp,
     Ri,
     Meiwakaiun,
     Nisso,
@@ -622,6 +624,12 @@ fn simple_b(kind: &SiteKindSimpleB) -> SinglepageFlow {
                 level1_selector: "div.entry > table > tbody:nth-child(1) > tr > td > a",
                 titles_selector:".entry > h3",
                 bodies_selector: ".entry > p",
+                ..Default::default()
+        },
+        SiteKindSimpleB::Mitsujp => SinglepageFlow {
+                links: vec![String::from("https://www.mitsujp.com/glossary1/"), String::from("https://www.mitsujp.com/glossary2/")],
+                titles_selector:"div.post_content > div.wp-block-group > div > h3, details.swell-block-accordion__item > div > div > div > div > div > h3",
+                bodies_selector: "div.post_content > div.wp-block-group > div > p, details.swell-block-accordion__item > div > div > div > div > div",
                 ..Default::default()
         },
         SiteKindSimpleB::Nisso => SinglepageFlow {
