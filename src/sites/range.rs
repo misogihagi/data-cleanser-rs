@@ -2,8 +2,6 @@ use super::interface::WorkFlowTrait;
 use crate::utils::{HeadingRangeFlow, Term};
 
 pub enum SiteKindRange {
-    // Add kinds here
-    Initial,
     Navigateinc,
 }
 
@@ -18,8 +16,6 @@ impl RangeWorkFlow {
 
     pub fn my_kind(kind_str: &'static str) -> Option<SiteKindRange> {
         match kind_str {
-            // Register kinds here
-            "initial" => Some(SiteKindRange::Initial),
             "navigateinc" => Some(SiteKindRange::Navigateinc),
             _ => None,
         }
@@ -40,9 +36,6 @@ impl WorkFlowTrait for RangeWorkFlow {
 impl RangeWorkFlow {
     fn get_flow(&self) -> HeadingRangeFlow {
         match self.kind {
-            SiteKindRange::Initial => HeadingRangeFlow {
-                ..Default::default()
-            },
             SiteKindRange::Navigateinc => HeadingRangeFlow {
                 index: "https://www.navigate-inc.co.jp/term/index.html",
                 level1_selector: "#linkbtn01 > ul > li > a, h2.sh2:nth-child(2) > a",
