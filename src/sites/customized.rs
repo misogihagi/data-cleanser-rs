@@ -1,8 +1,12 @@
 use super::interface::WorkFlowTrait;
-use crate::utils::{get_links, Flow, HierarchicalFlow, LinkQuery, SinglepageFlow, Term};
+use crate::utils::{
+    get_links, get_links_by_page_link, Flow, HeadingRangeFlow, HierarchicalFlow, LinkQuery,
+    SinglepageFlow, Term,
+};
 
 pub enum SiteKindCustomized {
     Hrpro,
+    Semiconnect,
     Shimauma,
     Zexy,
     HomemateResearchSoccer,
@@ -20,6 +24,7 @@ impl CustomizedWorkFlow {
     pub fn my_kind(kind_str: &'static str) -> Option<SiteKindCustomized> {
         match kind_str {
             "hrpro" => Some(SiteKindCustomized::Hrpro),
+            "semiconnect" => Some(SiteKindCustomized::Semiconnect),
             "shimauma" => Some(SiteKindCustomized::Shimauma),
             "zexy" => Some(SiteKindCustomized::Zexy),
             "homemateresearchsoccer" => Some(SiteKindCustomized::HomemateResearchSoccer),
@@ -83,6 +88,22 @@ async fn customize(kind: &SiteKindCustomized) -> Box<dyn Flow> {
                 title_selector: "h1.ttl",
                 body_selector: ".article-body",
                 level2_links: urls,
+                ..Default::default()
+            })
+        }
+        SiteKindCustomized::Semiconnect => {
+            let links = get_links_by_page_link(
+                "https://semi-connect.net/category/words/",
+                "",
+                "article.post-list-item > a",
+                ".pagination > li.current + li > a",
+                "utf-8",
+            )
+            .await;
+            Box::new(HeadingRangeFlow {
+                links,
+                titles_selector: ".cps-post-main >h2, .cps-post-main >h3",
+                last_body_selector: ".entry-content > p",
                 ..Default::default()
             })
         }

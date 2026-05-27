@@ -114,6 +114,7 @@ define_args!(
     ryugaku,
     sakaiku,
     scsk,
+    semiconnect,
     shimauma,
     smbcnikko,
     smtrc,
