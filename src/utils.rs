@@ -371,31 +371,16 @@ impl Flow for PageLinkFlow {
             vec![self.index.to_string()]
         } else {
             for link_link in level2_links {
-                let mut next_link = link_link.to_string();
-                loop {
-                    let mut links_result = get_links(LinkQuery {
-                        url: &next_link,
-                        base: self.base,
-                        selector_string: self.level1_selector,
-                        encoding: &self.encoding,
-                    })
-                    .await
-                    .unwrap();
-                    links.append(&mut links_result);
-                    let next_result = get_links(LinkQuery {
-                        url: &next_link,
-                        base: self.base,
-                        selector_string: self.level2_selector,
-                        encoding: &self.encoding,
-                    })
-                    .await
-                    .unwrap();
-                    if next_result.is_empty() {
-                        break;
-                    } else {
-                        next_link = next_result.first().unwrap().clone();
-                    }
-                }
+                links.extend(
+                    get_links_by_page_link(
+                        &link_link,
+                        self.base,
+                        self.level1_selector,
+                        self.level2_selector,
+                        &self.encoding,
+                    )
+                    .await,
+                )
             }
             links
         }
@@ -580,9 +565,47 @@ pub fn get_image_source(fragment: &Html, selector: &Selector) -> String {
         })
         .collect()
 }
+
 pub fn parse_fragment(html: String) -> Html {
     Html::parse_fragment(&html)
 }
+
+pub async fn get_links_by_page_link(
+    start: &str,
+    base: &str,
+    link_selector: &str,
+    next_selector: &str,
+    encoding: &str,
+) -> Vec<String> {
+    let mut links = Vec::new();
+    let mut next_link = start.to_string();
+    loop {
+        let mut links_result = get_links(LinkQuery {
+            url: &next_link,
+            base,
+            selector_string: link_selector,
+            encoding,
+        })
+        .await
+        .unwrap();
+        links.append(&mut links_result);
+        let next_result = get_links(LinkQuery {
+            url: &next_link,
+            base,
+            selector_string: next_selector,
+            encoding,
+        })
+        .await
+        .unwrap();
+        if next_result.is_empty() {
+            break;
+        } else {
+            next_link = next_result.first().unwrap().clone();
+        }
+    }
+    links
+}
+
 pub async fn get_term(
     url: String,
     s_title: &str,
