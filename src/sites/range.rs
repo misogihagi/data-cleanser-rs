@@ -1,0 +1,47 @@
+use super::interface::WorkFlowTrait;
+use crate::utils::{HeadingRangeFlow, Term};
+
+pub enum SiteKindRange {
+    // Add kinds here
+    Initial,
+}
+
+pub struct RangeWorkFlow {
+    pub kind: SiteKindRange,
+}
+
+impl RangeWorkFlow {
+    pub fn new(kind: SiteKindRange) -> Self {
+        Self { kind }
+    }
+
+    pub fn my_kind(kind_str: &'static str) -> Option<SiteKindRange> {
+        match kind_str {
+            // Register kinds here
+            "initial" => Some(SiteKindRange::Initial),
+            "navigateinc" => Some(SiteKindRange::Navigateinc),
+            _ => None,
+        }
+    }
+}
+
+impl WorkFlowTrait for RangeWorkFlow {
+    fn is_my_kind(kind_str: &'static str) -> bool {
+        Self::my_kind(kind_str).is_some()
+    }
+
+    async fn get_terms(&self) -> Vec<Term> {
+        use crate::utils::Flow;
+        self.get_flow().get_terms().await
+    }
+}
+
+impl RangeWorkFlow {
+    fn get_flow(&self) -> HeadingRangeFlow {
+        match self.kind {
+            SiteKindRange::Initial => HeadingRangeFlow {
+                ..Default::default()
+            },
+        }
+    }
+}

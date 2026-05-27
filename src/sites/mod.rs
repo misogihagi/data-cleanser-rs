@@ -4,6 +4,7 @@ pub mod interface;
 pub mod hierarchical;
 pub mod singlepage;
 pub mod pagelink;
+pub mod range;
 // indirectly generate flow
 pub mod customized;
 // directly generate Vec<Term> without following flow
@@ -16,11 +17,12 @@ pub mod special;
 use self::browser::BrowserWorkFlow;
 use self::customized::CustomizedWorkFlow;
 use self::handmade::HandmadeWorkFlow;
-use self::hierarchical::{HierarchicalWorkFlow, SiteKindHierarchical};
+use self::hierarchical::HierarchicalWorkFlow;
 use self::interface::WorkFlowTrait;
-use self::pagelink::{PagelinkWorkFlow, SiteKindPagelink};
+use self::pagelink::PagelinkWorkFlow;
 use self::pdf::PdfWorkFlow;
-use self::singlepage::{SiteKindSinglepage, SinglepageWorkFlow};
+use self::range::RangeWorkFlow;
+use self::singlepage::SinglepageWorkFlow;
 
 use crate::utils::Term;
 
@@ -28,6 +30,7 @@ pub enum SiteKind {
     Hierarchical(HierarchicalWorkFlow),
     Singlepage(SinglepageWorkFlow),
     Pagelink(PagelinkWorkFlow),
+    Range(RangeWorkFlow),
     Customized(CustomizedWorkFlow),
     Handmade(HandmadeWorkFlow),
     Pdf(PdfWorkFlow),
@@ -45,6 +48,9 @@ impl SiteKind {
             .or_else(|| {
                 PagelinkWorkFlow::my_kind(s)
                     .map(|k| SiteKind::Pagelink(PagelinkWorkFlow { kind: k }))
+            })
+            .or_else(|| {
+                RangeWorkFlow::my_kind(s).map(|k| SiteKind::Range(RangeWorkFlow { kind: k }))
             })
             .or_else(|| {
                 CustomizedWorkFlow::my_kind(s)
@@ -65,6 +71,7 @@ impl SiteKind {
             SiteKind::Hierarchical(w) => w.get_terms().await,
             SiteKind::Singlepage(w) => w.get_terms().await,
             SiteKind::Pagelink(w) => w.get_terms().await,
+            SiteKind::Range(w) => w.get_terms().await,
             SiteKind::Customized(w) => w.get_terms().await,
             SiteKind::Handmade(w) => w.get_terms().await,
             SiteKind::Pdf(w) => w.get_terms().await,

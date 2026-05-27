@@ -79,6 +79,31 @@ impl Default for SinglepageFlow {
     }
 }
 
+pub struct HeadingRangeFlow {
+    pub index: &'static str,
+    pub base: &'static str,
+    pub level1_selector: &'static str,
+    pub container_selector: &'static str,
+    pub titles_selector: &'static str,
+    pub last_body_selector: &'static str,
+    pub encoding: &'static str,
+    pub links: Vec<String>,
+}
+impl Default for HeadingRangeFlow {
+    fn default() -> HeadingRangeFlow {
+        HeadingRangeFlow {
+            index: "",
+            base: "",
+            level1_selector: "",
+            container_selector: "",
+            titles_selector: "",
+            last_body_selector: "",
+            encoding: "utf-8",
+            links: vec![],
+        }
+    }
+}
+
 pub struct PageLinkFlow {
     pub index: &'static str,
     pub base: &'static str,
@@ -271,6 +296,45 @@ impl Flow for SinglepageFlow {
         .into_iter()
         .flat_map(|r| r.unwrap())
         .collect()
+    }
+}
+
+#[async_trait]
+impl Flow for HeadingRangeFlow {
+    async fn get_links(&self) -> Vec<String> {
+        if !self.links.is_empty() {
+            self.links.clone()
+        } else if self.level1_selector == "" {
+            vec![self.index.to_string()]
+        } else {
+            get_links(LinkQuery {
+                url: self.index,
+                base: self.base,
+                selector_string: self.level1_selector,
+                encoding: &self.encoding,
+            })
+            .await
+            .unwrap()
+        }
+    }
+    async fn get_terms(&self) -> Vec<Term> {
+        let links: Vec<String> = self.get_links().await;
+
+        let mut result = vec![];
+        for l in links {
+            result.extend(
+                get_terms_heading_range(
+                    l,
+                    self.container_selector,
+                    self.titles_selector,
+                    self.last_body_selector,
+                    self.encoding,
+                )
+                .await
+                .unwrap(),
+            );
+        }
+        result
     }
 }
 
@@ -602,6 +666,70 @@ pub async fn get_terms(
             images: images.clone(),
         })
         .collect())
+}
+
+pub async fn get_terms_heading_range(
+    url: String,
+    s_container: &str,
+    s_title: &str,
+    s_stop: &str,
+    encoding: &str,
+) -> reqwest::Result<Vec<Term>> {
+    let html = get_html(url, encoding).await.unwrap();
+
+    let title_selector = Selector::parse(s_title).unwrap();
+    let last_body_selector = if !s_stop.is_empty() {
+        Some(Selector::parse(s_stop).unwrap())
+    } else {
+        None
+    };
+    let fragment = Html::parse_fragment(&html);
+
+    let containers = if !s_container.is_empty() {
+        let container_selector = Selector::parse(s_container).unwrap();
+        fragment.select(&container_selector).collect::<Vec<_>>()
+    } else {
+        vec![fragment.root_element()]
+    };
+
+    let mut terms = vec![];
+
+    for container in containers {
+        let titles = container.select(&title_selector).collect::<Vec<_>>();
+
+        for title_node in titles {
+            let title_text = title_node.text().collect::<String>().trim().to_string();
+            let mut body_text = String::new();
+
+            let mut curr = title_node.next_sibling();
+            while let Some(node) = curr {
+                if node.value().is_element() {
+                    let element = scraper::ElementRef::wrap(node).unwrap();
+                    if title_selector.matches(&element) {
+                        break;
+                    }
+                    if let Some(ref stop) = last_body_selector {
+                        if stop.matches(&element) {
+                            body_text.push_str(&element.text().collect::<String>());
+                            break;
+                        }
+                    }
+                    body_text.push_str(&element.text().collect::<String>());
+                } else if node.value().is_text() {
+                    body_text.push_str(node.value().as_text().unwrap());
+                }
+                curr = node.next_sibling();
+            }
+
+            terms.push(Term {
+                title: title_text,
+                body: body_text.trim().to_string(),
+                images: vec![],
+            });
+        }
+    }
+
+    Ok(terms)
 }
 
 async fn get_terms_chunked(

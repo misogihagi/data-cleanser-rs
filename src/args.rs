@@ -99,6 +99,7 @@ define_args!(
     mwords,
     naganofc,
     naigai,
+    navigateinc,
     nichiren,
     nikken,
     nisso,
