@@ -126,6 +126,7 @@ define_args!(
     suumo,
     theglenlivet,
     toraiz,
+    ts4500,
     unew,
     universalooh,
     wafermeasurementinspection,
