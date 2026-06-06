@@ -462,6 +462,14 @@ pub async fn get_html(url: impl AsRef<str>, encoding_str: &str) -> reqwest::Resu
             );
             tokio::time::sleep(Duration::from_secs(BANNED_INTERVAL)).await;
             continue;
+        } else if response.status() == reqwest::StatusCode::TOO_MANY_REQUESTS {
+            println!(
+                "{} failed {} times due to too many requests. retrying",
+                url.as_ref(),
+                i
+            );
+            tokio::time::sleep(Duration::from_secs(BANNED_INTERVAL)).await;
+            continue;
         }
         bytes_opt = Some(response.bytes().await.unwrap());
         break;
