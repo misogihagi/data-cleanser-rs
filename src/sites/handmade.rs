@@ -21,7 +21,6 @@ pub enum SiteKindHandmade {
     Nikken,
     Ntt,
     Toraiz,
-    Yodosha,
     Naganofc,
 }
 
@@ -47,7 +46,6 @@ impl HandmadeWorkFlow {
             "ntt" => Some(SiteKindHandmade::Ntt),
             "nikken" => Some(SiteKindHandmade::Nikken),
             "toraiz" => Some(SiteKindHandmade::Toraiz),
-            "yodosha" => Some(SiteKindHandmade::Yodosha),
             "naganofc" => Some(SiteKindHandmade::Naganofc),
             _ => None,
         }
@@ -74,7 +72,6 @@ impl WorkFlowTrait for HandmadeWorkFlow {
             &SiteKindHandmade::Nikken => nikken().await,
             &SiteKindHandmade::Ntt => ntt().await,
             &SiteKindHandmade::Toraiz => toraiz().await,
-            &SiteKindHandmade::Yodosha => yodosha().await,
             &SiteKindHandmade::Naganofc => naganofc().await,
         }
     }
@@ -728,7 +725,6 @@ pub async fn toraiz() -> Vec<Term> {
 pub async fn yodosha() -> Vec<Term> {
     let level2_links = HierarchicalFlow {
         index: "https://www.yodosha.co.jp/jikkenigaku/keyword/",
-        base: "https://www.yodosha.co.jp/jikkenigaku/keyword/",
         level2_selector: "div.indexes > table > tbody > tr> td > a",
         ..Default::default()
     }
@@ -737,7 +733,7 @@ pub async fn yodosha() -> Vec<Term> {
     let links: Vec<String> = join_all(level2_links.iter().map(|link_link| {
         get_links(LinkQuery {
             url: link_link,
-            base: "https://www.yodosha.co.jp/jikkenigaku/keyword/",
+            base: "",
             selector_string: "#indexlistbox > ul > li > a",
             encoding: "utf-8",
         })

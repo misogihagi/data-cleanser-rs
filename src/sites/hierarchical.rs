@@ -48,6 +48,7 @@ pub enum SiteKindHierarchical {
     Suumo,
     WaferMeasurementInspection,
     Webtan,
+    Yodosha,
     Nichiren,
     Sufu,
     Unew,
@@ -114,6 +115,7 @@ impl HierarchicalWorkFlow {
             "unew" => Some(SiteKindHierarchical::Unew),
             "wafermeasurementinspection" => Some(SiteKindHierarchical::WaferMeasurementInspection),
             "webtan" => Some(SiteKindHierarchical::Webtan),
+            "yodosha" => Some(SiteKindHierarchical::Yodosha),
             _ => None,
         }
     }
@@ -543,14 +545,26 @@ impl HierarchicalWorkFlow {
                 level1_selector: ".newslist > li > a",
                 title_selector: ".ts3",
                 body_selector: ".longComment",
+                pool_size:1,
+                rest:1,
                 ..Default::default()
             },
             SiteKindHierarchical::Webtan => HierarchicalFlow {
-                index: "https://webtan.impress.co.jp/glossary/list/1",
+                level2_links: vec![String::from("https://webtan.impress.co.jp/glossary/list/1")],
                 base: "https://webtan.impress.co.jp",
-                level1_selector: ".node > div:nth-child(1) > ul > li > a",
+                level1_selector: ".node > div:nth-child(1) > ul > li > a",  
                 title_selector: "h1.title",
                 body_selector: ".glossary_description",
+                ..Default::default()
+            },
+            SiteKindHierarchical::Yodosha => HierarchicalFlow {
+                index: "https://www.yodosha.co.jp/jikkenigaku/keyword/",
+                level2_selector: ".index-list-wrap > ul > li > a",
+                level1_selector: "div.keyword > a",
+                title_selector: "#keyword",
+                body_selector: ".definition",
+                pool_size: 10,
+                rest: 3,
                 ..Default::default()
             },
             SiteKindHierarchical::Nichiren => HierarchicalFlow {
