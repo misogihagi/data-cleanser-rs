@@ -613,30 +613,56 @@ pub async fn get_term(
     s_images: Option<&str>,
     encoding: &str,
 ) -> reqwest::Result<Term> {
-    let html = get_html(url, encoding).await.unwrap();
+    for i in 1..RETRY {
+        let html = get_html(&url, encoding).await.unwrap();
 
-    let title_selector = Selector::parse(s_title).unwrap();
-    let body_selector = Selector::parse(s_body).unwrap();
-    let fragment = Html::parse_fragment(&html);
+        let mut term_opt = None;
+        {
+            let fragment = Html::parse_fragment(&html);
+            let title_selector = Selector::parse(s_title).unwrap();
+            let body_selector = Selector::parse(s_body).unwrap();
 
-    let title = get_text(fragment.clone(), title_selector.clone());
-    let body = get_text(fragment.clone(), body_selector.clone());
+            let title = get_text(fragment.clone(), title_selector.clone());
+            let body = get_text(fragment.clone(), body_selector.clone());
 
-    let images: Vec<String> = match s_images {
-        Some(s) => {
-            let images_selector = Selector::parse(s).unwrap();
-            fragment
-                .select(&images_selector)
-                .map(|e| e.value().attr("src").unwrap().to_string())
-                .collect::<Vec<String>>()
+            if !title.is_empty() || !body.is_empty() {
+                let images: Vec<String> = match s_images {
+                    Some(s) => {
+                        let images_selector = Selector::parse(s).unwrap();
+                        fragment
+                            .select(&images_selector)
+                            .map(|e| {
+                                e.value()
+                                    .attr("src")
+                                    .map(|s| s.to_string())
+                                    .unwrap_or_else(|| "".to_string())
+                            })
+                            .filter(|s| !s.is_empty())
+                            .collect::<Vec<String>>()
+                    }
+                    None => vec![],
+                };
+
+                term_opt = Some(Term {
+                    title: title,
+                    body: body,
+                    images: images,
+                });
+            }
         }
-        None => vec![],
-    };
+
+        if let Some(term) = term_opt {
+            return Ok(term);
+        }
+
+        println!("{} title and body is empty. retrying {} times", url, i);
+        tokio::time::sleep(Duration::from_secs(RETRY_INTERVAL)).await;
+    }
 
     Ok(Term {
-        title: title,
-        body: body,
-        images: images,
+        title: "".to_string(),
+        body: "".to_string(),
+        images: vec![],
     })
 }
 
